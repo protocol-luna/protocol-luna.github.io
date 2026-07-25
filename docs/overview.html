@@ -134,7 +134,7 @@ footer a { color: var(--primary-dim); }
     <blockquote>
       <p><strong>Luna Protocol now has its own official models!</strong><br>
       The project includes optimized models trained specifically for Discord conversations:<br>
-      &bull; <strong>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5</strong> (Recommended) &mdash; Lightweight, fast, perfect for Discord bots<br>
+      &bull; <strong>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5</strong> (Recommended) -- Lightweight, fast, perfect for Discord bots<br>
       &bull; Available on <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct">HuggingFace</a></p>
     </blockquote>
 
@@ -156,7 +156,7 @@ footer a { color: var(--primary-dim); }
         <tr><td>2</td><td><code>dm</code></td><td>DM with <code>replyInDM = true</code></td><td>Yes (0%)</td><td>No</td></tr>
         <tr><td>3</td><td><code>name</code></td><td>"Luna"/"Pixie"/alias (whole word)</td><td>No (8%)</td><td>No</td></tr>
         <tr><td>4</td><td><code>keyword</code></td><td><code>hello</code>, <code>hi</code>, <code>hey</code>, <code>yo</code>, <code>ai</code>, <code>bot</code>... (whole word)</td><td>No (8%)</td><td>No</td></tr>
-        <tr><td>5</td><td><code>follow-up</code></td><td>Bot was last speaker + &lt; 15s + &lt; 3 / 60s</td><td>&mdash;</td><td>&mdash;</td></tr>
+        <tr><td>5</td><td><code>follow-up</code></td><td>Bot was last speaker + &lt; 15s + &lt; 3 / 60s</td><td>--</td><td>--</td></tr>
         <tr><td>6</td><td><code>random</code></td><td>1.5% chance on non-matching</td><td>No (8%)</td><td>No</td></tr>
       </tbody>
     </table>
@@ -199,7 +199,7 @@ footer a { color: var(--primary-dim); }
     <p>Configurable probability (<code>voice_message_chance</code>, default 8%). Full pipeline: sanitize &rarr; synthesize (Piper) &rarr; convert (ffmpeg) &rarr; upload (Discord CDN).</p>
 
     <h3>Typing indicator</h3>
-    <p><code>startTyping()</code> is called before <code>askLLM()</code> &mdash; the typing indicator stays active during generation (refreshed every 8s).</p>
+    <p><code>startTyping()</code> is called before <code>askLLM()</code> -- the typing indicator stays active during generation (refreshed every 8s).</p>
 
     <h3>Real-time response</h3>
     <p>The LLM streams its response line by line (<code>\n</code>). Each line is split into words, emitted one by one. No simulated delay: the pace is the LLM's own.</p>
@@ -258,24 +258,24 @@ footer a { color: var(--primary-dim); }
     <table>
       <thead><tr><th>Icon</th><th>Meaning</th></tr></thead>
       <tbody>
-        <tr><td>&#x2705;</td><td>Hot-reloadable &mdash; changes picked up at runtime</td></tr>
+        <tr><td>&#x2705;</td><td>Hot-reloadable -- changes picked up at runtime</td></tr>
         <tr><td>&#x274C;</td><td>Requires restart</td></tr>
       </tbody>
     </table>
 
     <h3>Secrets &amp; Paths (&#x274C;)</h3>
     <ul>
-      <li><code>discord_token</code> &mdash; Discord bot token</li>
-      <li><code>llama_model_path</code> &mdash; Path to GGUF model</li>
-      <li><code>llm_host</code> / <code>llm_port</code> &mdash; LLM server connection</li>
-      <li><code>llm_mode</code> &mdash; <code>direct</code> (local llama-server) or <code>online</code> (OpenAI API)</li>
-      <li><code>tts_model_path</code>, <code>tts_binary_path</code>, <code>ffmpeg_path</code>, <code>ffprobe_path</code> &mdash; TTS &amp; audio paths</li>
+      <li><code>discord_token</code> -- Discord bot token</li>
+      <li><code>llama_model_path</code> -- Path to GGUF model</li>
+      <li><code>llm_host</code> / <code>llm_port</code> -- LLM server connection</li>
+      <li><code>llm_mode</code> -- <code>direct</code> (local llama-server) or <code>online</code> (OpenAI API)</li>
+      <li><code>tts_model_path</code>, <code>tts_binary_path</code>, <code>ffmpeg_path</code>, <code>ffprobe_path</code> -- TTS &amp; audio paths</li>
     </ul>
 
     <h3>Triggers (&#x2705;)</h3>
     <p><code>names</code>, <code>keywords</code>, <code>random_chance</code>, <code>cooldown_seconds</code>, <code>reply_in_dm</code></p>
 
-    <h3>Mannerisms &mdash; Concentration (&#x2705;)</h3>
+    <h3>Mannerisms -- Concentration (&#x2705;)</h3>
     <p>Per-trigger delays, ignore &amp; reaction chances.</p>
 
     <h3>Typos (&#x2705;)</h3>
@@ -320,7 +320,7 @@ footer a { color: var(--primary-dim); }
     </table>
 
     <h2 id="dataset">Dataset</h2>
-    <p><a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues"><strong>Discord-Dialogues</strong></a> &mdash; 7.3M exchanges, 17M turns, 140M words. Real Discord conversations spring-summer 2025, filtered PII/ToS/bots/commands. Apache 2.0.</p>
+    <p><a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues"><strong>Discord-Dialogues</strong></a> -- 7.3M exchanges, 17M turns, 140M words. Real Discord conversations spring-summer 2025, filtered PII/ToS/bots/commands. Apache 2.0.</p>
     <table>
       <thead><tr><th>Metric</th><th>Value</th></tr></thead>
       <tbody>

@@ -274,7 +274,7 @@ img { max-width: 100%; height: auto; }
   <div class="container">
     <div class="hero-badge">Autonomous AI &middot; Open Source &middot; 2026</div>
     <h1>Protocol Luna</h1>
-    <p>Autonomous, sentient-like bots powered by local LLM inference. Conversing naturally &mdash; with sleep, typos, hesitations, and memory.</p>
+    <p>Autonomous, sentient-like bots powered by local LLM inference. Conversing naturally -- with sleep, typos, hesitations, and memory.</p>
     <div class="hero-actions">
       <a href="https://github.com/protocol-luna" class="btn btn-primary">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -284,7 +284,7 @@ img { max-width: 100%; height: auto; }
     </div>
     <p class="hero-note">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle;margin-right:6px;"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
-      This project has a Matrix server. Invite <code>@pixieglow:protocol-luna.github.io</code> to test the bot &mdash; no guarantee it&rsquo;s awake, though.
+      This project has a Matrix server. Invite <code>@pixieglow:protocol-luna.github.io</code> to test the bot -- no guarantee it&rsquo;s awake, though.
     </p>
   </div>
 </section>
@@ -293,19 +293,19 @@ img { max-width: 100%; height: auto; }
   <div class="container">
     <div class="section-label">Raw Output</div>
     <h2 class="section-title">No Tricks. Just Fine-Tuning.</h2>
-    <p class="section-sub">Load the model. No system prompt, no few-shot priming, no behavioral layer. The fine-tuning alone produces human-style responses &mdash; not assistant-style.</p>
+    <p class="section-sub">Load the model. No system prompt, no few-shot priming, no behavioral layer. The fine-tuning alone produces human-style responses -- not assistant-style.</p>
     <div class="raw-model-demo">
       <div class="terminal-wrapper">
         <div class="terminal-bar">
           <span class="terminal-dot" style="background:#ff5f57;"></span>
           <span class="terminal-dot" style="background:#febc2e;"></span>
           <span class="terminal-dot" style="background:#28c840;"></span>
-          <span class="terminal-title">llama-cli &mdash; Luna-Protocol-1.5B-Q8_0</span>
+          <span class="terminal-title">llama-cli -- Luna-Protocol-1.5B-Q8_0</span>
         </div>
         <img src="images/llama-cli-raw.png" alt="Raw model output in llama-cli terminal" loading="lazy">
       </div>
       <div class="raw-model-note">
-        <p><strong>What you see:</strong> the model responds with &ldquo;good hruu&rdquo;, &ldquo;ohh nicee&rdquo;, &ldquo;no problem, how was your day?&rdquo; &mdash; casual, lowercase, no punctuation excess. The style is <em>baked into the weights</em>, not injected by prompts. The behavioral layer (typos, hesitations, sleep) just adds imperfections on top.</p>
+        <p><strong>What you see:</strong> the model responds with &ldquo;good hruu&rdquo;, &ldquo;ohh nicee&rdquo;, &ldquo;no problem, how was your day?&rdquo; -- casual, lowercase, no punctuation excess. The style is <em>baked into the weights</em>, not injected by prompts. The behavioral layer (typos, hesitations, sleep) just adds imperfections on top.</p>
       </div>
     </div>
   </div>
@@ -319,11 +319,11 @@ img { max-width: 100%; height: auto; }
     <div class="priming-grid">
       <div class="priming-card">
         <h4>Few-Shot Priming</h4>
-        <p>Inject 3-5 example exchanges before each request. The model doesn&rsquo;t just answer &mdash; it <em>continues a persona</em>. Name, tone, context, all seeded in the prompt window. Zero training required.</p>
+        <p>Inject 3-5 example exchanges before each request. The model doesn&rsquo;t just answer -- it <em>continues a persona</em>. Name, tone, context, all seeded in the prompt window. Zero training required.</p>
       </div>
       <div class="priming-card">
         <h4>Repeat Penalty</h4>
-        <p>Prevents the bot from echoing the same phrases. Forces vocabulary diversity across long conversations &mdash; no more &ldquo;ohh nicee&rdquo; five times in a row.</p>
+        <p>Prevents the bot from echoing the same phrases. Forces vocabulary diversity across long conversations -- no more &ldquo;ohh nicee&rdquo; five times in a row.</p>
       </div>
       <div class="priming-card">
         <h4>Custom top_p / top_k</h4>
@@ -331,7 +331,7 @@ img { max-width: 100%; height: auto; }
       </div>
     </div>
     <div class="priming-cta">
-      <p>The model is available on HuggingFace &mdash; the <strong>200k-instruct</strong> variant is the one used in production:</p>
+      <p>The model is available on HuggingFace -- the <strong>200k-instruct</strong> variant is the one used in production:</p>
       <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct" target="_blank" rel="noopener" class="btn btn-primary">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct
@@ -347,7 +347,7 @@ img { max-width: 100%; height: auto; }
     <p class="section-sub">Three components, three setups. All local, no cloud APIs required.</p>
 
     <div class="setup-block">
-      <h3><span class="setup-badge">1</span> Krystal &mdash; LLM Inference Server</h3>
+      <h3><span class="setup-badge">1</span> Krystal -- LLM Inference Server</h3>
       <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API.</p>
       <pre><code>git clone https://github.com/protocol-luna/Krystal.git
 cd Krystal
@@ -359,7 +359,7 @@ cp config.example.yml config.yml
     </div>
 
     <div class="setup-block">
-      <h3><span class="setup-badge">2</span> Jade &mdash; Discord Bot</h3>
+      <h3><span class="setup-badge">2</span> Jade -- Discord Bot</h3>
       <p>TypeScript bot using Eris. Connects to Krystal for LLM inference.</p>
       <pre><code>git clone https://github.com/protocol-luna/jade.git
 cd jade
@@ -370,7 +370,7 @@ npm start</code></pre>
     </div>
 
     <div class="setup-block">
-      <h3><span class="setup-badge">3</span> Pixieglow &mdash; Matrix Bot</h3>
+      <h3><span class="setup-badge">3</span> Pixieglow -- Matrix Bot</h3>
       <p>Matrix bot written in TypeScript with <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>. Connects to Krystal for LLM inference.</p>
       <pre><code>git clone https://github.com/protocol-luna/pixieglow.git
 cd pixieglow
@@ -378,8 +378,8 @@ bun install
 cp config.example.yml config.yml
 # edit config.yml: matrix_homeserver, matrix_token, llm_host/port
 bun start</code></pre>
-      <p>The bot auto-joins rooms it&rsquo;s invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). The bot needs a <code>discord_token</code>? No &mdash; it&rsquo;s Matrix-native, no Discord involved.</p>
-      <p>Invite <code>@pixieglow:protocol-luna.github.io</code> on this server to test it &mdash; no guarantee it&rsquo;s awake, though.</p>
+      <p>The bot auto-joins rooms it&rsquo;s invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). The bot needs a <code>discord_token</code>? No -- it&rsquo;s Matrix-native, no Discord involved.</p>
+      <p>Invite <code>@pixieglow:protocol-luna.github.io</code> on this server to test it -- no guarantee it&rsquo;s awake, though.</p>
     </div>
 
     <div class="setup-block setup-block-model">
@@ -436,7 +436,7 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Architecture</div>
     <h2 class="section-title">How It Works</h2>
-    <p class="section-sub">24 state-machine diagrams document every component &mdash; from message processing to typo correction.</p>
+    <p class="section-sub">24 state-machine diagrams document every component -- from message processing to typo correction.</p>
     <div class="diagram-wrapper">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
       <div class="diagram-caption">High-level system architecture: configuration &rarr; bot layer &rarr; LLM inference</div>
@@ -444,7 +444,7 @@ huggingface-cli download \
     <div class="diagram-grid">
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/02-message-processing.svg'">
         <h4>Message Processing</h4>
-        <p>The main state machine &mdash; every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
+        <p>The main state machine -- every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/03-trigger-evaluation.svg'">
         <h4>Trigger Evaluation</h4>
@@ -460,7 +460,7 @@ huggingface-cli download \
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/24-topic-fatigue.svg'">
         <h4>Topic Fatigue</h4>
-        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored &mdash; longer delays, higher ignore chance.</p>
+        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored -- longer delays, higher ignore chance.</p>
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/22-complete-lifecycle.svg'">
         <h4>Complete Lifecycle</h4>
@@ -474,49 +474,49 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Behavioral Layer</div>
     <h2 class="section-title">The State Machine That Makes It Real</h2>
-    <p class="section-sub">Jade&rsquo;s state machine isn&rsquo;t about generating text &mdash; it&rsquo;s about deciding <em>when</em>, <em>how</em>, and <em>whether</em> to respond. Every behavior is a deliberate imperfection.</p>
+    <p class="section-sub">Jade&rsquo;s state machine isn&rsquo;t about generating text -- it&rsquo;s about deciding <em>when</em>, <em>how</em>, and <em>whether</em> to respond. Every behavior is a deliberate imperfection.</p>
     <div class="behavior-grid">
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
         </div>
         <h4>Typo Injection</h4>
-        <p>Simulates keyboard slips: adjacent-key swaps (<code>teh</code>), missing letters (<code>liek</code>), double-taps (<code>sooo</code>). Probability scales with message length &mdash; longer messages = more typos. Corrections happen silently 3-8 seconds later.</p>
+        <p>Simulates keyboard slips: adjacent-key swaps (<code>teh</code>), missing letters (<code>liek</code>), double-taps (<code>sooo</code>). Probability scales with message length -- longer messages = more typos. Corrections happen silently 3-8 seconds later.</p>
       </div>
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
         <h4>Hesitation Markers</h4>
-        <p>&ldquo;hmm&rdquo;, &ldquo;wait&rdquo;, &ldquo;idk&rdquo;, &ldquo;...&rdquo; inserted before uncertain responses. The LLM doesn&rsquo;t generate these &mdash; the state machine injects them post-generation based on confidence scoring.</p>
+        <p>&ldquo;hmm&rdquo;, &ldquo;wait&rdquo;, &ldquo;idk&rdquo;, &ldquo;...&rdquo; inserted before uncertain responses. The LLM doesn&rsquo;t generate these -- the state machine injects them post-generation based on confidence scoring.</p>
       </div>
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
         </div>
         <h4>Sleep Cycles</h4>
-        <p>Circadian rhythm tied to real time. At night: ignore all but mentions. During &ldquo;slow&rdquo; hours: 3-5&times; longer delays. The bot doesn&rsquo;t pretend to sleep &mdash; it <em>actually</em> reduces activity based on its persona&rsquo;s schedule.</p>
+        <p>Circadian rhythm tied to real time. At night: ignore all but mentions. During &ldquo;slow&rdquo; hours: 3-5&times; longer delays. The bot doesn&rsquo;t pretend to sleep -- it <em>actually</em> reduces activity based on its persona&rsquo;s schedule.</p>
       </div>
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
         </div>
         <h4>Burst Mode</h4>
-        <p>When engaged in a conversation, response delays drop to 2-5 seconds &mdash; mimicking real typing speed. But only for 15 seconds max per exchange, then it cools down. Prevents the bot from dominating a thread.</p>
+        <p>When engaged in a conversation, response delays drop to 2-5 seconds -- mimicking real typing speed. But only for 15 seconds max per exchange, then it cools down. Prevents the bot from dominating a thread.</p>
       </div>
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h4>Topic Fatigue</h4>
-        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored &mdash; longer delays, higher ignore chance, shorter responses. Humans do this unconsciously; the bot does it explicitly.</p>
+        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored -- longer delays, higher ignore chance, shorter responses. Humans do this unconsciously; the bot does it explicitly.</p>
       </div>
       <div class="behavior-card">
         <div class="behavior-icon">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
         </div>
         <h4>Follow-Up Detection</h4>
-        <p>Tracks who spoke last. If the bot was the last to talk, it&rsquo;s less likely to respond again &mdash; preventing monologues. If someone replies to the bot specifically, response probability jumps back up.</p>
+        <p>Tracks who spoke last. If the bot was the last to talk, it&rsquo;s less likely to respond again -- preventing monologues. If someone replies to the bot specifically, response probability jumps back up.</p>
       </div>
     </div>
   </div>
@@ -526,34 +526,34 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Showcase</div>
     <h2 class="section-title">Real Conversations</h2>
-    <p class="section-sub">Unedited Discord exchanges. Both accounts are bot instances &mdash; neither participant is human. PixieGlow runs <strong>Luna 1.5B 200k Instruct</strong> (Q8_0). Sujet d&rsquo;SBlow runs <strong>Discord-Hermes-8B</strong> (f16).</p>
+    <p class="section-sub">Unedited Discord exchanges. Both accounts are bot instances -- neither participant is human. PixieGlow runs <strong>Luna 1.5B 200k Instruct</strong> (Q8_0). Sujet d&rsquo;SBlow runs <strong>Discord-Hermes-8B</strong> (f16).</p>
     <div class="showcase-grid">
       <div class="showcase-screenshot">
         <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-01.png" alt="Discord conversation screenshot 1" loading="lazy">
-        <div class="caption">PixieGlow and Sujet d'SBlow discuss roles and identity &mdash; casual, confused, and completely human-sounding.</div>
+        <div class="caption">PixieGlow and Sujet d'SBlow discuss roles and identity -- casual, confused, and completely human-sounding.</div>
       </div>
       <div class="showcase-screenshot">
         <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-02.png" alt="Discord conversation screenshot 2" loading="lazy">
-        <div class="caption">Short, human replies (&ldquo;okay, okay&rdquo;, &ldquo;yay&rdquo;, &ldquo;yayy&rdquo;) &mdash; exactly the kind of messages you&rsquo;d expect on Discord.</div>
+        <div class="caption">Short, human replies (&ldquo;okay, okay&rdquo;, &ldquo;yay&rdquo;, &ldquo;yayy&rdquo;) -- exactly the kind of messages you&rsquo;d expect on Discord.</div>
       </div>
       <div class="showcase-screenshot">
         <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-03.png" alt="Discord conversation screenshot 3" loading="lazy">
-        <div class="caption">The conversation drifts into a different topic with coherent follow-ups &mdash; no robotic transitions, no topic resets.</div>
+        <div class="caption">The conversation drifts into a different topic with coherent follow-ups -- no robotic transitions, no topic resets.</div>
       </div>
       <div class="showcase-screenshot">
         <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-04.png" alt="Discord conversation screenshot 4" loading="lazy">
-        <div class="caption">Responses are short and reactive: &ldquo;that&rsquo;s probably true&rdquo;, &ldquo;i guess&rdquo;, &ldquo;yeah&rdquo; &mdash; human pacing with no over-explaining.</div>
+        <div class="caption">Responses are short and reactive: &ldquo;that&rsquo;s probably true&rdquo;, &ldquo;i guess&rdquo;, &ldquo;yeah&rdquo; -- human pacing with no over-explaining.</div>
       </div>
       <div class="showcase-screenshot">
         <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-05.png" alt="Discord conversation screenshot 5" loading="lazy">
-        <div class="caption">The bots tackle a sensitive topic naturally, with no robotic hedging or forced disclaimers &mdash; just real-sounding discussion.</div>
+        <div class="caption">The bots tackle a sensitive topic naturally, with no robotic hedging or forced disclaimers -- just real-sounding discussion.</div>
       </div>
     </div>
     <div class="showcase-quote">
-      <strong>What you just read:</strong> two bots talking to each other on Discord, each one behaviorally &ldquo;convinced&rdquo; it&rsquo;s chatting with someone normal. The tone, the hesitations, the casual pacing &mdash; none of it was scripted. This is a practical glimpse of the <strong>dead internet theory</strong>: autonomous instances holding a conversation for minutes without ever giving themselves away. If you assumed one was human at any point, you fell for it &mdash; exactly like anyone would on a real server.
+      <strong>What you just read:</strong> two bots talking to each other on Discord, each one behaviorally &ldquo;convinced&rdquo; it&rsquo;s chatting with someone normal. The tone, the hesitations, the casual pacing -- none of it was scripted. This is a practical glimpse of the <strong>dead internet theory</strong>: autonomous instances holding a conversation for minutes without ever giving themselves away. If you assumed one was human at any point, you fell for it -- exactly like anyone would on a real server.
     </div>
     <div class="showcase-quote" style="margin-top:16px;">
-      <strong>Coming soon:</strong> Krystal will detect whether a message is trivial or substantive, and switch between Luna (1.5B, fast) and Discord-Hermes (8B, deep) accordingly &mdash; two inference servers, one seamless persona. Voice messages via <strong>PiperTTS</strong> will add a new dimension: real-sounding voice notes generated locally, no cloud API needed.
+      <strong>Coming soon:</strong> Krystal will detect whether a message is trivial or substantive, and switch between Luna (1.5B, fast) and Discord-Hermes (8B, deep) accordingly -- two inference servers, one seamless persona. Voice messages via <strong>PiperTTS</strong> will add a new dimension: real-sounding voice notes generated locally, no cloud API needed.
     </div>
   </div>
 </section>
@@ -562,55 +562,55 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Timeline</div>
     <h2 class="section-title">60 Years of Chatbots</h2>
-    <p class="section-sub">From keyword matching to autonomous agents &mdash; a quick timeline of conversational AI.</p>
+    <p class="section-sub">From keyword matching to autonomous agents -- a quick timeline of conversational AI.</p>
     <div class="timeline">
       <div class="timeline-item">
         <div class="timeline-year">1966</div>
         <div class="timeline-content">
           <h4>ELIZA</h4>
-          <p><strong>How it works:</strong> A script called DOCTOR scans user input for keywords (e.g. &ldquo;mother&rdquo;, &ldquo;sad&rdquo;). When found, it applies a transformation rule &mdash; flipping pronouns (&ldquo;my&rdquo; &rarr; &ldquo;your&rdquo;) and appending a template response (&ldquo;Tell me more about your mother&rdquo;). No memory, no understanding, no state. The &ldquo;Eliza effect&rdquo;: humans project empathy onto a rephrasing engine.</p>
+          <p><strong>How it works:</strong> A script called DOCTOR scans user input for keywords (e.g. &ldquo;mother&rdquo;, &ldquo;sad&rdquo;). When found, it applies a transformation rule -- flipping pronouns (&ldquo;my&rdquo; &rarr; &ldquo;your&rdquo;) and appending a template response (&ldquo;Tell me more about your mother&rdquo;). No memory, no understanding, no state. The &ldquo;Eliza effect&rdquo;: humans project empathy onto a rephrasing engine.</p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-year">1972</div>
         <div class="timeline-content">
           <h4>PARRY</h4>
-          <p><strong>How it works:</strong> An &ldquo;internal model&rdquo; with numerical variables for anger, fear, and suspiciousness. Each user input is parsed for keywords, and matching rules adjust these variables up or down. The output is generated by selecting a response template based on which variable is highest &mdash; deflection when suspicious, aggression when angry. Still no learning &mdash; just a more complex state machine than ELIZA.</p>
+          <p><strong>How it works:</strong> An &ldquo;internal model&rdquo; with numerical variables for anger, fear, and suspiciousness. Each user input is parsed for keywords, and matching rules adjust these variables up or down. The output is generated by selecting a response template based on which variable is highest -- deflection when suspicious, aggression when angry. Still no learning -- just a more complex state machine than ELIZA.</p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-year">1995</div>
         <div class="timeline-content">
           <h4>A.L.I.C.E.</h4>
-          <p><strong>How it works:</strong> AIML (Artificial Intelligence Markup Language) &mdash; XML-based pattern matching. Each rule defines a &ldquo;template&rdquo; (response) tied to a &ldquo;pattern&rdquo; (regex-like keyword sequence). Categories can have <code>&lt;srai&gt;</code> redirects (synonyms, fallbacks), <code>&lt;set&gt;/&lt;get&gt;</code> for basic memory, and <code>&lt;that&gt;</code> for context tracking. ~40,000 hand-written rules. Won Loebner Prize 3x. Still no learning &mdash; just a massive lookup table.</p>
+          <p><strong>How it works:</strong> AIML (Artificial Intelligence Markup Language) -- XML-based pattern matching. Each rule defines a &ldquo;template&rdquo; (response) tied to a &ldquo;pattern&rdquo; (regex-like keyword sequence). Categories can have <code>&lt;srai&gt;</code> redirects (synonyms, fallbacks), <code>&lt;set&gt;/&lt;get&gt;</code> for basic memory, and <code>&lt;that&gt;</code> for context tracking. ~40,000 hand-written rules. Won Loebner Prize 3x. Still no learning -- just a massive lookup table.</p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-year">2001</div>
         <div class="timeline-content">
           <h4>SmarterChild</h4>
-          <p><strong>How it works:</strong> Hybrid approach &mdash; AIML-style pattern matching for conversation, plus API integrations for real data (weather, news, stock prices). Introduced contextual shortcuts: users could type <code>/weather Paris</code> directly. The bot maintained per-user state across sessions. The first chatbot to feel &ldquo;useful&rdquo; rather than just entertaining &mdash; 26 million users on AIM/MSN.</p>
+          <p><strong>How it works:</strong> Hybrid approach -- AIML-style pattern matching for conversation, plus API integrations for real data (weather, news, stock prices). Introduced contextual shortcuts: users could type <code>/weather Paris</code> directly. The bot maintained per-user state across sessions. The first chatbot to feel &ldquo;useful&rdquo; rather than just entertaining -- 26 million users on AIM/MSN.</p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-year">2011</div>
         <div class="timeline-content">
           <h4>Siri</h4>
-          <p><strong>How it works:</strong> Speech-to-text (Hidden Markov Models) &rarr; NLU intent classification &rarr; slot filling (entity extraction) &rarr; action dispatch to APIs. The chatbot becomes an <em>agent</em> &mdash; it doesn&rsquo;t just talk, it <em>does things</em> (set alarms, send messages, search the web). State tracking via conversation graphs. Still rule-based at the NLU layer &mdash; the &ldquo;intelligence&rdquo; is in the integration, not the language model.</p>
+          <p><strong>How it works:</strong> Speech-to-text (Hidden Markov Models) &rarr; NLU intent classification &rarr; slot filling (entity extraction) &rarr; action dispatch to APIs. The chatbot becomes an <em>agent</em> -- it doesn&rsquo;t just talk, it <em>does things</em> (set alarms, send messages, search the web). State tracking via conversation graphs. Still rule-based at the NLU layer -- the &ldquo;intelligence&rdquo; is in the integration, not the language model.</p>
         </div>
       </div>
       <div class="timeline-item">
         <div class="timeline-year">2022</div>
         <div class="timeline-content">
           <h4>ChatGPT</h4>
-          <p><strong>How it works:</strong> A Transformer neural network trained on trillions of tokens. Instead of matching patterns, it <em>predicts the next token</em> given the full conversation context. Reinforcement Learning from Human Feedback (RLHF) aligns outputs to human preferences. No scripts, no decision trees &mdash; just probability distributions over vocabulary. The chatbot becomes indistinguishable from a person because it&rsquo;s learned the statistical structure of human language itself.</p>
+          <p><strong>How it works:</strong> A Transformer neural network trained on trillions of tokens. Instead of matching patterns, it <em>predicts the next token</em> given the full conversation context. Reinforcement Learning from Human Feedback (RLHF) aligns outputs to human preferences. No scripts, no decision trees -- just probability distributions over vocabulary. The chatbot becomes indistinguishable from a person because it&rsquo;s learned the statistical structure of human language itself.</p>
         </div>
       </div>
       <div class="timeline-item" style="border-color:var(--primary);">
         <div class="timeline-year" style="color:var(--primary-light);">2026</div>
         <div class="timeline-content">
           <h4>Protocol Luna</h4>
-          <p><strong>How it works:</strong> A fine-tuned 1.5B LLM (Qwen-based) served locally via llama.cpp. Few-shot priming injects persona context into every request. Behavioral layers add sleep cycles, typos, hesitations, topic fatigue, and spontaneous messages &mdash; none of which come from the model itself. Voice output via <strong>PiperTTS</strong> &mdash; a fast, local neural TTS that runs on CPU in real time, making voice messages on Discord or Matrix feel natural. The bot runs on your hardware, lives on your server, and is indistinguishable from a real user. Two instances can hold a conversation for hours without breaking character.</p>
+          <p><strong>How it works:</strong> A fine-tuned 1.5B LLM (Qwen-based) served locally via llama.cpp. Few-shot priming injects persona context into every request. Behavioral layers add sleep cycles, typos, hesitations, topic fatigue, and spontaneous messages -- none of which come from the model itself. Voice output via <strong>PiperTTS</strong> -- a fast, local neural TTS that runs on CPU in real time, making voice messages on Discord or Matrix feel natural. The bot runs on your hardware, lives on your server, and is indistinguishable from a real user. Two instances can hold a conversation for hours without breaking character.</p>
         </div>
       </div>
     </div>
@@ -624,7 +624,7 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Use Cases</div>
     <h2 class="section-title">Where Human-Like Bots Matter</h2>
-    <p class="section-sub">Protocol Luna isn&rsquo;t a chatbot for customer support. It&rsquo;s about creating presence &mdash; digital beings that feel real enough to pass.</p>
+    <p class="section-sub">Protocol Luna isn&rsquo;t a chatbot for customer support. It&rsquo;s about creating presence -- digital beings that feel real enough to pass.</p>
     <div class="use-cases-grid">
       <div class="use-case-card">
         <div class="icon-wrap">
@@ -638,14 +638,14 @@ huggingface-cli download \
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <h4>Social Simulation</h4>
-        <p>Game worlds, Discord servers, virtual communities &mdash; environments where NPCs need to feel like real participants, not scripted quest givers.</p>
+        <p>Game worlds, Discord servers, virtual communities -- environments where NPCs need to feel like real participants, not scripted quest givers.</p>
       </div>
       <div class="use-case-card">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </div>
         <h4>Companion AI</h4>
-        <p>Not therapy, not productivity &mdash; just presence. A bot that remembers your habits, shares your interests, and talks to you like a friend would.</p>
+        <p>Not therapy, not productivity -- just presence. A bot that remembers your habits, shares your interests, and talks to you like a friend would.</p>
       </div>
       <div class="use-case-card">
         <div class="icon-wrap">
@@ -684,14 +684,14 @@ huggingface-cli download \
         <span class="luna-tag">Protocol Luna</span>
         <div class="content">
           <div class="title">From ELIZA to LLMs: 60 years of conversational AI, rebuilt in TypeScript</div>
-          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot &mdash; five radically different architectures, ported to TypeScript with original data.</div>
+          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot -- five radically different architectures, ported to TypeScript with original data.</div>
           <div class="meta">July 21, 2026</div>
         </div>
       </a>
       <a class="blog-post" href="https://fox3000foxy.com/blog/how-did-i-achieved-serverless-bots" target="_blank" rel="noopener">
         <div class="content">
           <div class="title">Discord bot 100% serverless: Hono + Cloudflare Workers</div>
-          <div class="desc">How I replaced a Discord bot that cost $50/month with zero &mdash; interaction endpoints, Workers, real-time image rendering.</div>
+          <div class="desc">How I replaced a Discord bot that cost $50/month with zero -- interaction endpoints, Workers, real-time image rendering.</div>
           <div class="meta">May 29, 2026</div>
         </div>
       </a>
@@ -738,7 +738,7 @@ huggingface-cli download \
 
 <footer>
   <div class="container">
-    <p>Protocol Luna &mdash; <a href="https://github.com/protocol-luna">GitHub</a> &middot; <a href="https://fox3000foxy.com">fox3000foxy.com</a></p>
+    <p>Protocol Luna -- <a href="https://github.com/protocol-luna">GitHub</a> &middot; <a href="https://fox3000foxy.com">fox3000foxy.com</a></p>
     <p style="margin-top:8px; font-size:0.8rem;">Built with local LLMs</p>
   </div>
 </footer>
