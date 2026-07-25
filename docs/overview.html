@@ -255,19 +255,21 @@ footer a { color: var(--primary-dim); }
     <p>Sapphire is a middleware service that sits between all bots and the LLM backends. It provides a single <code>/v1/chat/completions</code> endpoint (OpenAI-compatible) that:</p>
     <ul>
       <li>Receives the request from any bot (Jade, Pixieglow)</li>
-      <li>Classifies the last user message as <strong>GENERIC</strong> (trivial) or <strong>SEMANTIC</strong> (serious) using a DistilBERT multilingual model (134M params, ONNX INT8, 98.4% accuracy, P99 16.87ms)</li>
+      <li>Classifies the last user message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed)</li>
       <li>Routes to the appropriate Krystal instance</li>
       <li>Streams the response back to the client</li>
     </ul>
+    <p><strong>How classification works:</strong> Instead of a trained classifier, Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~180 curated examples in <code>examples.yml</code>. The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list.</p>
     <p><strong>Routing:</strong></p>
     <ul>
-      <li><strong>GENERIC</strong> (trivial) — chit-chat, greetings, commands &rarr; Krystal-GENERIC (<code>:3124</code>, Luna 1.5B)</li>
-      <li><strong>SEMANTIC</strong> (serious) — facts, personal info, complex questions &rarr; Krystal-SEMANTIC (<code>:3125</code>, Discord-Hermes-8B)</li>
+      <li><strong>FUTILE</strong> (trivial) — chit-chat, greetings, commands &rarr; Krystal-GENERIC (<code>:3124</code>, Luna 1.5B)</li>
+      <li><strong>INTERESSANT</strong> (serious) — facts, personal info, complex questions &rarr; Krystal-SEMANTIC (<code>:3125</code>, Discord-Hermes-8B)</li>
     </ul>
     <p><strong>Setup:</strong></p>
     <pre><code>git clone https://github.com/protocol-luna/sapphire
 cd sapphire
-bash start.sh
+pip install -r requirements.txt
+python server.py
 # listens on 127.0.0.1:3123
 </code></pre>
     <p><strong>Environment variables:</strong></p>
@@ -275,8 +277,9 @@ bash start.sh
       <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Sapphire server port</td></tr>
-        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for trivial messages</td></tr>
-        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for serious messages</td></tr>
+        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
+        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
+        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to curated example list</td></tr>
       </tbody>
     </table>
     <p><strong>Bot config:</strong> Both Jade and Pixieglow point their <code>llm_host</code>/<code>llm_port</code> to Sapphire (<code>localhost:3123</code>). No per-bot classifier needed.</p>
