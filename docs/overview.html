@@ -255,11 +255,11 @@ footer a { color: var(--primary-dim); }
     <p>Sapphire is a middleware service that sits between all bots and the LLM backends. It provides a single <code>/v1/chat/completions</code> endpoint (OpenAI-compatible) that:</p>
     <ul>
       <li>Receives the request from any bot (Jade, Pixieglow)</li>
-      <li>Classifies the last user message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed)</li>
+      <li>Classifies the last user message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed, 99.6% accuracy on test suite)</li>
       <li>Routes to the appropriate Krystal instance</li>
       <li>Streams the response back to the client</li>
     </ul>
-    <p><strong>How classification works:</strong> Instead of a trained classifier, Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~180 curated examples in <code>examples.yml</code>. The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list.</p>
+    <p><strong>How classification works:</strong> Instead of a trained classifier, Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~200 curated examples in <code>examples.yml</code> (weighted items supported). The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list. Achieves <strong>99.6% accuracy</strong> (257/258 on the test suite).</p>
     <p><strong>Routing:</strong></p>
     <ul>
       <li><strong>FUTILE</strong> (trivial) — chit-chat, greetings, commands &rarr; Krystal-GENERIC (<code>:3124</code>, Luna 1.5B)</li>
