@@ -348,14 +348,13 @@ img { max-width: 100%; height: auto; }
 
     <div class="setup-block">
       <h3><span class="setup-badge">1</span> Krystal -- LLM Inference Server</h3>
-      <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API.</p>
+      <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API. Runs in two modes:</p>
       <pre><code>git clone https://github.com/protocol-luna/Krystal.git
 cd Krystal
 npm install
-cp config.example.yml config.yml
-# edit config.yml with your model path
-./start.sh</code></pre>
-      <p>The server listens on <code>http://127.0.0.1:3125</code>. Configurable via environment variables: <code>LLM_CPU_AFFINITY</code>, <code>LLM_N_THREADS</code>, <code>LLM_N_CTX</code>, <code>LLM_N_SLOTS</code>.</p>
+./start.sh small    # Luna 1.5B  on :3124 (GENERIC — fast)
+./start.sh large    # Hermes-8B  on :3125 (SEMANTIC — deep)</code></pre>
+      <p>Both can run simultaneously. Configurable via <code>KRYSTAL_*</code> environment variables (or legacy <code>LLM_*</code>).</p>
     </div>
 
     <div class="setup-block">
@@ -406,7 +405,7 @@ huggingface-cli download \
           <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h3>Krystal</h3>
-        <p>LLM inference server wrapping llama.cpp. Serves GGUF models via an OpenAI-compatible HTTP API. Managed by PM2 for auto-restart.</p>
+        <p>LLM inference server wrapping llama.cpp. Serves GGUF models via an OpenAI-compatible HTTP API. Small/large mode support. Managed by PM2.</p>
         <div class="tags"><span>llama.cpp</span><span>C++</span><span>PM2</span></div>
         <a href="https://github.com/protocol-luna/krystal" class="card-link" aria-label="Krystal repo"></a>
       </div>
