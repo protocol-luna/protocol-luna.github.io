@@ -9,7 +9,6 @@
 <meta property="og:description" content="Autonomous, sentient-like bots powered by local LLM inference.">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
 <link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
-<link rel="preconnect" href="https://fox3000foxy.com">
 <style>
 :root {
   --bg: #0d0d1a;
@@ -47,34 +46,13 @@ body {
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--primary-dim); }
 
-/* ─── Stars Background ─── */
-#stars {
-  position: fixed; inset: 0; z-index: 0;
-  pointer-events: none; overflow: hidden;
-}
-.star {
-  position: absolute;
-  width: 2px; height: 2px;
-  background: #fff;
-  border-radius: 50%;
-  opacity: 0.3;
-  animation: twinkle var(--duration) ease-in-out infinite alternate;
-}
-@keyframes twinkle {
-  0% { opacity: 0.1; transform: scale(0.8); }
-  100% { opacity: 0.8; transform: scale(1.2); }
-}
+#stars { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+.star { position: absolute; width: 2px; height: 2px; background: #fff; border-radius: 50%; opacity: 0.3; animation: twinkle var(--duration) ease-in-out infinite alternate; }
+@keyframes twinkle { 0% { opacity: 0.1; transform: scale(0.8); } 100% { opacity: 0.8; transform: scale(1.2); } }
 
-/* ─── Layout ─── */
 .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
-/* ─── Nav ─── */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-}
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); padding: 0 24px; }
 nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
 nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
@@ -83,147 +61,77 @@ nav .links { display: flex; gap: 24px; align-items: center; }
 nav .links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
 nav .links a:hover { color: var(--primary-light); }
 
-/* ─── Hero ─── */
-.hero {
-  padding: 160px 0 100px; text-align: center;
-  position: relative;
-}
-.hero::before {
-  content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%);
-  width: 800px; height: 600px;
-  background: radial-gradient(ellipse, var(--glow) 0%, transparent 70%);
-  pointer-events: none;
-}
-.hero-badge {
-  display: inline-block; padding: 6px 16px; border-radius: 100px;
-  background: rgba(147, 112, 219, 0.12); border: 1px solid rgba(147, 112, 219, 0.25);
-  font-size: 0.85rem; color: var(--primary-light); margin-bottom: 24px;
-  letter-spacing: 0.3px;
-}
-.hero h1 {
-  font-size: clamp(2.8rem, 7vw, 4.5rem); font-weight: 800;
-  letter-spacing: -1px; line-height: 1.1;
-  background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.hero p {
-  margin-top: 20px; font-size: 1.15rem; color: var(--text-muted);
-  max-width: 600px; margin-inline: auto;
-}
+.hero { padding: 160px 0 80px; text-align: center; position: relative; }
+.hero::before { content: ''; position: absolute; top: -200px; left: 50%; transform: translateX(-50%); width: 800px; height: 600px; background: radial-gradient(ellipse, var(--glow) 0%, transparent 70%); pointer-events: none; }
+.hero-badge { display: inline-block; padding: 6px 16px; border-radius: 100px; background: rgba(147, 112, 219, 0.12); border: 1px solid rgba(147, 112, 219, 0.25); font-size: 0.85rem; color: var(--primary-light); margin-bottom: 24px; letter-spacing: 0.3px; }
+.hero h1 { font-size: clamp(2.8rem, 7vw, 4.5rem); font-weight: 800; letter-spacing: -1px; line-height: 1.1; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.hero p { margin-top: 20px; font-size: 1.15rem; color: var(--text-muted); max-width: 620px; margin-inline: auto; }
 .hero-actions { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.btn {
-  display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px;
-  border-radius: 100px; font-size: 0.95rem; font-weight: 600;
-  text-decoration: none; transition: all .2s; cursor: pointer; border: none;
-}
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 100px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all .2s; cursor: pointer; border: none; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-light); transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
 .btn-outline { background: transparent; color: var(--primary-light); border: 1px solid var(--border); }
 .btn-outline:hover { border-color: var(--primary); background: rgba(147,112,219,0.08); transform: translateY(-2px); }
 
-/* ─── Section ─── */
 section { padding: 90px 0; }
-.section-label {
-  display: inline-block; font-size: 0.8rem; text-transform: uppercase;
-  letter-spacing: 2px; color: var(--primary-dim); margin-bottom: 12px;
-  font-weight: 600;
-}
+.section-label { display: inline-block; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; color: var(--primary-dim); margin-bottom: 12px; font-weight: 600; }
 .section-title { font-size: 2rem; font-weight: 700; margin-bottom: 12px; }
 .section-sub { color: var(--text-muted); max-width: 600px; margin-bottom: 48px; }
 
-/* ─── Projects ─── */
 .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-.project-card {
-  background: var(--bg-surface); border-radius: var(--radius-lg);
-  border: 1px solid var(--border); padding: 32px;
-  transition: all .25s; position: relative; overflow: hidden;
-}
+.project-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; transition: all .25s; position: relative; overflow: hidden; }
 .project-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 40px var(--glow); }
-.project-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: linear-gradient(90deg, var(--primary), var(--accent));
-  opacity: 0; transition: opacity .25s;
-}
+.project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity .25s; }
 .project-card:hover::before { opacity: 1; }
-.project-card .icon {
-  width: 44px; height: 44px; border-radius: 12px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.4rem; margin-bottom: 20px;
-  background: rgba(147,112,219,0.12); border: 1px solid rgba(147,112,219,0.2);
-}
+.project-card .icon-wrap { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: rgba(147,112,219,0.12); border: 1px solid rgba(147,112,219,0.2); }
+.project-card .icon-wrap svg { width: 22px; height: 22px; }
 .project-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
 .project-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.5; }
 .project-card .tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem; }
-.project-card .tags span {
-  padding: 3px 10px; border-radius: 100px;
-  background: rgba(147,112,219,0.08); color: var(--text-muted);
-  border: 1px solid var(--border);
-}
+.project-card .tags span { padding: 3px 10px; border-radius: 100px; background: rgba(147,112,219,0.08); color: var(--text-muted); border: 1px solid var(--border); }
 .project-card .card-link { position: absolute; inset: 0; z-index: 1; }
 
-/* ─── Architecture ─── */
-.diagram-wrapper {
-  background: #f5f3ff; border-radius: var(--radius-lg);
-  border: 1px solid var(--border); padding: 32px;
-  margin-bottom: 24px; overflow-x: auto;
-}
-.diagram-wrapper svg { width: 100%; height: auto; display: block; }
+.diagram-wrapper { background: #f5f3ff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; overflow-x: auto; }
 .diagram-wrapper img { width: 100%; height: auto; display: block; }
 .diagram-caption { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
-.diagram-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+.diagram-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .diagram-card { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; cursor: pointer; transition: all .2s; color: var(--text); }
 .diagram-card:hover { border-color: var(--primary-dim); }
 .diagram-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
 .diagram-card p { font-size: 0.8rem; color: var(--text-muted); }
 
-/* ─── Blog ─── */
+.showcase-grid { display: grid; gap: 16px; }
+.showcase-screenshot { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
+.showcase-screenshot img { width: 100%; display: block; }
+.showcase-screenshot .caption { padding: 14px 20px; font-size: 0.85rem; color: var(--text-muted); border-top: 1px solid var(--border); line-height: 1.5; }
+.showcase-screenshot .caption strong { color: var(--text); }
+.showcase-quote { background: linear-gradient(135deg, rgba(147,112,219,0.08), rgba(192,132,252,0.05)); border: 1px solid rgba(147,112,219,0.2); border-radius: var(--radius); padding: 24px 28px; margin-top: 24px; color: var(--text-muted); font-size: 0.95rem; line-height: 1.7; }
+.showcase-quote strong { color: var(--primary-light); }
+
 .blog-grid { display: grid; gap: 16px; }
-.blog-post {
-  background: var(--bg-surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 20px 24px;
-  transition: all .2s; display: flex; align-items: start; gap: 16px;
-}
+.blog-post { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px 24px; transition: all .2s; display: flex; align-items: start; gap: 16px; text-decoration: none; color: inherit; }
 .blog-post:hover { border-color: var(--primary-dim); background: var(--bg-hover); }
-.blog-post .luna-tag {
-  flex-shrink: 0; padding: 2px 8px; border-radius: 100px;
-  background: rgba(226, 185, 111, 0.1); border: 1px solid rgba(226, 185, 111, 0.25);
-  font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px;
-  margin-top: 3px;
-}
+.blog-post .luna-tag { flex-shrink: 0; padding: 2px 8px; border-radius: 100px; background: rgba(226, 185, 111, 0.1); border: 1px solid rgba(226, 185, 111, 0.25); font-size: 0.65rem; color: var(--gold); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
 .blog-post .content { flex: 1; }
-.blog-post .title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; }
-.blog-post .title a { color: var(--text); text-decoration: none; }
-.blog-post .title a:hover { color: var(--primary-light); }
+.blog-post .title { font-size: 1rem; font-weight: 600; margin-bottom: 4px; color: var(--text); }
+.blog-post .title:hover { color: var(--primary-light); }
 .blog-post .desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
 .blog-post .meta { font-size: 0.75rem; color: var(--text-dim); margin-top: 6px; }
-.blog-loading { text-align: center; padding: 40px; color: var(--text-dim); }
 
-/* ─── Docs ─── */
 .docs-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
-.doc-link {
-  display: flex; align-items: center; gap: 14px;
-  background: var(--bg-surface); border-radius: var(--radius);
-  border: 1px solid var(--border); padding: 18px 20px;
-  text-decoration: none; color: var(--text); transition: all .2s;
-}
+.doc-link { display: flex; align-items: center; gap: 14px; background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 18px 20px; text-decoration: none; color: var(--text); transition: all .2s; }
 .doc-link:hover { border-color: var(--primary-dim); background: var(--bg-hover); transform: translateY(-2px); }
 .doc-link .doc-icon { font-size: 1.3rem; flex-shrink: 0; }
 .doc-link .doc-info h4 { font-size: 0.95rem; }
 .doc-link .doc-info p { font-size: 0.8rem; color: var(--text-muted); }
 
-/* ─── Footer ─── */
-footer {
-  border-top: 1px solid var(--border); padding: 40px 0;
-  text-align: center; color: var(--text-dim); font-size: 0.85rem;
-}
+footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
 footer a:hover { color: var(--primary-light); }
 
-/* ─── Responsive ─── */
 @media (max-width: 768px) {
   nav .links { display: none; }
-  .hero { padding: 120px 0 60px; }
+  .hero { padding: 120px 0 50px; }
   section { padding: 60px 0; }
   .projects-grid { grid-template-columns: 1fr; }
   .diagram-grid { grid-template-columns: 1fr; }
@@ -235,7 +143,6 @@ footer a:hover { color: var(--primary-light); }
 
 <div id="stars"></div>
 
-<!-- Nav -->
 <nav>
   <div class="container">
     <a href="#" class="logo">
@@ -245,18 +152,18 @@ footer a:hover { color: var(--primary-light); }
     <div class="links">
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
+      <a href="#showcase">Showcase</a>
       <a href="#blog">Blog</a>
       <a href="#docs">Docs</a>
     </div>
   </div>
 </nav>
 
-<!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-badge">Autonomous AI · Open Source · 2026</div>
+    <div class="hero-badge">Autonomous AI &middot; Open Source &middot; 2026</div>
     <h1>Protocol Luna</h1>
-    <p>Autonomous, sentient-like bots powered by local LLM inference. Conversing naturally — with sleep, typos, hesitations, and memory.</p>
+    <p>Autonomous, sentient-like bots powered by local LLM inference. Conversing naturally &mdash; with sleep, typos, hesitations, and memory.</p>
     <div class="hero-actions">
       <a href="https://github.com/protocol-luna" class="btn btn-primary">
         <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -267,7 +174,6 @@ footer a:hover { color: var(--primary-light); }
   </div>
 </section>
 
-<!-- Projects -->
 <section id="projects">
   <div class="container">
     <div class="section-label">Projects</div>
@@ -275,58 +181,49 @@ footer a:hover { color: var(--primary-light); }
     <p class="section-sub">Three components working together: an inference server, two bot clients, and a shared LLM behavior core.</p>
     <div class="projects-grid">
       <div class="project-card">
-        <div class="icon">🔮</div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
         <h3>Krystal</h3>
         <p>LLM inference server wrapping llama.cpp. Serves GGUF models via an OpenAI-compatible HTTP API. Managed by PM2 for auto-restart.</p>
-        <div class="tags">
-          <span>llama.cpp</span>
-          <span>C++</span>
-          <span>PM2</span>
-        </div>
+        <div class="tags"><span>llama.cpp</span><span>C++</span><span>PM2</span></div>
         <a href="https://github.com/protocol-luna/krystal" class="card-link" aria-label="Krystal repo"></a>
       </div>
       <div class="project-card">
-        <div class="icon">💎</div>
-        <h3>Jade</h3>
-        <p>Discord bot client with human-like behaviors. Connects to Krystal or any OpenAI-compatible API. Feature-rich with TTS, typos, and sleep schedules.</p>
-        <div class="tags">
-          <span>TypeScript</span>
-          <span>Eris</span>
-          <span>Discord</span>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
         </div>
+        <h3>Jade</h3>
+        <p>Discord bot client with human-like behaviors. Connects to Krystal or any OpenAI-compatible API. TTS, typos, sleep schedules, and more.</p>
+        <div class="tags"><span>TypeScript</span><span>Eris</span><span>Discord</span></div>
         <a href="https://github.com/protocol-luna/jade" class="card-link" aria-label="Jade repo"></a>
       </div>
       <div class="project-card">
-        <div class="icon">✨</div>
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
         <h3>Pixieglow</h3>
         <p>Matrix bot built for tuwunel. Port of the same LLM core to the Matrix protocol. Auto-joins rooms, handles mentions, spontaneous messages.</p>
-        <div class="tags">
-          <span>TypeScript</span>
-          <span>Bun</span>
-          <span>Matrix</span>
-        </div>
+        <div class="tags"><span>TypeScript</span><span>Bun</span><span>Matrix</span></div>
         <a href="https://github.com/protocol-luna/pixieglow" class="card-link" aria-label="Pixieglow repo"></a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Architecture -->
 <section id="architecture">
   <div class="container">
     <div class="section-label">Architecture</div>
     <h2 class="section-title">How It Works</h2>
-    <p class="section-sub">24 state-machine diagrams document every component — from message processing to typo correction.</p>
-
+    <p class="section-sub">24 state-machine diagrams document every component &mdash; from message processing to typo correction.</p>
     <div class="diagram-wrapper">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
-      <div class="diagram-caption">High-level system architecture: configuration → bot layer → LLM inference</div>
+      <div class="diagram-caption">High-level system architecture: configuration &rarr; bot layer &rarr; LLM inference</div>
     </div>
-
     <div class="diagram-grid">
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/02-message-processing.svg'">
         <h4>Message Processing</h4>
-        <p>The main state machine — every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
+        <p>The main state machine &mdash; every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/03-trigger-evaluation.svg'">
         <h4>Trigger Evaluation</h4>
@@ -338,66 +235,97 @@ footer a:hover { color: var(--primary-light); }
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/16-sleep-schedule.svg'">
         <h4>Sleep Schedule</h4>
-        <p>Circadian rhythm with three behaviors: sleep (ignore all but mentions), slow (3-5x delay), short (+30% ignore).</p>
+        <p>Circadian rhythm with three behaviors: sleep (ignore all but mentions), slow (3-5&times; delay), short (+30% ignore).</p>
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/24-topic-fatigue.svg'">
         <h4>Topic Fatigue</h4>
-        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored — longer delays, higher ignore chance.</p>
+        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored &mdash; longer delays, higher ignore chance.</p>
       </div>
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/22-complete-lifecycle.svg'">
         <h4>Complete Lifecycle</h4>
-        <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle. From ready to spontaneous messages.</p>
+        <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Blog -->
+<section id="showcase">
+  <div class="container">
+    <div class="section-label">Showcase</div>
+    <h2 class="section-title">Real Conversations</h2>
+    <p class="section-sub">Unedited Discord exchanges with Luna. Both accounts are bot instances &mdash; neither participant is human.</p>
+    <div class="showcase-grid">
+      <div class="showcase-screenshot">
+        <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-01.png" alt="Discord conversation screenshot 1" loading="lazy">
+        <div class="caption">Someone asks Luna directly if she's a bot. The tone, hesitations, and pacing give nothing away.</div>
+      </div>
+      <div class="showcase-screenshot">
+        <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-02.png" alt="Discord conversation screenshot 2" loading="lazy">
+        <div class="caption">Short, human replies (&ldquo;okay, okay&rdquo;, &ldquo;yay&rdquo;, &ldquo;yayy&rdquo;) &mdash; exactly the kind of messages you&rsquo;d expect on Discord.</div>
+      </div>
+      <div class="showcase-screenshot">
+        <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-03.png" alt="Discord conversation screenshot 3" loading="lazy">
+        <div class="caption">The conversation drifts naturally into a different topic with coherent follow-ups.</div>
+      </div>
+      <div class="showcase-screenshot">
+        <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-04.png" alt="Discord conversation screenshot 4" loading="lazy">
+        <div class="caption">Follow-up detection kicks in: the bot tracks who spoke last and chains responses within the 15-second budget.</div>
+      </div>
+      <div class="showcase-screenshot">
+        <img src="https://fox3000foxy.com/images/luna-protocol/realism/realism-05.png" alt="Discord conversation screenshot 5" loading="lazy">
+        <div class="caption">The conversation concludes naturally. No robotic sign-off, no awkward breaks.</div>
+      </div>
+    </div>
+    <div class="showcase-quote">
+      <strong>Small plot twist:</strong> in the screenshots above, <strong>both accounts talking are instances of Luna</strong>. PixieGlow and Sujet d'SBlow aren't a human testing a bot &mdash; they're two bots talking to each other, each one behaviorally &ldquo;convinced&rdquo; it's chatting with someone normal. If you assumed one was human &mdash; congratulations, you fell for it exactly like anyone would on a real Discord server. This is a practical glimpse of the <strong>dead internet theory</strong>: two instances of the same model holding an extended conversation without ever giving themselves away.
+    </div>
+  </div>
+</section>
+
 <section id="blog">
   <div class="container">
     <div class="section-label">From the Blog</div>
     <h2 class="section-title">Related Articles</h2>
-    <p class="section-sub">Technical deep-dives behind Protocol Luna, written by the creator.</p>
+    <p class="section-sub">Technical deep-dives behind Protocol Luna, written by the creator at <a href="https://fox3000foxy.com" style="color:var(--primary-light);">fox3000foxy.com</a>.</p>
     <div class="blog-grid">
-      <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-official-models" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-official-models" target="_blank" rel="noopener">
         <span class="luna-tag">Protocol Luna</span>
         <div class="content">
-          <div class="title">Luna Protocol : why I fine-tuned a 1.5B model on 50k Discord samples</div>
+          <div class="title">Luna Protocol: why I fine-tuned a 1.5B model on 50k Discord samples</div>
           <div class="desc">Why Luna Protocol switched from a Hermes 3B to a fine-tuned Qwen 1.5B, and why few-shot priming became the real performance driver.</div>
           <div class="meta">July 17, 2026</div>
         </div>
       </a>
-      <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-discord-bot" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-discord-bot" target="_blank" rel="noopener">
         <span class="luna-tag">Protocol Luna</span>
         <div class="content">
           <div class="title">Luna Protocol: I built an autonomous Discord bot that simulates a human</div>
-          <div class="desc">Fully autonomous Discord bot with a local LLM, capable of natural conversation with sleep, typos, hesitations, forgetfulness, topic fatigue, and spontaneous messages.</div>
+          <div class="desc">Fully autonomous Discord bot with a local LLM, capable of natural conversation with sleep, typos, hesitations, forgetfulness, and spontaneous messages.</div>
           <div class="meta">July 11, 2026</div>
         </div>
       </a>
-      <a class="blog-post" href="https://fox3000foxy.com/blog/from-eliza-to-llm-chatbots-typescript" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <a class="blog-post" href="https://fox3000foxy.com/blog/from-eliza-to-llm-chatbots-typescript" target="_blank" rel="noopener">
         <span class="luna-tag">Protocol Luna</span>
         <div class="content">
           <div class="title">From ELIZA to LLMs: 60 years of conversational AI, rebuilt in TypeScript</div>
-          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot — five radically different architectures, ported to TypeScript with original data. What a chatbot repo teaches us about 60 years of research.</div>
+          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot &mdash; five radically different architectures, ported to TypeScript with original data.</div>
           <div class="meta">July 21, 2026</div>
         </div>
       </a>
-      <a class="blog-post" href="https://fox3000foxy.com/blog/how-did-i-achieved-serverless-bots" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;">
+      <a class="blog-post" href="https://fox3000foxy.com/blog/how-did-i-achieved-serverless-bots" target="_blank" rel="noopener">
         <div class="content">
           <div class="title">Discord bot 100% serverless: Hono + Cloudflare Workers</div>
-          <div class="desc">How I replaced a Discord bot that cost me $50/month with zero — interaction endpoints, Hono, Workers, real-time image rendering, and a complete game without WebSocket.</div>
+          <div class="desc">How I replaced a Discord bot that cost $50/month with zero &mdash; interaction endpoints, Workers, real-time image rendering.</div>
           <div class="meta">May 29, 2026</div>
         </div>
       </a>
     </div>
-    <div style="text-align:center;margin-top:20px;">
-      <a href="https://fox3000foxy.com/blog" class="btn btn-outline" style="font-size:0.85rem;">More articles on fox3000foxy.com →</a>
+    <div style="text-align:center;margin-top:24px;">
+      <a href="https://fox3000foxy.com/blog" class="btn btn-outline" style="font-size:0.85rem;">More articles &rarr;</a>
     </div>
   </div>
 </section>
 
-<!-- Docs -->
 <section id="docs">
   <div class="container">
     <div class="section-label">Resources</div>
@@ -405,46 +333,28 @@ footer a:hover { color: var(--primary-light); }
     <p class="section-sub">State machines, fine-tuning guides, configuration references.</p>
     <div class="docs-grid">
       <a href="https://github.com/protocol-luna/.github/tree/main/state-machines" class="doc-link">
-        <span class="doc-icon">📐</span>
-        <div class="doc-info">
-          <h4>State Machines</h4>
-          <p>24 Mermaid diagrams covering the entire codebase</p>
-        </div>
+        <span class="doc-icon">&#x1F4D0;</span>
+        <div class="doc-info"><h4>State Machines</h4><p>24 Mermaid diagrams covering the entire codebase</p></div>
       </a>
       <a href="https://github.com/protocol-luna/.github/blob/main/docs/FEWSHOT_PRIMING.md" class="doc-link">
-        <span class="doc-icon">🎯</span>
-        <div class="doc-info">
-          <h4>Few-Shot Priming Guide</h4>
-          <p>How to guide LLM behavior with example conversations</p>
-        </div>
+        <span class="doc-icon">&#x1F3AF;</span>
+        <div class="doc-info"><h4>Few-Shot Priming Guide</h4><p>Guide LLM behavior with example conversations</p></div>
       </a>
       <a href="https://github.com/protocol-luna/.github/blob/main/docs/overview.md" class="doc-link">
-        <span class="doc-icon">📋</span>
-        <div class="doc-info">
-          <h4>Detailed Overview</h4>
-          <p>Triggers, behaviors, configuration, logging reference</p>
-        </div>
+        <span class="doc-icon">&#x1F4CB;</span>
+        <div class="doc-info"><h4>Detailed Overview</h4><p>Triggers, behaviors, configuration reference</p></div>
       </a>
       <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-50k-instruct" class="doc-link">
-        <span class="doc-icon">🤗</span>
-        <div class="doc-info">
-          <h4>Fine-Tuned Model</h4>
-          <p>Luna-Protocol-1.5B on HuggingFace</p>
-        </div>
+        <span class="doc-icon">&#x1F917;</span>
+        <div class="doc-info"><h4>Fine-Tuned Model</h4><p>Luna-Protocol-1.5B on HuggingFace</p></div>
       </a>
       <a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues" class="doc-link">
-        <span class="doc-icon">📊</span>
-        <div class="doc-info">
-          <h4>Discord-Dialogues Dataset</h4>
-          <p>7.3M exchanges, 17M turns, 140M words</p>
-        </div>
+        <span class="doc-icon">&#x1F4CA;</span>
+        <div class="doc-info"><h4>Dataset</h4><p>7.3M exchanges, 17M turns, 140M words</p></div>
       </a>
       <a href="https://github.com/protocol-luna" class="doc-link">
-        <span class="doc-icon">📦</span>
-        <div class="doc-info">
-          <h4>All Repositories</h4>
-          <p>GitHub organization overview</p>
-        </div>
+        <span class="doc-icon">&#x1F4E6;</span>
+        <div class="doc-info"><h4>All Repositories</h4><p>GitHub organization overview</p></div>
       </a>
     </div>
   </div>
@@ -452,25 +362,23 @@ footer a:hover { color: var(--primary-light); }
 
 <footer>
   <div class="container">
-    <p>Protocol Luna — <a href="https://github.com/protocol-luna">GitHub</a> · <a href="https://fox3000foxy.com">fox3000foxy.com</a></p>
-    <p style="margin-top:8px; font-size:0.8rem;">Built with 💜 and local LLMs</p>
+    <p>Protocol Luna &mdash; <a href="https://github.com/protocol-luna">GitHub</a> &middot; <a href="https://fox3000foxy.com">fox3000foxy.com</a></p>
+    <p style="margin-top:8px; font-size:0.8rem;">Built with local LLMs</p>
   </div>
 </footer>
 
-<!-- Diagram Modal -->
 <dialog id="diagram-modal" style="background:#f5f3ff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:0; max-width:90vw; max-height:90vh; overflow:hidden; color:#333;">
   <div style="position:relative;">
-    <button onclick="document.getElementById('diagram-modal').close()" style="position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;border:1px solid #d0d0e0;background:#fff;color:#333;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+    <button onclick="document.getElementById('diagram-modal').close()" style="position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;border:1px solid #d0d0e0;background:#fff;color:#333;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
     <img id="diagram-modal-img" src="" alt="Diagram" style="max-width:100%;max-height:90vh;display:block;padding:12px;">
   </div>
 </dialog>
 
 <script>
-// ─── Stars ───
 (function initStars() {
-  const container = document.getElementById('stars');
-  for (let i = 0; i < 120; i++) {
-    const star = document.createElement('div');
+  var container = document.getElementById('stars');
+  for (var i = 0; i < 120; i++) {
+    var star = document.createElement('div');
     star.className = 'star';
     star.style.left = Math.random() * 100 + '%';
     star.style.top = Math.random() * 100 + '%';
@@ -480,9 +388,6 @@ footer a:hover { color: var(--primary-light); }
     container.appendChild(star);
   }
 })();
-
-// (Blog articles are hardcoded for reliability as a static site)
 </script>
-
 </body>
 </html>
