@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Protocol — Detailed Overview</title>
+<meta name="description" content="Full technical overview of Luna Protocol: triggers, behaviors, configuration, logs, and dataset.">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
+<style>
+:root {
+  --bg: #0d0d1a;
+  --bg-surface: #16162e;
+  --bg-card: #1a1a3e;
+  --bg-hover: #222255;
+  --primary: #9370DB;
+  --primary-light: #b388ff;
+  --primary-dim: #7c5cbf;
+  --accent: #c084fc;
+  --text: #e0dff0;
+  --text-muted: #9595b5;
+  --text-dim: #6b6b8a;
+  --border: #2d2d5e;
+  --glow: rgba(147, 112, 219, 0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { overflow-x: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+::selection { background: var(--primary); color: #fff; }
+a { color: var(--primary-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
+nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
+nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
+nav .logo span { color: var(--primary-light); }
+nav .back { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
+nav .back:hover { color: var(--primary-light); text-decoration: none; }
+
+.doc-header { padding: 100px 0 40px; }
+.doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
+
+.doc-content { padding: 0 0 80px; }
+.doc-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+.doc-content h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; color: var(--primary-light); }
+.doc-content h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+.doc-content p { margin-bottom: 16px; color: var(--text-muted); }
+.doc-content strong { color: var(--text); }
+.doc-content ul, .doc-content ol { margin: 0 0 16px 24px; color: var(--text-muted); }
+.doc-content li { margin-bottom: 6px; }
+.doc-content code { background: rgba(147,112,219,0.15); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', Monaco, Consolas, monospace; color: var(--primary-light); }
+.doc-content pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; overflow-x: auto; margin-bottom: 20px; }
+.doc-content pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.85rem; }
+.doc-content table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.9rem; }
+.doc-content th { background: var(--bg-surface); color: var(--text); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.doc-content td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text-muted); }
+.doc-content tr:hover td { background: rgba(147,112,219,0.05); }
+.doc-content blockquote { border-left: 3px solid var(--primary); padding: 12px 20px; margin: 0 0 20px; background: rgba(147,112,219,0.08); border-radius: 0 var(--radius) var(--radius) 0; }
+.doc-content blockquote p { margin-bottom: 0; color: var(--text-muted); }
+
+.toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 40px; }
+.toc h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-dim); margin-bottom: 12px; }
+.toc ul { list-style: none; margin: 0; padding: 0; }
+.toc li { margin-bottom: 6px; }
+.toc a { color: var(--text-muted); font-size: 0.9rem; }
+.toc a:hover { color: var(--primary-light); }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+footer a { color: var(--primary-dim); }
+
+@media (max-width: 768px) {
+  .doc-header { padding: 80px 0 30px; }
+  .doc-header h1 { font-size: 1.8rem; }
+  .doc-content h2 { font-size: 1.3rem; }
+  .container { padding: 0 16px; }
+  .doc-content pre { padding: 14px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../" class="logo">
+      <img src="https://avatars.githubusercontent.com/u/295615117?v=4" alt="" crossorigin="anonymous">
+      Protocol <span>Luna</span>
+    </a>
+    <a href="../" class="back">&larr; Back to site</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="doc-header">
+    <h1>Detailed Overview</h1>
+    <p>Triggers, behaviors, configuration reference, logs, and dataset documentation for Luna Protocol.</p>
+  </div>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+      <li><a href="#trigger-system">Trigger System</a></li>
+      <li><a href="#response-mechanisms">Response Mechanisms</a></li>
+      <li><a href="#commands">Commands</a></li>
+      <li><a href="#configuration">Configuration</a></li>
+      <li><a href="#logs">Logs</a></li>
+      <li><a href="#dataset">Dataset</a></li>
+      <li><a href="#discord-portal">Discord Developer Portal</a></li>
+    </ul>
+  </div>
+
+  <div class="doc-content">
+
+    <blockquote>
+      <p><strong>Luna Protocol now has its own official models!</strong><br>
+      The project includes optimized models trained specifically for Discord conversations:<br>
+      &bull; <strong>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5</strong> (Recommended) &mdash; Lightweight, fast, perfect for Discord bots<br>
+      &bull; Available on <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct">HuggingFace</a></p>
+    </blockquote>
+
+    <ul>
+      <li>Fine-tuned Qwen2.5 1.5B model, trained on 200k samples from <a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues">Discord-Dialogues</a></li>
+      <li>Quantized GGUF format</li>
+      <li><strong>Few-shot priming</strong>: Inject example conversations to guide model behavior (configurable in <code>config.yml</code>)</li>
+      <li>Two LLM modes: <code>direct</code> (bot &rarr; llama-server directly, shared model / prompt cache), <code>online</code> (OpenAI-compatible API)</li>
+      <li>Event-driven architecture: <code>llmBus</code> for LLM tokens/errors, <code>stateBus</code> for auto-persist</li>
+    </ul>
+
+    <h2 id="trigger-system">Trigger System</h2>
+
+    <h3>Trigger priority order</h3>
+    <table>
+      <thead><tr><th>#</th><th>Reason</th><th>Conditions</th><th>Bypass ignore</th><th>Bypass pause</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>mention</code></td><td>@bot</td><td>Yes (0%)</td><td>Yes</td></tr>
+        <tr><td>2</td><td><code>dm</code></td><td>DM with <code>replyInDM = true</code></td><td>Yes (0%)</td><td>No</td></tr>
+        <tr><td>3</td><td><code>name</code></td><td>"Luna"/"Pixie"/alias (whole word)</td><td>No (8%)</td><td>No</td></tr>
+        <tr><td>4</td><td><code>keyword</code></td><td><code>hello</code>, <code>hi</code>, <code>hey</code>, <code>yo</code>, <code>ai</code>, <code>bot</code>... (whole word)</td><td>No (8%)</td><td>No</td></tr>
+        <tr><td>5</td><td><code>follow-up</code></td><td>Bot was last speaker + &lt; 15s + &lt; 3 / 60s</td><td>&mdash;</td><td>&mdash;</td></tr>
+        <tr><td>6</td><td><code>random</code></td><td>1.5% chance on non-matching</td><td>No (8%)</td><td>No</td></tr>
+      </tbody>
+    </table>
+    <p>Whole word matching (<code>\b</code>): "ai" does not match "mais", "vrai", "lait".</p>
+
+    <h3>Cooldown</h3>
+    <p>8 seconds between two responses in the same channel. Bypassed by mentions and follow-ups.</p>
+
+    <h3>Follow-up</h3>
+    <p>The bot registers itself as <code>lastSpeaker</code>. Any subsequent message within 15s triggers an immediate response (no timer, no keyword check). Budget: 3 follow-ups per 60s window.</p>
+
+    <h2 id="response-mechanisms">Response Mechanisms</h2>
+
+    <h3>Variable concentration</h3>
+    <table>
+      <thead><tr><th>Trigger</th><th>Min delay</th><th>Max delay</th><th>Ignore</th><th>Reaction</th></tr></thead>
+      <tbody>
+        <tr><td><code>mention</code></td><td>300ms</td><td>1500ms</td><td>0%</td><td>8%</td></tr>
+        <tr><td><code>dm</code></td><td>400ms</td><td>1800ms</td><td>0%</td><td>5%</td></tr>
+        <tr><td><code>name</code></td><td>800ms</td><td>4000ms</td><td>5%</td><td>6%</td></tr>
+        <tr><td><code>keyword</code></td><td>1000ms</td><td>3500ms</td><td>8%</td><td>4%</td></tr>
+        <tr><td><code>follow-up</code></td><td>500ms</td><td>2000ms</td><td>0%</td><td>3%</td></tr>
+        <tr><td><code>random</code></td><td>1500ms</td><td>5000ms</td><td>15%</td><td>2%</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Typos</h3>
+    <p>Configurable probability (<code>typo_chance</code>, default 6%) of replacing a letter with an adjacent key (AZERTY/QWERTY). Correction after 2-4s:</p>
+    <table>
+      <thead><tr><th>Style</th><th>Behavior</th></tr></thead>
+      <tbody>
+        <tr><td><code>edit</code></td><td>Edits the message</td></tr>
+        <tr><td><code>message</code></td><td>New message: <code>word*</code></td></tr>
+        <tr><td><code>mixed</code></td><td>50/50 random (default)</td></tr>
+      </tbody>
+    </table>
+    <p>AZERTY example: <code>bonjour &rarr; bonjpur</code>, <code>salut &rarr; slaut</code>, <code>comment &rarr; cpmment</code>.</p>
+
+    <h3>Voice Messages (TTS)</h3>
+    <p>Configurable probability (<code>voice_message_chance</code>, default 8%). Full pipeline: sanitize &rarr; synthesize (Piper) &rarr; convert (ffmpeg) &rarr; upload (Discord CDN).</p>
+
+    <h3>Typing indicator</h3>
+    <p><code>startTyping()</code> is called before <code>askLLM()</code> &mdash; the typing indicator stays active during generation (refreshed every 8s).</p>
+
+    <h3>Real-time response</h3>
+    <p>The LLM streams its response line by line (<code>\n</code>). Each line is split into words, emitted one by one. No simulated delay: the pace is the LLM's own.</p>
+
+    <h3>Reactions</h3>
+    <p>30% server custom emoji, 70% unicode emoji.</p>
+
+    <h3>Sleep schedules</h3>
+    <table>
+      <thead><tr><th>Mode</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td><code>sleep</code></td><td>Only mentions and DMs pass through</td></tr>
+        <tr><td><code>slow</code></td><td>Delay &times;3-5, reactions nearly zero</td></tr>
+        <tr><td><code>short</code></td><td>Ignore chance +30%, reactions nearly zero</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Spontaneous Messages</h3>
+    <p>Every 5 minutes, 12% chance the bot posts a message on its own initiative.</p>
+
+    <h3>Hesitation</h3>
+    <p>The bot sometimes starts its response with a hesitation word: <code>uh...</code>, <code>um...</code>, <code>well...</code>, <code>i mean...</code>, <code>hmm...</code>, <code>so...</code>.</p>
+
+    <h3>Forgetfulness</h3>
+    <p>Even after matching a trigger, the bot can "forget" to respond with a probability of <code>forget_chance</code> (default 3%).</p>
+
+    <h3>Inactivity warmup</h3>
+    <p>If the bot has not been active for <code>inactivity_warmup_minutes</code> (default 10 min), the response delay is multiplied by <code>inactivity_warmup_multiplier</code>.</p>
+
+    <h3>Dynamic Discord Status</h3>
+    <p>The Discord status alternates between several configured presets, rotating every <code>dynamic_status_interval_minutes</code> minutes.</p>
+
+    <h3>Anti-spam</h3>
+    <p>Key <code>channelId:userId</code>. Only one message queued per user per channel.</p>
+
+    <h3>Persistence</h3>
+    <p><strong>Persisted:</strong> pendingMessages, paused, cooldowns, timestamps, lastSpeaker, follow-up counters.<br>
+    <strong>Auto-save:</strong> any state mutation emits on <code>stateBus</code> &rarr; automatic save (debounce 500ms).</p>
+
+    <h2 id="commands">Commands</h2>
+    <p><strong>By text:</strong> <code>-stop</code> (pause + reset), <code>-start</code> (resume), <code>-clear</code> (reset history)</p>
+    <p><strong>By reactions</strong> on one of the bot's messages:</p>
+    <table>
+      <thead><tr><th>Emoji</th><th>Effect</th></tr></thead>
+      <tbody>
+        <tr><td>&#x274C;</td><td>Stop</td></tr>
+        <tr><td>&#x25B6;&#xFE0F;</td><td>Start</td></tr>
+        <tr><td>&#x1F5D1;&#xFE0F;</td><td>Clear</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="configuration">Configuration</h2>
+    <p>Single <code>config.yml</code> file. Shell env vars override YAML keys if present. Hot-reload for dynamic values.</p>
+
+    <h3>Hot-reload legend</h3>
+    <table>
+      <thead><tr><th>Icon</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td>&#x2705;</td><td>Hot-reloadable &mdash; changes picked up at runtime</td></tr>
+        <tr><td>&#x274C;</td><td>Requires restart</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Secrets &amp; Paths (&#x274C;)</h3>
+    <ul>
+      <li><code>discord_token</code> &mdash; Discord bot token</li>
+      <li><code>llama_model_path</code> &mdash; Path to GGUF model</li>
+      <li><code>llm_host</code> / <code>llm_port</code> &mdash; LLM server connection</li>
+      <li><code>llm_mode</code> &mdash; <code>direct</code> (local llama-server) or <code>online</code> (OpenAI API)</li>
+      <li><code>tts_model_path</code>, <code>tts_binary_path</code>, <code>ffmpeg_path</code>, <code>ffprobe_path</code> &mdash; TTS &amp; audio paths</li>
+    </ul>
+
+    <h3>Triggers (&#x2705;)</h3>
+    <p><code>names</code>, <code>keywords</code>, <code>random_chance</code>, <code>cooldown_seconds</code>, <code>reply_in_dm</code></p>
+
+    <h3>Mannerisms &mdash; Concentration (&#x2705;)</h3>
+    <p>Per-trigger delays, ignore &amp; reaction chances.</p>
+
+    <h3>Typos (&#x2705;)</h3>
+    <p><code>typo_chance</code>, <code>typo_layout</code> (azerty/qwerty), <code>typo_correction_style</code> (edit/message/mixed)</p>
+
+    <h3>Message Burst (&#x2705;)</h3>
+    <p><code>burst_chance</code>, <code>burst_delay_min</code>, <code>burst_delay_max</code></p>
+
+    <h3>Topic Fatigue (&#x2705;)</h3>
+    <p>Detects repetitive topics per channel. Configurable window, threshold, multiplier.</p>
+
+    <h3>Human-like Behaviors (&#x2705;)</h3>
+    <p><code>hesitation_chance</code>, <code>hesitation_words</code>, <code>forget_chance</code>, <code>inactivity_warmup</code></p>
+
+    <h3>Dynamic Status (&#x2705;)</h3>
+    <p>Rotation interval + status presets (Playing, Watching, Listening, etc.)</p>
+
+    <h3>Sleep Schedules (&#x2705;)</h3>
+    <p>Time-based behavior switching (sleep/slow/short).</p>
+
+    <h3>Session Limits (&#x2705;)</h3>
+    <p>Max exchanges before pause, pause duration, reset timer.</p>
+
+    <h3>TTS / Voice Messages (&#x2705;)</h3>
+    <p>Voice message probability.</p>
+
+    <h3>Reply Styles (&#x2705;)</h3>
+    <p>Weighted message_reference + mention_replied_user configs.</p>
+
+    <h2 id="logs">Logs</h2>
+    <table>
+      <thead><tr><th>Prefix</th><th>Info</th></tr></thead>
+      <tbody>
+        <tr><td><code>[trigger]</code></td><td>Evaluation + result of each message</td></tr>
+        <tr><td><code>[mannerisms]</code></td><td>Delay, ignore, reaction, msgLength, inactivity</td></tr>
+        <tr><td><code>[bot]</code></td><td>Decision, follow-up, reply style, forget</td></tr>
+        <tr><td><code>[tts]</code></td><td>Synthesis, upload, voice message</td></tr>
+        <tr><td><code>[persist]</code></td><td>Save/restore</td></tr>
+        <tr><td><code>[llm-core]</code></td><td>Queue, proxy/online, LLM events</td></tr>
+        <tr><td><code>[llmBus]</code></td><td>LLM events (token, done, flush, error, ready)</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="dataset">Dataset</h2>
+    <p><a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues"><strong>Discord-Dialogues</strong></a> &mdash; 7.3M exchanges, 17M turns, 140M words. Real Discord conversations spring-summer 2025, filtered PII/ToS/bots/commands. Apache 2.0.</p>
+    <table>
+      <thead><tr><th>Metric</th><th>Value</th></tr></thead>
+      <tbody>
+        <tr><td>Samples</td><td>7 303 464</td></tr>
+        <tr><td>Total turns</td><td>16 881 010</td></tr>
+        <tr><td>Total words</td><td>139 922 950</td></tr>
+        <tr><td>Average tokens</td><td>32.8</td></tr>
+        <tr><td>Tokenizer</td><td>Hermes-3-Llama-3.1-8B</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="discord-portal">Discord Developer Portal</h2>
+    <ul>
+      <li><strong>Message Content Intent</strong> (Bot tab)</li>
+      <li>Scope <code>bot</code> + permissions: <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code></li>
+      <li>Gateway intents: <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code></li>
+    </ul>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="../">Protocol Luna</a> &middot; <a href="fewshot-priming.html">Few-Shot Priming Guide</a> &middot; <a href="https://github.com/protocol-luna">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>

@@ -174,6 +174,21 @@ section { padding: 90px 0; }
 .priming-cta p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
 .priming-cta strong { color: var(--text); }
 
+.setup-steps { display: flex; flex-direction: column; gap: 0; }
+.setup-step { display: flex; gap: 24px; position: relative; padding-bottom: 32px; }
+.setup-step:last-child { padding-bottom: 0; }
+.setup-step::before { content: ''; position: absolute; left: 19px; top: 44px; bottom: 0; width: 2px; background: var(--border); }
+.setup-step:last-child::before { display: none; }
+.step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; position: relative; z-index: 1; }
+.step-content { flex: 1; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 24px 28px; }
+.step-content h4 { font-size: 1.05rem; margin-bottom: 8px; color: var(--text); }
+.step-content p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.step-content pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; overflow-x: auto; }
+.step-content pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.82rem; }
+.step-content ul { margin: 0 0 12px 20px; }
+.step-content li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
+.step-content a { color: var(--primary-light); }
+
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
 footer a:hover { color: var(--primary-light); }
@@ -207,6 +222,8 @@ img { max-width: 100%; height: auto; }
   .timeline { padding-left: 32px; }
   .terminal-wrapper { border-radius: var(--radius); }
   .priming-grid { grid-template-columns: 1fr; }
+  .setup-step { gap: 16px; }
+  .step-content { padding: 18px 20px; }
 }
 
 @media (max-width: 480px) {
@@ -234,6 +251,7 @@ img { max-width: 100%; height: auto; }
     <div class="links">
       <a href="#raw-model">Raw Model</a>
       <a href="#priming">Priming</a>
+      <a href="#setup">Setup</a>
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
       <a href="#state-machine">State Machine</a>
@@ -308,6 +326,110 @@ img { max-width: 100%; height: auto; }
         <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
         fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct
       </a>
+    </div>
+  </div>
+</section>
+
+<section id="setup">
+  <div class="container">
+    <div class="section-label">Get Started</div>
+    <h2 class="section-title">How to Setup</h2>
+    <p class="section-sub">From zero to a running Discord bot in 7 steps. All local, no cloud APIs required.</p>
+    <div class="setup-steps">
+
+      <div class="setup-step">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h4>Prerequisites</h4>
+          <p>Node.js &ge; 18, npm, git. For local inference: llama.cpp compiled with CUDA/Metal/Vulkan. For voice: PiperTTS + ffmpeg.</p>
+          <pre><code>node --version   # v18+
+git --version
+npm --version</code></pre>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h4>Clone the Repository</h4>
+          <pre><code>git clone https://github.com/protocol-luna/luna-protocol-matrix.git
+cd luna-protocol-matrix
+npm install</code></pre>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h4>Download the Model</h4>
+          <p>Grab the 200k-instruct GGUF from HuggingFace:</p>
+          <pre><code>pip install huggingface-hub
+huggingface-cli download \
+  fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct \
+  --local-dir models/</code></pre>
+          <p>Or download manually from <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct" target="_blank" rel="noopener">HuggingFace</a>.</p>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">4</div>
+        <div class="step-content">
+          <h4>Configure the Bot</h4>
+          <p>Copy the example config and edit it with your settings:</p>
+          <pre><code>cp config.example.yml config.yml</code></pre>
+          <p>Key fields to set:</p>
+          <pre><code>discord_token: "YOUR_BOT_TOKEN"
+llama_model_path: "models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q8_0.gguf"
+llm_mode: "direct"
+llm_host: "127.0.0.1"
+llm_port: 8080
+
+few_shot_enabled: true
+few_shot_examples:
+  - user: "yo whats good"
+    assistant: "nm just chillin, u"
+  - user: "bored af"
+    assistant: "lol same energy fr"</code></pre>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">5</div>
+        <div class="step-content">
+          <h4>Start llama-server</h4>
+          <p>Launch the inference server with your GGUF model:</p>
+          <pre><code>llama-server \
+  -m models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q8_0.gguf \
+  --port 8080 \
+  --ctx-size 2048 \
+  --n-predict 256</code></pre>
+          <p>Wait for <code>Server is listening on port 8080</code>.</p>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">6</div>
+        <div class="step-content">
+          <h4>Launch the Bot</h4>
+          <pre><code>npm start</code></pre>
+          <p>The bot connects to Discord, loads its state, and starts responding. Check the console for <code>[trigger]</code> and <code>[bot]</code> logs.</p>
+        </div>
+      </div>
+
+      <div class="setup-step">
+        <div class="step-number">7</div>
+        <div class="step-content">
+          <h4>Invite to Discord</h4>
+          <p>Generate an OAuth2 URL from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>:</p>
+          <ul>
+            <li>Scope: <code>bot</code></li>
+            <li>Permissions: <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code></li>
+            <li>Intents: <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code></li>
+          </ul>
+          <p>Paste the URL in your browser, select a server, and the bot joins.</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -625,21 +747,21 @@ img { max-width: 100%; height: auto; }
     <h2 class="section-title">Documentation</h2>
     <p class="section-sub">State machines, fine-tuning guides, configuration references.</p>
     <div class="docs-grid">
+      <a href="docs/overview.html" class="doc-link">
+        <span class="doc-icon">&#x1F4CB;</span>
+        <div class="doc-info"><h4>Detailed Overview</h4><p>Triggers, behaviors, configuration reference</p></div>
+      </a>
+      <a href="docs/fewshot-priming.html" class="doc-link">
+        <span class="doc-icon">&#x1F3AF;</span>
+        <div class="doc-info"><h4>Few-Shot Priming Guide</h4><p>Guide LLM behavior with example conversations</p></div>
+      </a>
       <a href="https://github.com/protocol-luna/.github/tree/main/state-machines" class="doc-link">
         <span class="doc-icon">&#x1F4D0;</span>
         <div class="doc-info"><h4>State Machines</h4><p>24 Mermaid diagrams covering the entire codebase</p></div>
       </a>
-      <a href="https://github.com/protocol-luna/.github/blob/main/docs/FEWSHOT_PRIMING.md" class="doc-link">
-        <span class="doc-icon">&#x1F3AF;</span>
-        <div class="doc-info"><h4>Few-Shot Priming Guide</h4><p>Guide LLM behavior with example conversations</p></div>
-      </a>
-      <a href="https://github.com/protocol-luna/.github/blob/main/docs/overview.md" class="doc-link">
-        <span class="doc-icon">&#x1F4CB;</span>
-        <div class="doc-info"><h4>Detailed Overview</h4><p>Triggers, behaviors, configuration reference</p></div>
-      </a>
-      <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-50k-instruct" class="doc-link">
+      <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct" class="doc-link">
         <span class="doc-icon">&#x1F917;</span>
-        <div class="doc-info"><h4>Fine-Tuned Model</h4><p>Luna-Protocol-1.5B on HuggingFace</p></div>
+        <div class="doc-info"><h4>Fine-Tuned Model</h4><p>Luna-Protocol-1.5B on HuggingFace (200k-instruct)</p></div>
       </a>
       <a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues" class="doc-link">
         <span class="doc-icon">&#x1F4CA;</span>
