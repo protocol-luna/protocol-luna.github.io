@@ -184,20 +184,17 @@ section { padding: 90px 0; }
 .priming-cta p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px; }
 .priming-cta strong { color: var(--text); }
 
-.setup-steps { display: flex; flex-direction: column; gap: 0; }
-.setup-step { display: flex; gap: 24px; position: relative; padding-bottom: 32px; }
-.setup-step:last-child { padding-bottom: 0; }
-.setup-step::before { content: ''; position: absolute; left: 19px; top: 44px; bottom: 0; width: 2px; background: var(--border); }
-.setup-step:last-child::before { display: none; }
-.step-number { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1rem; flex-shrink: 0; position: relative; z-index: 1; }
-.step-content { flex: 1; background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 24px 28px; }
-.step-content h4 { font-size: 1.05rem; margin-bottom: 8px; color: var(--text); }
-.step-content p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
-.step-content pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; overflow-x: auto; }
-.step-content pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.82rem; }
-.step-content ul { margin: 0 0 12px 20px; }
-.step-content li { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px; }
-.step-content a { color: var(--primary-light); }
+.setup-block { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 28px; margin-bottom: 20px; }
+.setup-block h3 { font-size: 1.05rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+.setup-block p { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.5; }
+.setup-block a { color: var(--primary-light); }
+.setup-block pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 18px; margin-bottom: 12px; overflow-x: auto; }
+.setup-block pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.82rem; }
+.setup-badge { width: 32px; height: 32px; border-radius: 50%; background: var(--primary); color: #fff; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; }
+.setup-block-model { border-color: var(--primary); background: rgba(147,112,219,0.06); }
+.setup-block-model h3 .setup-badge { background: var(--gold); color: #1a1a2e; }
+.setup-block-model .btn-outline { font-size: 0.85rem; }
+.setup-block:last-child { margin-bottom: 0; }
 
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
@@ -232,8 +229,7 @@ img { max-width: 100%; height: auto; }
   .timeline { padding-left: 32px; }
   .terminal-wrapper { border-radius: var(--radius); }
   .priming-grid { grid-template-columns: 1fr; }
-  .setup-step { gap: 16px; }
-  .step-content { padding: 18px 20px; }
+  .setup-block { padding: 20px; }
 }
 
 @media (max-width: 480px) {
@@ -348,103 +344,54 @@ img { max-width: 100%; height: auto; }
   <div class="container">
     <div class="section-label">Get Started</div>
     <h2 class="section-title">How to Setup</h2>
-    <p class="section-sub">From zero to a running Discord bot in 7 steps. All local, no cloud APIs required.</p>
-    <div class="setup-steps">
+    <p class="section-sub">Three components, three setups. All local, no cloud APIs required.</p>
 
-      <div class="setup-step">
-        <div class="step-number">1</div>
-        <div class="step-content">
-          <h4>Prerequisites</h4>
-          <p>Node.js &ge; 18, npm, git. For local inference: llama.cpp compiled with CUDA/Metal/Vulkan. For voice: PiperTTS + ffmpeg.</p>
-          <pre><code>node --version   # v18+
-git --version
-npm --version</code></pre>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">2</div>
-        <div class="step-content">
-          <h4>Clone the Repository</h4>
-          <pre><code>git clone https://github.com/protocol-luna/Krystal.git
+    <div class="setup-block">
+      <h3><span class="setup-badge">1</span> Krystal &mdash; LLM Inference Server</h3>
+      <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API.</p>
+      <pre><code>git clone https://github.com/protocol-luna/Krystal.git
 cd Krystal
-npm install</code></pre>
-        </div>
-      </div>
+npm install
+cp config.example.yml config.yml
+# edit config.yml with your model path
+./start.sh</code></pre>
+      <p>The server listens on <code>http://127.0.0.1:3125</code>. Configurable via environment variables: <code>LLM_CPU_AFFINITY</code>, <code>LLM_N_THREADS</code>, <code>LLM_N_CTX</code>, <code>LLM_N_SLOTS</code>.</p>
+    </div>
 
-      <div class="setup-step">
-        <div class="step-number">3</div>
-        <div class="step-content">
-          <h4>Download the Model</h4>
-          <p>Grab the 200k-instruct GGUF from HuggingFace:</p>
-          <pre><code>pip install huggingface-hub
+    <div class="setup-block">
+      <h3><span class="setup-badge">2</span> Jade &mdash; Discord Bot</h3>
+      <p>TypeScript bot using Eris. Connects to Krystal for LLM inference.</p>
+      <pre><code>git clone https://github.com/protocol-luna/jade.git
+cd jade
+npm install
+# configure config.yml with your discord token + Krystal URL
+npm start</code></pre>
+      <p>Generate an OAuth2 URL from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>: scope <code>bot</code>, permissions <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code>, intents <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code>.</p>
+    </div>
+
+    <div class="setup-block">
+      <h3><span class="setup-badge">3</span> Pixieglow &mdash; Matrix Bot</h3>
+      <p>Matrix bot written in TypeScript with <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>. Connects to Krystal for LLM inference.</p>
+      <pre><code>git clone https://github.com/protocol-luna/pixieglow.git
+cd pixieglow
+bun install
+cp config.example.yml config.yml
+# edit config.yml: matrix_homeserver, matrix_token, llm_host/port
+bun start</code></pre>
+      <p>The bot auto-joins rooms it&rsquo;s invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). The bot needs a <code>discord_token</code>? No &mdash; it&rsquo;s Matrix-native, no Discord involved.</p>
+      <p>Invite <code>@pixieglow:protocol-luna.github.io</code> on this server to test it &mdash; no guarantee it&rsquo;s awake, though.</p>
+    </div>
+
+    <div class="setup-block setup-block-model">
+      <h3><span class="setup-badge">&#x2606;</span> Download the Model</h3>
+      <p>All three components share the same fine-tuned model from HuggingFace:</p>
+      <pre><code>pip install huggingface-hub
 huggingface-cli download \
   fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct \
   --local-dir models/</code></pre>
-          <p>Or download manually from <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct" target="_blank" rel="noopener">HuggingFace</a>.</p>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">4</div>
-        <div class="step-content">
-          <h4>Configure the Bot</h4>
-          <p>Copy the example config and edit it with your settings:</p>
-          <pre><code>cp config.example.yml config.yml</code></pre>
-          <p>Key fields to set:</p>
-          <pre><code>discord_token: "YOUR_BOT_TOKEN"
-llama_model_path: "models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q8_0.gguf"
-llm_mode: "direct"
-llm_host: "127.0.0.1"
-llm_port: 8080
-
-few_shot_enabled: true
-few_shot_examples:
-  - user: "yo whats good"
-    assistant: "nm just chillin, u"
-  - user: "bored af"
-    assistant: "lol same energy fr"</code></pre>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">5</div>
-        <div class="step-content">
-          <h4>Start llama-server</h4>
-          <p>Launch the inference server with your GGUF model:</p>
-          <pre><code>llama-server \
-  -m models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q8_0.gguf \
-  --port 8080 \
-  --ctx-size 2048 \
-  --n-predict 256</code></pre>
-          <p>Wait for <code>Server is listening on port 8080</code>.</p>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">6</div>
-        <div class="step-content">
-          <h4>Launch the Bot</h4>
-          <pre><code>npm start</code></pre>
-          <p>The bot connects to Discord, loads its state, and starts responding. Check the console for <code>[trigger]</code> and <code>[bot]</code> logs.</p>
-        </div>
-      </div>
-
-      <div class="setup-step">
-        <div class="step-number">7</div>
-        <div class="step-content">
-          <h4>Invite to Discord</h4>
-          <p>Generate an OAuth2 URL from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>:</p>
-          <ul>
-            <li>Scope: <code>bot</code></li>
-            <li>Permissions: <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code></li>
-            <li>Intents: <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code></li>
-          </ul>
-          <p>Paste the URL in your browser, select a server, and the bot joins.</p>
-        </div>
-      </div>
-
+      <p><a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct" target="_blank" rel="noopener" class="btn btn-outline" style="margin-top:12px;">fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct</a></p>
     </div>
+
   </div>
 </section>
 
