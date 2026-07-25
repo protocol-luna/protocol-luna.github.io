@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luna Protocol -- Getting Started</title>
+<meta name="description" content="Beginner and advanced guides for running Luna Protocol bots: Krystal, Sapphire, Jade, and Pixieglow.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://protocol-luna.github.io/docs/getting-started.html">
+<meta property="og:site_name" content="Protocol Luna">
+<meta property="og:title" content="Getting Started -- Protocol Luna">
+<meta property="og:description" content="Beginner and advanced guides for running Luna Protocol bots: Krystal, Sapphire, Jade, and Pixieglow.">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Getting Started -- Protocol Luna">
+<meta name="twitter:description" content="Beginner and advanced guides for running Luna Protocol bots.">
+<meta name="twitter:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
+<style>
+:root {
+  --bg: #0d0d1a;
+  --bg-surface: #16162e;
+  --bg-card: #1a1a3e;
+  --bg-hover: #222255;
+  --primary: #9370DB;
+  --primary-light: #b388ff;
+  --primary-dim: #7c5cbf;
+  --accent: #c084fc;
+  --text: #e0dff0;
+  --text-muted: #9595b5;
+  --text-dim: #6b6b8a;
+  --border: #2d2d5e;
+  --glow: rgba(147, 112, 219, 0.15);
+  --radius: 12px;
+  --radius-lg: 20px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { overflow-x: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+::selection { background: var(--primary); color: #fff; }
+a { color: var(--primary-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+
+nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
+nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
+nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
+nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
+nav .logo span { color: var(--primary-light); }
+nav .back { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
+nav .back:hover { color: var(--primary-light); text-decoration: none; }
+
+.doc-header { padding: 100px 0 40px; }
+.doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
+
+.doc-content { padding: 0 0 80px; }
+.doc-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--text); }
+.doc-content h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; color: var(--primary-light); }
+.doc-content h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
+.doc-content p { margin-bottom: 16px; color: var(--text-muted); }
+.doc-content strong { color: var(--text); }
+.doc-content ul, .doc-content ol { margin: 0 0 16px 24px; color: var(--text-muted); }
+.doc-content li { margin-bottom: 6px; }
+.doc-content code { background: rgba(147,112,219,0.15); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', Monaco, Consolas, monospace; color: var(--primary-light); }
+.doc-content pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; overflow-x: auto; margin-bottom: 20px; }
+.doc-content pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.85rem; }
+.doc-content table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.9rem; }
+.doc-content th { background: var(--bg-surface); color: var(--text); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
+.doc-content td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text-muted); }
+.doc-content tr:hover td { background: rgba(147,112,219,0.05); }
+.doc-content blockquote { border-left: 3px solid var(--primary); padding: 12px 20px; margin: 0 0 20px; background: rgba(147,112,219,0.08); border-radius: 0 var(--radius) var(--radius) 0; }
+.doc-content blockquote p { margin-bottom: 0; color: var(--text-muted); }
+
+.toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 40px; }
+.toc h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-dim); margin-bottom: 12px; }
+.toc ul { list-style: none; margin: 0; padding: 0; }
+.toc li { margin-bottom: 6px; }
+.toc a { color: var(--text-muted); font-size: 0.9rem; }
+.toc a:hover { color: var(--primary-light); }
+
+.badge { display: inline-block; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 2px 10px; border-radius: 20px; margin-right: 6px; }
+.badge-beginner { background: rgba(76,175,80,0.2); color: #81c784; border: 1px solid rgba(76,175,80,0.3); }
+.badge-advanced { background: rgba(255,152,0,0.2); color: #ffb74d; border: 1px solid rgba(255,152,0,0.3); }
+
+footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+footer a { color: var(--primary-dim); }
+
+@media (max-width: 768px) {
+  .doc-header { padding: 80px 0 30px; }
+  .doc-header h1 { font-size: 1.8rem; }
+  .doc-content h2 { font-size: 1.3rem; }
+  .container { padding: 0 16px; }
+  .doc-content pre { padding: 14px; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../" class="logo">
+      <img src="https://avatars.githubusercontent.com/u/295615117?v=4" alt="" crossorigin="anonymous">
+      Protocol <span>Luna</span>
+    </a>
+    <a href="../" class="back">&larr; Back to site</a>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="doc-header">
+    <h1>Getting Started</h1>
+    <p>From zero to running bot in 15 minutes. Beginner and advanced guides for the full Luna Protocol stack.</p>
+  </div>
+
+  <div class="toc">
+    <h3>Table of Contents</h3>
+    <ul>
+      <li><a href="#quickstart"><span class="badge badge-beginner">Beginner</span> Quick Start (15 min)</a></li>
+      <li><a href="#architecture">Architecture Overview</a></li>
+      <li><a href="#prerequisites">Prerequisites</a></li>
+      <li><a href="#step-krystal">Step 1: Krystal (LLM Server)</a></li>
+      <li><a href="#step-sapphire">Step 2: Sapphire (Gateway)</a></li>
+      <li><a href="#step-bot">Step 3: Bot (Jade / Pixieglow)</a></li>
+      <li><a href="#testing">Testing Your Setup</a></li>
+      <li><a href="#best-practices"><span class="badge badge-advanced">Advanced</span> Best Practices</a></li>
+      <li><a href="#performance">Performance Tuning</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+    </ul>
+  </div>
+
+  <div class="doc-content">
+
+    <h2 id="quickstart">Quick Start (15 min)</h2>
+
+    <p>Get a fully working bot in 5 commands:</p>
+
+    <pre><code># 1. Start the LLM server (Krystal, small mode = Luna 1.5B)
+git clone https://github.com/protocol-luna/krystal
+cd krystal &amp;&amp; npm install
+npx pm2 start taskset -- -c 0 ./bin/llama/llama-server \
+  -m ./models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5.Q4_K_M.gguf \
+  -t 1 -c 8192 --host 127.0.0.1 --port 3125 --no-slots
+
+# 2. Start the classifier gateway (Sapphire)
+git clone https://github.com/protocol-luna/sapphire
+cd sapphire
+pip install -r requirements.txt
+python server.py &amp;
+
+# 3. Start a bot (example: Pixieglow for Matrix)
+git clone https://github.com/protocol-luna/pixieglow
+cd pixieglow
+cp config.example.yml config.yml
+# edit config.yml with your Matrix token and homeserver
+bun run src/index.ts</code></pre>
+
+    <h2 id="architecture">Architecture Overview</h2>
+
+    <p>The Luna Protocol stack has three layers:</p>
+
+    <pre><code>Bot Layer         ┌──────────┐  ┌─────────────┐
+(Jade/Pixieglow)  │ Jade     │  │ Pixieglow   │
+                  │ (Discord)│  │ (Matrix)    │
+                  └────┬─────┘  └──────┬──────┘
+                       │               │
+                       └───────┬───────┘
+                               │ OpenAI-compatible HTTP
+Gateway Layer      ┌──────────▼──────────┐
+(Sapphire)         │  Sapphire            │
+                   │  classify + route    │
+                   │  FUTILE / INTERESSANT│
+                   └────┬──────────┬──────┘
+                        │          │
+                   FUTILE    INTERESSANT
+                        │          │
+LLM Layer      ┌───────▼──┐  ┌────▼────────┐
+(Krystal)      │ Krystal- │  │ Krystal-   │
+               │ small    │  │ large      │
+               │ :3124    │  │ :3125      │
+               │ Luna1.5B │  │ Hermes-8B  │
+               └──────────┘  └────────────┘</code></pre>
+
+    <h2 id="prerequisites">Prerequisites</h2>
+
+    <table>
+      <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
+      <tbody>
+        <tr><td>Krystal</td><td>Linux (llama-server), ~2 GB disk per model</td></tr>
+        <tr><td>Sapphire</td><td>Python 3.10+, ~200 MB for fastembed cache</td></tr>
+        <tr><td>Jade (Discord)</td><td>Node.js 18+, Discord bot token</td></tr>
+        <tr><td>Pixieglow (Matrix)</td><td>Bun, Matrix access token + homeserver URL</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="step-krystal">Step 1: Krystal (LLM Server)</h2>
+
+    <p>Krystal wraps <code>llama-server</code> from llama.cpp to serve GGUF models. Two modes:</p>
+
+    <table>
+      <thead><tr><th>Mode</th><th>Port</th><th>Model</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td><code>small</code></td><td><code>:3124</code></td><td>Luna-Protocol-1.5B</td><td>GENERIC — chit-chat, greetings, fast replies</td></tr>
+        <tr><td><code>large</code></td><td><code>:3125</code></td><td>Discord-Hermes-8B</td><td>SEMANTIC — deep conversation, complex questions</td></tr>
+      </tbody>
+    </table>
+
+    <pre><code>git clone https://github.com/protocol-luna/krystal
+cd krystal
+npm install
+./start.sh small   # or: ./start.sh large
+# Both can run simultaneously for full Sapphire routing</code></pre>
+
+    <p><strong>Download models:</strong></p>
+    <pre><code>npm run download-model:small   # Luna 1.5B (~1 GB)
+npm run download-model:large   # Hermes-8B (~6 GB)</code></pre>
+
+    <p><strong>Environment variables:</strong></p>
+    <table>
+      <thead><tr><th>Variable</th><th>Description</th><th>Default (small)</th><th>Default (large)</th></tr></thead>
+      <tbody>
+        <tr><td><code>KRYSTAL_MODEL_PATH</code></td><td>Path to GGUF file</td><td>./models/Luna-1.5B...gguf</td><td>./models/Hermes-8B...gguf</td></tr>
+        <tr><td><code>KRYSTAL_PORT</code></td><td>Server port</td><td>3124</td><td>3125</td></tr>
+        <tr><td><code>KRYSTAL_CPU_AFFINITY</code></td><td>CPU core affinity</td><td>0</td><td>0,1</td></tr>
+        <tr><td><code>KRYSTAL_N_THREADS</code></td><td>Thread count</td><td>auto</td><td>auto</td></tr>
+        <tr><td><code>KRYSTAL_N_CTX</code></td><td>Context size</td><td>8192</td><td>8192</td></tr>
+      </tbody>
+    </table>
+
+    <blockquote>
+      <p><strong>Legacy vars:</strong> <code>LLM_*</code> vars (e.g. <code>LLM_MODEL_PATH</code>) still work as fallbacks.</p>
+    </blockquote>
+
+    <h2 id="step-sapphire">Step 2: Sapphire (Gateway)</h2>
+
+    <p>Sapphire sits between your bot and Krystal. It classifies each message and routes to the correct Krystal instance.</p>
+
+    <pre><code>git clone https://github.com/protocol-luna/sapphire
+cd sapphire
+pip install -r requirements.txt
+python server.py
+# listens on 127.0.0.1:3123</code></pre>
+
+    <p><strong>How it works:</strong></p>
+    <ul>
+      <li>Loads <code>BAAI/bge-small-en-v1.5</code> (fastembed, auto-downloaded on first run)</li>
+      <li>Computes centroids from <code>examples.yml</code> (~200 curated examples)</li>
+      <li>Each message is embedded and compared to both centroids via cosine similarity</li>
+      <li>Label with higher similarity wins: <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious)</li>
+      <li><strong>99.6% accuracy</strong> on the test suite (257/258)</li>
+    </ul>
+
+    <p><strong>Endpoints:</strong></p>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>Classify + proxy to Krystal (OpenAI-compatible)</td></tr>
+        <tr><td><code>/classify</code></td><td>POST</td><td>Classify only, returns label + similarity scores</td></tr>
+        <tr><td><code>/health</code></td><td>GET</td><td>Server status + configuration</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Environment variables:</strong></p>
+    <table>
+      <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Server port</td></tr>
+        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
+        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
+        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to example list</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="step-bot">Step 3: Bot (Jade / Pixieglow)</h2>
+
+    <h3>Jade (Discord)</h3>
+    <pre><code>git clone https://github.com/protocol-luna/jade
+cd jade
+cp config.example.yml config.yml
+# edit config.yml: set discord_token, llm_host=localhost, llm_port=3123
+npm install
+npm start</code></pre>
+
+    <h3>Pixieglow (Matrix)</h3>
+    <pre><code>git clone https://github.com/protocol-luna/pixieglow
+cd pixieglow
+cp config.example.yml config.yml
+# edit config.yml: set matrix_token, matrix_host, llm_host=localhost, llm_port=3123
+bun install
+bun run src/index.ts</code></pre>
+
+    <p>Both bots point their <code>llm_host</code> / <code>llm_port</code> to <strong>Sapphire</strong> (<code>localhost:3123</code>), not directly to Krystal. Sapphire handles classification and routing.</p>
+
+    <h2 id="testing">Testing Your Setup</h2>
+
+    <p>Verify each layer independently:</p>
+
+    <pre><code># 1. Krystal is running
+curl http://127.0.0.1:3124/health   # small mode
+curl http://127.0.0.1:3125/health   # large mode
+
+# 2. Sapphire is running
+curl http://127.0.0.1:3123/health
+
+# 3. Classification works
+curl -X POST http://127.0.0.1:3123/classify \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"hello"}'
+# Expected: {"label":"FUTILE","confidence":0.1461,...}
+
+curl -X POST http://127.0.0.1:3123/classify \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"how does quantum computing work"}'
+# Expected: {"label":"INTERESSANT",...}
+
+# 4. Full routing works
+curl -X POST http://127.0.0.1:3123/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"messages":[{"role":"user","content":"hello"}]}'
+# Expected: response from Krystal-small (:3124)</code></pre>
+
+    <p>Run the full test suite to check accuracy:</p>
+    <pre><code>cd sapphire
+pip install -r requirements.txt  # if not done already
+python test_classifier.py
+# Expected: 257/258 (99.6%)</code></pre>
+
+    <h2 id="best-practices">Best Practices</h2>
+
+    <h3>Production Deployment</h3>
+    <ul>
+      <li><strong>Use PM2</strong> for auto-restart: both Krystal instances and Sapphire should be managed by PM2</li>
+      <li><strong>Pin CPU affinity</strong>: dedicate cores to each Krystal instance to avoid context switching</li>
+      <li><strong>Monitor disk space</strong>: GGUF models are 1-6 GB; logs can grow quickly</li>
+      <li><strong>Use a reverse proxy</strong> (nginx, cloudflared) if exposing endpoints outside localhost</li>
+    </ul>
+
+    <h3>Model Selection</h3>
+    <table>
+      <thead><tr><th>Scenario</th><th>Recommended</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td>Low resources (1-2 cores, &lt;4 GB RAM)</td><td>Luna 1.5B (small only)</td><td>Single instance, fast responses</td></tr>
+        <tr><td>Moderate (4 cores, 8 GB RAM)</td><td>Both small + large</td><td>Full Sapphire routing</td></tr>
+        <tr><td>High (8+ cores, 16+ GB RAM)</td><td>Both; increase context to 16384</td><td>Maximum capability</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Tuning Examples</h3>
+    <p>If messages are misclassified, edit <code>sapphire/examples.yml</code>:</p>
+    <ul>
+      <li><strong>FUTILE bleeding into INTERESSANT</strong>: add more examples of that type to the <code>futile</code> list</li>
+      <li><strong>INTERESSANT bleeding into FUTILE</strong>: add more examples to the <code>interessant</code> list</li>
+      <li><strong>Weighted examples</strong>: use <code>{text: "example", weight: 5}</code> to give extra weight without duplicating</li>
+      <li>After editing, restart Sapphire to recompute centroids</li>
+      <li>Run <code>python test_classifier.py</code> to verify accuracy</li>
+    </ul>
+
+    <h3>Prompt Caching</h3>
+    <p>Both Krystal instances use <code>--cache-reuse 256</code> and <code>--slot-prompt-similarity 0</code>. This means:</p>
+    <ul>
+      <li>FUTILE messages reuse a shared prompt cache (fast, efficient)</li>
+      <li>INTERESSANT messages get a fresh slot (no cache pollution from trivial chats)</li>
+      <li>Adjust <code>KRYSTAL_N_SLOTS</code> if you need concurrent users</li>
+    </ul>
+
+    <h2 id="performance">Performance Tuning</h2>
+
+    <h3>CPU Affinity</h3>
+    <p>Dedicate specific CPU cores to each Krystal instance. Example for a 4-core system:</p>
+    <pre><code># Krystal-small: core 0
+KRYSTAL_CPU_AFFINITY=0 ./start.sh small
+
+# Krystal-large: cores 1-2
+KRYSTAL_CPU_AFFINITY=1-2 ./start.sh large
+
+# Sapphire: core 3 (optional, uses very little CPU)
+taskset -c 3 python server.py</code></pre>
+
+    <h3>Memory</h3>
+    <ul>
+      <li>Luna 1.5B Q4_K_M: ~1 GB RAM</li>
+      <li>Hermes-8B Q8_0: ~8 GB RAM</li>
+      <li>Sapphire (fastembed): ~200 MB</li>
+      <li>Running both models simultaneously requires ~10 GB RAM</li>
+    </ul>
+
+    <h3>Context Size</h3>
+    <ul>
+      <li><code>KRYSTAL_N_CTX=8192</code> is the default (good for most conversations)</li>
+      <li>Increase to <code>16384</code> for long-running conversations with history</li>
+      <li>Higher context = more RAM usage (roughly +1 GB per 8192 tokens)</li>
+    </ul>
+
+    <h2 id="troubleshooting">Troubleshooting</h2>
+
+    <h3>Sapphire won't start</h3>
+    <p><strong>"Model not loaded" or connection refused:</strong></p>
+    <ul>
+      <li>fastembed auto-downloads the model on first run (~100 MB). Ensure internet access.</li>
+      <li>Check <code>~/cache/huggingface/</code> for downloaded models.</li>
+      <li>Run <code>pip install -r requirements.txt</code> to ensure all deps are installed.</li>
+    </ul>
+
+    <h3>Bot gets no response</h3>
+    <p><strong>Check each layer from bottom up:</strong></p>
+    <ul>
+      <li><code>curl http://127.0.0.1:3125/health</code> — Krystal must respond</li>
+      <li><code>curl http://127.0.0.1:3123/health</code> — Sapphire must respond</li>
+      <li><code>curl http://127.0.0.1:3123/classify -d '{"text":"hi"}'</code> — classification must work</li>
+      <li>Bot config must point <code>llm_host: localhost</code> + <code>llm_port: 3123</code> (Sapphire, not Krystal directly)</li>
+    </ul>
+
+    <h3>Wrong classification</h3>
+    <ul>
+      <li>Check <code>sapphire/examples.yml</code> — add examples of the misbehaving type</li>
+      <li>Restart Sapphire after editing examples</li>
+      <li>Run <code>python test_classifier.py</code> to measure impact</li>
+      <li>See <a href="#best-practices">Best Practices &rarr; Tuning Examples</a></li>
+    </ul>
+
+    <h3>Krystal crashes or OOM</h3>
+    <ul>
+      <li>Reduce <code>KRYSTAL_N_CTX</code> (try 4096)</li>
+      <li>Use a smaller quantized model (Q4_K_M instead of Q8_0)</li>
+      <li>Reduce <code>KRYSTAL_N_THREADS</code> to match available cores</li>
+      <li>Check <code>pm2 logs krystal-small</code> or <code>pm2 logs krystal-large</code></li>
+    </ul>
+
+    <h3>Streaming not working</h3>
+    <ul>
+      <li>Sapphire proxies SSE streams. Ensure your bot client supports streaming.</li>
+      <li>Set <code>stream: true</code> in the request body.</li>
+      <li>Check that Krystal was started with <code>--no-slots</code> (required for streaming).</li>
+    </ul>
+
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <a href="../">Protocol Luna</a> &middot; <a href="overview.html">Overview</a> &middot; <a href="fewshot-priming.html">Few-Shot Priming Guide</a> &middot; <a href="https://github.com/protocol-luna">GitHub</a>
+  </div>
+</footer>
+
+</body>
+</html>
