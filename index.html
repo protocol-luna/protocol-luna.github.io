@@ -127,6 +127,24 @@ section { padding: 90px 0; }
 .doc-link .doc-info h4 { font-size: 0.95rem; }
 .doc-link .doc-info p { font-size: 0.8rem; color: var(--text-muted); }
 
+.timeline { position: relative; padding-left: 40px; }
+.timeline::before { content: ''; position: absolute; left: 16px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.timeline-item { position: relative; margin-bottom: 32px; }
+.timeline-item::before { content: ''; position: absolute; left: -32px; top: 6px; width: 12px; height: 12px; border-radius: 50%; background: var(--bg-card); border: 2px solid var(--primary-dim); }
+.timeline-item:last-child::before { background: var(--primary); border-color: var(--primary); box-shadow: 0 0 12px var(--glow); }
+.timeline-year { font-size: 0.8rem; font-weight: 700; color: var(--primary-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+.timeline-content { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px 24px; }
+.timeline-content h4 { font-size: 1rem; margin-bottom: 6px; }
+.timeline-content p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
+.use-cases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
+.use-case-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 28px; transition: all .25s; }
+.use-case-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 30px var(--glow); }
+.use-case-card .icon-wrap { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; background: rgba(147,112,219,0.12); border: 1px solid rgba(147,112,219,0.2); }
+.use-case-card .icon-wrap svg { width: 20px; height: 20px; }
+.use-case-card h4 { font-size: 1rem; margin-bottom: 8px; }
+.use-case-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
 footer a:hover { color: var(--primary-light); }
@@ -155,6 +173,8 @@ img { max-width: 100%; height: auto; }
   .blog-post .luna-tag { align-self: flex-start; }
   .docs-grid { grid-template-columns: 1fr; }
   .showcase-quote { font-size: 0.85rem; padding: 18px 20px; }
+  .use-cases-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 32px; }
 }
 
 @media (max-width: 480px) {
@@ -183,6 +203,8 @@ img { max-width: 100%; height: auto; }
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
       <a href="#showcase">Showcase</a>
+      <a href="#timeline">Timeline</a>
+      <a href="#use-cases">Use Cases</a>
       <a href="#blog">Blog</a>
       <a href="#docs">Docs</a>
     </div>
@@ -311,6 +333,106 @@ img { max-width: 100%; height: auto; }
     </div>
     <div class="showcase-quote" style="margin-top:16px;">
       <strong>Coming soon:</strong> Krystal will detect whether a message is trivial or substantive, and switch between Luna (1.5B, fast) and Discord-Hermes (8B, deep) accordingly &mdash; two inference servers, one seamless persona.
+    </div>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="container">
+    <div class="section-label">Timeline</div>
+    <h2 class="section-title">60 Years of Chatbots</h2>
+    <p class="section-sub">From keyword matching to autonomous agents &mdash; a quick timeline of conversational AI.</p>
+    <div class="timeline">
+      <div class="timeline-item">
+        <div class="timeline-year">1966</div>
+        <div class="timeline-content">
+          <h4>ELIZA</h4>
+          <p>MIT. Keyword matching simulating a therapist. The &ldquo;Eliza effect&rdquo; &mdash; humans attributing understanding to a machine that simply rephrases their sentences.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1972</div>
+        <div class="timeline-content">
+          <h4>PARRY</h4>
+          <p>Psychiatrist Kenneth Colby simulates paranoid schizophrenia. More complex behavior model &mdash; anger, suspicion, deflection &mdash; but still rule-based.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">1995</div>
+        <div class="timeline-content">
+          <h4>A.L.I.C.E.</h4>
+          <p>AIML (Artificial Intelligence Markup Language). Thousands of hand-written rules. Won the Loebner Prize 3 times. Still no learning, just bigger pattern libraries.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2001</div>
+        <div class="timeline-content">
+          <h4>SmarterChild</h4>
+          <p>AOL Instant Messenger &amp; MSN Messenger. Information retrieval + entertainment. The first chatbot millions used daily &mdash; without knowing it was a chatbot.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2011</div>
+        <div class="timeline-content">
+          <h4>Siri</h4>
+          <p>Apple puts a chatbot in every pocket. Voice-first interaction. From text scripts to speech recognition &mdash; the chatbot goes mainstream.</p>
+        </div>
+      </div>
+      <div class="timeline-item">
+        <div class="timeline-year">2022</div>
+        <div class="timeline-content">
+          <h4>ChatGPT</h4>
+          <p>Large Language Models finally feel like &ldquo;real conversation.&rdquo; No more decision trees &mdash; fluid, context-aware, open-ended dialogue. The chatbot becomes indistinguishable from a person.</p>
+        </div>
+      </div>
+      <div class="timeline-item" style="border-color:var(--primary);">
+        <div class="timeline-year" style="color:var(--primary-light);">2026</div>
+        <div class="timeline-content">
+          <h4>Protocol Luna</h4>
+          <p>Local LLMs, autonomous behavior, sleep cycles, typos, hesitations. The chatbot is no longer a tool &mdash; it&rsquo;s a persona that lives on your server.</p>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px;">
+      <a class="btn btn-outline" href="https://fox3000foxy.com/blog/from-eliza-to-llm-chatbots-typescript" target="_blank" rel="noopener">Read the full article &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<section id="use-cases">
+  <div class="container">
+    <div class="section-label">Use Cases</div>
+    <h2 class="section-title">Where Human-Like Bots Matter</h2>
+    <p class="section-sub">Protocol Luna isn&rsquo;t a chatbot for customer support. It&rsquo;s about creating presence &mdash; digital beings that feel real enough to pass.</p>
+    <div class="use-cases-grid">
+      <div class="use-case-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </div>
+        <h4>Dead Internet Theory</h4>
+        <p>When every platform is flooded with bots, the only way to stay visible is to have your own. Two instances of Luna can maintain a server&rsquo;s activity without any human intervention.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <h4>Social Simulation</h4>
+        <p>Game worlds, Discord servers, virtual communities &mdash; environments where NPCs need to feel like real participants, not scripted quest givers.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h4>Companion AI</h4>
+        <p>Not therapy, not productivity &mdash; just presence. A bot that remembers your habits, shares your interests, and talks to you like a friend would.</p>
+      </div>
+      <div class="use-case-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h4>Testing &amp; Research</h4>
+        <p>How do humans react to bots they can&rsquo;t detect? Protocol Luna is a practical lab for studying the Eliza effect at scale.</p>
+      </div>
     </div>
   </div>
 </section>
