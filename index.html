@@ -154,6 +154,17 @@ section { padding: 90px 0; }
 .behavior-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
 .behavior-card code { background: rgba(147,112,219,0.15); padding: 1px 5px; border-radius: 4px; font-size: 0.8rem; }
 
+.raw-model-demo { display: flex; flex-direction: column; gap: 24px; align-items: center; }
+.terminal-wrapper { background: #0c0c0c; border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden; width: 100%; max-width: 800px; }
+.terminal-bar { display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #1a1a1a; border-bottom: 1px solid #333; }
+.terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+.terminal-title { margin-left: 12px; font-size: 0.75rem; color: #888; font-family: monospace; }
+.terminal-wrapper img { width: 100%; display: block; }
+.raw-model-note { max-width: 700px; background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px 24px; }
+.raw-model-note p { font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; }
+.raw-model-note strong { color: var(--text); }
+.raw-model-note em { color: var(--primary-light); font-style: normal; }
+
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
 footer a:hover { color: var(--primary-light); }
@@ -185,6 +196,7 @@ img { max-width: 100%; height: auto; }
   .use-cases-grid { grid-template-columns: 1fr; }
   .behavior-grid { grid-template-columns: 1fr; }
   .timeline { padding-left: 32px; }
+  .terminal-wrapper { border-radius: var(--radius); }
 }
 
 @media (max-width: 480px) {
@@ -210,6 +222,7 @@ img { max-width: 100%; height: auto; }
       Protocol <span>Luna</span>
     </a>
     <div class="links">
+      <a href="#raw-model">Raw Model</a>
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
       <a href="#state-machine">State Machine</a>
@@ -233,6 +246,28 @@ img { max-width: 100%; height: auto; }
         GitHub Organization
       </a>
       <a href="https://github.com/protocol-luna/.github" class="btn btn-outline">Documentation</a>
+    </div>
+  </div>
+</section>
+
+<section id="raw-model">
+  <div class="container">
+    <div class="section-label">Raw Output</div>
+    <h2 class="section-title">No Tricks. Just Fine-Tuning.</h2>
+    <p class="section-sub">Load the model. No system prompt, no few-shot priming, no behavioral layer. The fine-tuning alone produces human-style responses &mdash; not assistant-style.</p>
+    <div class="raw-model-demo">
+      <div class="terminal-wrapper">
+        <div class="terminal-bar">
+          <span class="terminal-dot" style="background:#ff5f57;"></span>
+          <span class="terminal-dot" style="background:#febc2e;"></span>
+          <span class="terminal-dot" style="background:#28c840;"></span>
+          <span class="terminal-title">llama-cli &mdash; Luna-Protocol-1.5B-Q8_0</span>
+        </div>
+        <img src="images/llama-cli-raw.png" alt="Raw model output in llama-cli terminal" loading="lazy">
+      </div>
+      <div class="raw-model-note">
+        <p><strong>What you see:</strong> the model responds with &ldquo;good hruu&rdquo;, &ldquo;ohh nicee&rdquo;, &ldquo;no problem, how was your day?&rdquo; &mdash; casual, lowercase, no punctuation excess. The style is <em>baked into the weights</em>, not injected by prompts. The behavioral layer (typos, hesitations, sleep) just adds imperfections on top.</p>
+      </div>
     </div>
   </div>
 </section>
