@@ -145,6 +145,15 @@ section { padding: 90px 0; }
 .use-case-card h4 { font-size: 1rem; margin-bottom: 8px; }
 .use-case-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
 
+.behavior-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+.behavior-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 28px; transition: all .25s; }
+.behavior-card:hover { border-color: var(--primary); transform: translateY(-3px); box-shadow: 0 8px 30px var(--glow); }
+.behavior-card .behavior-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; background: rgba(147,112,219,0.12); border: 1px solid rgba(147,112,219,0.2); }
+.behavior-card .behavior-icon svg { width: 20px; height: 20px; }
+.behavior-card h4 { font-size: 1rem; margin-bottom: 8px; }
+.behavior-card p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; }
+.behavior-card code { background: rgba(147,112,219,0.15); padding: 1px 5px; border-radius: 4px; font-size: 0.8rem; }
+
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); text-decoration: none; }
 footer a:hover { color: var(--primary-light); }
@@ -174,6 +183,7 @@ img { max-width: 100%; height: auto; }
   .docs-grid { grid-template-columns: 1fr; }
   .showcase-quote { font-size: 0.85rem; padding: 18px 20px; }
   .use-cases-grid { grid-template-columns: 1fr; }
+  .behavior-grid { grid-template-columns: 1fr; }
   .timeline { padding-left: 32px; }
 }
 
@@ -202,6 +212,7 @@ img { max-width: 100%; height: auto; }
     <div class="links">
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
+      <a href="#state-machine">State Machine</a>
       <a href="#showcase">Showcase</a>
       <a href="#timeline">Timeline</a>
       <a href="#use-cases">Use Cases</a>
@@ -296,6 +307,58 @@ img { max-width: 100%; height: auto; }
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/22-complete-lifecycle.svg'">
         <h4>Complete Lifecycle</h4>
         <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="state-machine">
+  <div class="container">
+    <div class="section-label">Behavioral Layer</div>
+    <h2 class="section-title">The State Machine That Makes It Real</h2>
+    <p class="section-sub">Jade&rsquo;s state machine isn&rsquo;t about generating text &mdash; it&rsquo;s about deciding <em>when</em>, <em>how</em>, and <em>whether</em> to respond. Every behavior is a deliberate imperfection.</p>
+    <div class="behavior-grid">
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <h4>Typo Injection</h4>
+        <p>Simulates keyboard slips: adjacent-key swaps (<code>teh</code>), missing letters (<code>liek</code>), double-taps (<code>sooo</code>). Probability scales with message length &mdash; longer messages = more typos. Corrections happen silently 3-8 seconds later.</p>
+      </div>
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <h4>Hesitation Markers</h4>
+        <p>&ldquo;hmm&rdquo;, &ldquo;wait&rdquo;, &ldquo;idk&rdquo;, &ldquo;...&rdquo; inserted before uncertain responses. The LLM doesn&rsquo;t generate these &mdash; the state machine injects them post-generation based on confidence scoring.</p>
+      </div>
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+        </div>
+        <h4>Sleep Cycles</h4>
+        <p>Circadian rhythm tied to real time. At night: ignore all but mentions. During &ldquo;slow&rdquo; hours: 3-5&times; longer delays. The bot doesn&rsquo;t pretend to sleep &mdash; it <em>actually</em> reduces activity based on its persona&rsquo;s schedule.</p>
+      </div>
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+        </div>
+        <h4>Burst Mode</h4>
+        <p>When engaged in a conversation, response delays drop to 2-5 seconds &mdash; mimicking real typing speed. But only for 15 seconds max per exchange, then it cools down. Prevents the bot from dominating a thread.</p>
+      </div>
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h4>Topic Fatigue</h4>
+        <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored &mdash; longer delays, higher ignore chance, shorter responses. Humans do this unconsciously; the bot does it explicitly.</p>
+      </div>
+      <div class="behavior-card">
+        <div class="behavior-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h4>Follow-Up Detection</h4>
+        <p>Tracks who spoke last. If the bot was the last to talk, it&rsquo;s less likely to respond again &mdash; preventing monologues. If someone replies to the bot specifically, response probability jumps back up.</p>
       </div>
     </div>
   </div>
