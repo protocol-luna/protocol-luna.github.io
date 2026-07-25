@@ -439,7 +439,7 @@ huggingface-cli download \
     <p class="section-sub">24 state-machine diagrams document every component -- from message processing to typo correction.</p>
     <div class="diagram-wrapper">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
-      <div class="diagram-caption">High-level system architecture: configuration &rarr; bot layer &rarr; LLM inference</div>
+      <div class="diagram-caption">High-level system architecture: bot &rarr; Sapphire (classification + routing) &rarr; Krystal instances</div>
     </div>
     <div class="diagram-grid">
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/02-message-processing.svg'">
@@ -465,6 +465,10 @@ huggingface-cli download \
       <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/22-complete-lifecycle.svg'">
         <h4>Complete Lifecycle</h4>
         <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle.</p>
+      </div>
+      <div class="diagram-card">
+        <h4>Sapphire Gateway</h4>
+        <p>Unified LLM gateway. All bots (Jade, Pixieglow) talk to Sapphire. Classifies each message as GENERIC or SEMANTIC via DistilBERT (134M, ONNX INT8), then routes to the right Krystal instance — Luna 1.5B (fast) or Discord-Hermes-8B (deep).</p>
       </div>
     </div>
   </div>
