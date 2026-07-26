@@ -65,7 +65,7 @@ nav .back:hover { color: var(--primary-light); text-decoration: none; }
 .doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
 
-.doc-content { padding: 0 0 80px; }
+.doc-content { grid-column: 2; padding: 0 0 80px; }
 .doc-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--text); scroll-margin-top: 80px; }
 .doc-content h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; color: var(--primary-light); scroll-margin-top: 80px; }
 .doc-content h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
@@ -106,6 +106,7 @@ footer a { color: var(--primary-dim); }
   .doc-content pre { padding: 14px; font-size: 0.8rem; }
   .doc-layout { grid-template-columns: 1fr; gap: 0; }
   .doc-sidebar { position: static; margin-bottom: 24px; }
+  .doc-content { grid-column: auto; }
 }
 </style>
 </head>
