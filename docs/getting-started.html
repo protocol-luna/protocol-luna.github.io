@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luna Protocol -- Getting Started</title>
-<meta name="description" content="Beginner and advanced guides for running Luna Protocol bots: Krystal, Sapphire, Jade, and Pixieglow.">
+<meta name="description" content="From zero to running bot: install Krystal, Sapphire, Emerald, and a bot adapter in minutes.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://protocol-luna.github.io/docs/getting-started.html">
 <meta property="og:site_name" content="Protocol Luna">
 <meta property="og:title" content="Getting Started -- Protocol Luna">
-<meta property="og:description" content="Beginner and advanced guides for running Luna Protocol bots: Krystal, Sapphire, Jade, and Pixieglow.">
+<meta property="og:description" content="From zero to running bot: install Krystal, Sapphire, Emerald, and a bot adapter.">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Getting Started -- Protocol Luna">
-<meta name="twitter:description" content="Beginner and advanced guides for running Luna Protocol bots.">
+<meta name="twitter:description" content="From zero to running bot: install Krystal, Sapphire, Emerald, and a bot adapter.">
 <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -134,21 +134,22 @@ footer a { color: var(--primary-dim); }
   <div class="doc-layout">
     <div class="doc-header">
       <h1>Getting Started</h1>
-      <p>From zero to running bot in 15 minutes. Beginner and advanced guides for the full Luna Protocol stack.</p>
+      <p>From zero to running bot in 20 minutes. All local, no cloud APIs.</p>
     </div>
     <aside class="doc-sidebar">
       <div class="toc">
         <h3>Table of Contents</h3>
         <ul>
-          <li><a href="#quickstart"><span class="badge badge-beginner">Beginner</span> Quick Start (15 min)</a></li>
+          <li><a href="#quickstart"><span class="badge badge-beginner">Beginner</span> Quick Start (20 min)</a></li>
           <li><a href="#architecture">Architecture Overview</a></li>
           <li><a href="#prerequisites">Prerequisites</a></li>
           <li><a href="#step-krystal">Step 1: Krystal (LLM Server)</a></li>
           <li><a href="#step-sapphire">Step 2: Sapphire (Gateway)</a></li>
-          <li><a href="#step-bot">Step 3: Bot (Jade / Pixieglow)</a></li>
+          <li><a href="#step-emerald">Step 3: Emerald (Brain)</a></li>
+          <li><a href="#step-bot">Step 4: Bot (Jade / Pixieglow)</a></li>
           <li><a href="#testing">Testing Your Setup</a></li>
+          <li><a href="#debug-mode">Debug Mode</a></li>
           <li><a href="#best-practices"><span class="badge badge-advanced">Advanced</span> Best Practices</a></li>
-          <li><a href="#performance">Performance Tuning</a></li>
           <li><a href="#troubleshooting">Troubleshooting</a></li>
         </ul>
       </div>
@@ -156,62 +157,74 @@ footer a { color: var(--primary-dim); }
 
     <div class="doc-content">
 
-    <h2 id="quickstart">Quick Start (15 min)</h2>
+    <h2 id="quickstart">Quick Start (20 min)</h2>
 
-    <p>Get a fully working bot in 5 commands:</p>
+    <p>Get a fully working bot in 8 commands:</p>
 
-    <pre><code># 1. Start the LLM server (Krystal, small mode = Luna 1.5B)
+    <pre><code># 1. Start the LLM server (Krystal)
 git clone https://github.com/protocol-luna/krystal
 cd krystal
 npm install
-./start.sh small   # starts on :3124 with Luna 1.5B
+./start.sh   # Luna 1.5B on :3124
 
-# 2. Start the classifier gateway (Sapphire)
+# 2. Start the LLM gateway (Sapphire)
 git clone https://github.com/protocol-luna/sapphire
 cd sapphire
 pip install -r requirements.txt
-python server.py &amp;
+python server.py &amp;   # listens on :3123
 
-# 3. Start a bot (example: Pixieglow for Matrix)
-git clone https://github.com/protocol-luna/pixieglow
-cd pixieglow
+# 3. Start the brain (Emerald)
+git clone https://github.com/protocol-luna/emerald
+cd emerald
+npm install
 cp config.example.yml config.yml
-# edit config.yml: set matrix_token, sapphire_host=localhost, sapphire_port=3123
-bun run src/index.ts</code></pre>
+npm start &amp;   # WebSocket on :3126
+
+# 4. Start a bot (example: Jade for Discord)
+git clone https://github.com/protocol-luna/jade
+cd jade
+cp config.example.yml config.yml
+# edit config.yml: set discord_token, emerald_host=localhost, emerald_port=3126
+npm start</code></pre>
 
     <h2 id="architecture">Architecture Overview</h2>
 
-    <p>The Luna Protocol stack has three layers:</p>
+    <p>The Luna Protocol stack has four layers:</p>
 
-    <pre><code>Bot Layer         ┌──────────┐  ┌─────────────┐
-(Jade/Pixieglow)  │ Jade     │  │ Pixieglow   │
-                  │ (Discord)│  │ (Matrix)    │
-                  └────┬─────┘  └──────┬──────┘
-                       │               │
-                       └───────┬───────┘
-                               │ OpenAI-compatible HTTP
-Gateway Layer      ┌──────────▼──────────┐
-(Sapphire)         │  Sapphire            │
-                   │  classify + route    │
-                   │  FUTILE / INTERESSANT│
-                   └────┬──────────┬──────┘
-                        │          │
-                   FUTILE    INTERESSANT
-                        │          │
-LLM Layer      ┌───────▼──┐  ┌────▼────────┐
-(Krystal)      │ Krystal- │  │ Krystal-   │
-               │ small    │  │ large      │
-               │ :3124    │  │ :3125      │
-               │ Luna1.5B │  │ Hermes-8B  │
-               └──────────┘  └────────────┘</code></pre>
+    <pre><code>Platform Layer    ┌──────────────┐  ┌───────────────┐
+(Discord/Matrix)  │   Discord    │  │    Matrix     │
+                  └──────┬───────┘  └───────┬───────┘
+                         │                  │
+Adapter Layer     ┌──────▼───────┐  ┌───────▼───────┐
+(Jade/Pixieglow)  │    Jade      │  │   Pixieglow   │
+                  │ (WebSocket)  │  │  (WebSocket)  │
+                  └──────┬───────┘  └───────┬───────┘
+                         │                  │
+                         └────────┬─────────┘
+                                  │ WebSocket :3126
+Brain Layer       ┌───────────────▼──────────────┐
+(Emerald)         │      Emerald (Brain)          │
+                  │  behavior + Sapphire client   │
+                  └───────────────┬───────────────┘
+                                  │ HTTP :3123
+Gateway Layer     ┌───────────────▼──────────────┐
+(Sapphire)        │     Sapphire (Gateway)       │
+                  │  classify + session + emotion│
+                  └───────────────┬───────────────┘
+                                  │ HTTP :3124
+LLM Layer         ┌───────────────▼──────────────┐
+(Krystal)         │  Krystal (llama.cpp)         │
+                  │  Luna 1.5B Q4_K_M            │
+                  └──────────────────────────────┘</code></pre>
 
     <h2 id="prerequisites">Prerequisites</h2>
 
     <table>
       <thead><tr><th>Component</th><th>Requirement</th></tr></thead>
       <tbody>
-        <tr><td>Krystal</td><td>Linux (llama-server), ~2 GB disk per model</td></tr>
+        <tr><td>Krystal</td><td>Linux (llama-server), ~1 GB disk for model</td></tr>
         <tr><td>Sapphire</td><td>Python 3.10+, ~200 MB for fastembed cache</td></tr>
+        <tr><td>Emerald</td><td>Node.js 18+</td></tr>
         <tr><td>Jade (Discord)</td><td>Node.js 18+, Discord bot token</td></tr>
         <tr><td>Pixieglow (Matrix)</td><td>Bun, Matrix access token + homeserver URL</td></tr>
       </tbody>
@@ -219,45 +232,30 @@ LLM Layer      ┌───────▼──┐  ┌────▼───
 
     <h2 id="step-krystal">Step 1: Krystal (LLM Server)</h2>
 
-    <p>Krystal wraps <code>llama-server</code> from llama.cpp to serve GGUF models. Two modes:</p>
-
-    <table>
-      <thead><tr><th>Mode</th><th>Port</th><th>Model</th><th>Use case</th></tr></thead>
-      <tbody>
-        <tr><td><code>small</code></td><td><code>:3124</code></td><td>Luna-Protocol-1.5B</td><td>GENERIC — chit-chat, greetings, fast replies</td></tr>
-        <tr><td><code>large</code></td><td><code>:3125</code></td><td>Discord-Hermes-8B</td><td>SEMANTIC — deep conversation, complex questions</td></tr>
-      </tbody>
-    </table>
+    <p>Krystal wraps <code>llama-server</code> from llama.cpp. Single-backend mode on port 3124:</p>
 
     <pre><code>git clone https://github.com/protocol-luna/krystal
 cd krystal
 npm install
-./start.sh small   # or: ./start.sh large
-# Both can run simultaneously for full Sapphire routing</code></pre>
+./start.sh   # starts on :3124 with Luna 1.5B Q4_K_M</code></pre>
 
-    <p><strong>Download models:</strong></p>
-    <pre><code>npm run download-model:small   # Luna 1.5B (~1 GB)
-npm run download-model:large   # Hermes-8B (~6 GB)</code></pre>
+    <p><strong>Download the model:</strong></p>
+    <pre><code>npm run download-model   # Luna 1.5B (~1 GB)</code></pre>
 
     <p><strong>Environment variables:</strong></p>
     <table>
-      <thead><tr><th>Variable</th><th>Description</th><th>Default (small)</th><th>Default (large)</th></tr></thead>
+      <thead><tr><th>Variable</th><th>Description</th><th>Default</th></tr></thead>
       <tbody>
-        <tr><td><code>KRYSTAL_MODEL_PATH</code></td><td>Path to GGUF file</td><td>./models/Luna-1.5B...gguf</td><td>./models/Hermes-8B...gguf</td></tr>
-        <tr><td><code>KRYSTAL_PORT</code></td><td>Server port</td><td>3124</td><td>3125</td></tr>
-        <tr><td><code>KRYSTAL_CPU_AFFINITY</code></td><td>CPU core affinity</td><td>0</td><td>0,1</td></tr>
-        <tr><td><code>KRYSTAL_N_THREADS</code></td><td>Thread count</td><td>auto</td><td>auto</td></tr>
-        <tr><td><code>KRYSTAL_N_CTX</code></td><td>Context size</td><td>8192</td><td>8192</td></tr>
+        <tr><td><code>KRYSTAL_MODEL_PATH</code></td><td>Path to GGUF file</td><td>./models/Luna-1.5B...gguf</td></tr>
+        <tr><td><code>KRYSTAL_PORT</code></td><td>Server port</td><td>3124</td></tr>
+        <tr><td><code>KRYSTAL_N_THREADS</code></td><td>Thread count</td><td>6</td></tr>
+        <tr><td><code>KRYSTAL_N_CTX</code></td><td>Context size</td><td>4096</td></tr>
       </tbody>
     </table>
 
-    <blockquote>
-      <p><strong>Legacy vars:</strong> <code>LLM_*</code> vars (e.g. <code>LLM_MODEL_PATH</code>) still work as fallbacks.</p>
-    </blockquote>
-
     <h2 id="step-sapphire">Step 2: Sapphire (Gateway)</h2>
 
-    <p>Sapphire sits between your bot and Krystal. It classifies each message and routes to the correct Krystal instance.</p>
+    <p>Sapphire sits between Emerald and Krystal. It classifies messages, manages sessions, injects few-shot examples, and detects degenerate responses.</p>
 
     <pre><code>git clone https://github.com/protocol-luna/sapphire
 cd sapphire
@@ -267,20 +265,22 @@ python server.py
 
     <p><strong>How it works:</strong></p>
     <ul>
-      <li>Loads <code>BAAI/bge-small-en-v1.5</code> (fastembed, auto-downloaded on first run)</li>
-      <li>Computes centroids from <code>examples.yml</code> (~200 curated examples)</li>
-      <li>Each message is embedded and compared to both centroids via cosine similarity</li>
-      <li>Label with higher similarity wins: <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious)</li>
-      <li><strong>99.6% accuracy</strong> on the test suite (257/258)</li>
+      <li>Loads <code>BAAI/bge-small-en-v1.5</code> (fastembed, auto-downloaded on first run, ~100 MB)</li>
+      <li>Computes centroids from <code>examples.yml</code> (~1100 curated examples)</li>
+      <li>Each message is embedded and compared to centroids via cosine similarity</li>
+      <li>Scores emotion (valence/arousal) on [-1, 1] scale</li>
+      <li>Manages per-channel conversation sessions with configurable history length</li>
+      <li>Calls Krystal with emotion-aware sampling parameters</li>
     </ul>
 
-    <p><strong>Endpoints:</strong></p>
+    <p><strong>Key endpoints (Emerald uses /v1/respond):</strong></p>
     <table>
       <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>Classify + proxy to Krystal (OpenAI-compatible)</td></tr>
-        <tr><td><code>/classify</code></td><td>POST</td><td>Classify only, returns label + similarity scores</td></tr>
-        <tr><td><code>/health</code></td><td>GET</td><td>Server status + configuration</td></tr>
+        <tr><td><code>/v1/respond</code></td><td>POST</td><td>Classify + session + few-shot + emotion + call Krystal. Returns text and optional debug stats.</td></tr>
+        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>OpenAI-compatible chat completions (no sessions, no few-shot). For external tools.</td></tr>
+        <tr><td><code>/classify</code></td><td>POST</td><td>Classify only, returns label + similarity scores + emotion scores.</td></tr>
+        <tr><td><code>/health</code></td><td>GET</td><td>Server status + configuration.</td></tr>
       </tbody>
     </table>
 
@@ -289,40 +289,112 @@ python server.py
       <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Server port</td></tr>
-        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
-        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
+        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Krystal backend (single-backend mode)</td></tr>
         <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to example list</td></tr>
+        <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>System prompt for all conversations</td></tr>
       </tbody>
     </table>
 
-    <h2 id="step-bot">Step 3: Bot (Jade / Pixieglow)</h2>
+    <h2 id="step-emerald">Step 3: Emerald (Brain)</h2>
+
+    <p>Emerald is the central WebSocket server. Bots connect to it, and it orchestrates all LLM and behavior logic.</p>
+
+    <pre><code>git clone https://github.com/protocol-luna/emerald
+cd emerald
+npm install
+cp config.example.yml config.yml
+# edit config.yml if needed (sapphire_host, behavior settings)
+npm start
+# WebSocket server on 127.0.0.1:3126</code></pre>
+
+    <p><strong>What Emerald does:</strong></p>
+    <ul>
+      <li>Accepts WebSocket connections from bots on port 3126</li>
+      <li>Evaluates behavior rules: burst cooldown, sleep schedule, typo/swap, mannerisms, ignore prefixes</li>
+      <li>Calls Sapphire's <code>/v1/respond</code> for non-ignored messages</li>
+      <li>Applies typo/swap behavior to the response</li>
+      <li>Sends <code>RespondCommand</code> back to the bot with <code>responseText</code> and optional <code>debugStats</code></li>
+      <li>Sends <code>TypingCommand</code> for typing indicators</li>
+    </ul>
+
+    <h3>Configuration (config.yml)</h3>
+    <pre><code>host: "0.0.0.0"
+port: 3126
+sapphire_host: "localhost"
+sapphire_port: 3123
+sapphire_timeout: 10
+bot_username: "Luna"
+behavior:
+  burst:
+    enabled: true
+    min_interval: 2.0
+    max_interval: 6.0
+    max_messages: 2
+    cooldown: 60
+    reply_chance: 0.3
+  sleep:
+    enabled: true
+    start_hour: 0
+    end_hour: 8
+    timezone: "UTC"
+  typo:
+    enabled: true
+    chance: 0.08
+    swap_chance: 0.12
+  mannerisms:
+    enabled: true
+    chance: 0.075
+  ignore_prefixes:
+    - "!"</code></pre>
+
+    <h2 id="step-bot">Step 4: Bot (Jade / Pixieglow)</h2>
+
+    <p>Both bots are thin WebSocket clients of Emerald. They have no Sapphire or LLM logic.</p>
 
     <h3>Jade (Discord)</h3>
     <pre><code>git clone https://github.com/protocol-luna/jade
 cd jade
 cp config.example.yml config.yml
-# edit config.yml: set discord_token, sapphire_host=localhost, sapphire_port=3123
+# edit config.yml: set discord_token, emerald_host=localhost, emerald_port=3126
 npm install
-npm run build
 npm start</code></pre>
+
+    <p><strong>Config (config.yml):</strong></p>
+    <pre><code>discord_token: "your_discord_bot_token"
+emerald_host: "localhost"
+emerald_port: 3126
+# Optional TTS
+tts:
+  model_path: "/path/to/model.onnx"
+  config_path: "/path/to/model.json"
+  output_dir: "/tmp/tts"
+  voice_chance: 0.05</code></pre>
+
+    <p>Generate an OAuth2 URL from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>: scope <code>bot</code>, permissions <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code>, intents <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code>.</p>
 
     <h3>Pixieglow (Matrix)</h3>
     <pre><code>git clone https://github.com/protocol-luna/pixieglow
 cd pixieglow
 cp config.example.yml config.yml
-# edit config.yml: set matrix_token, matrix_homeserver, sapphire_host=localhost, sapphire_port=3123
+# edit config.yml: set matrix access token, emerald_host=localhost, emerald_port=3126
 bun install
-bun run src/index.ts</code></pre>
+bun start</code></pre>
 
-    <p>Both bots are thin SSE clients — they call <code>POST /v1/respond</code> on <strong>Sapphire</strong> (<code>localhost:3123</code>) which handles classification, session management, few-shot injection, emotion scoring, and routing to Krystal. No per-bot LLM logic needed.</p>
+    <p><strong>Config (config.yml):</strong></p>
+    <pre><code>matrix:
+  homeserver_url: "https://matrix.example.com"
+  access_token: "your_matrix_access_token"
+emerald_host: "localhost"
+emerald_port: 3126</code></pre>
+
+    <p>The bot auto-joins rooms it's invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). Invite <code>@pixieglow:protocol-luna.github.io</code> on the Luna server to test.</p>
 
     <h2 id="testing">Testing Your Setup</h2>
 
     <p>Verify each layer independently:</p>
 
     <pre><code># 1. Krystal is running
-curl http://127.0.0.1:3124/health   # small mode
-curl http://127.0.0.1:3125/health   # large mode (if running)
+curl http://127.0.0.1:3124/health
 
 # 2. Sapphire is running
 curl http://127.0.0.1:3123/health
@@ -338,88 +410,55 @@ curl -X POST http://127.0.0.1:3123/classify \
   -d '{"text":"how does quantum computing work"}'
 # Expected: {"label":"INTERESSANT",...}
 
-# 4. Full /v1/respond pipeline (non-streaming)
+# 4. Full /v1/respond pipeline
 curl -X POST http://127.0.0.1:3123/v1/respond \
   -H 'Content-Type: application/json' \
-  -d '{"username":"test","text":"hello","session_id":"test","stream":false}'
-# Expected: {"text":"...","label":"FUTILE","backend":"http://127.0.0.1:3124",...}
+  -d '{"username":"test","text":"hello","session_id":"test","behavior":{},"messages":[{"role":"user","content":"hello"}]}'
+# Expected: {"text":"...","debug":false}</code></pre>
 
-# 5. Streaming /v1/respond
-curl -N -X POST http://127.0.0.1:3123/v1/respond \
-  -H 'Content-Type: application/json' \
-  -d '{"username":"test","text":"hello","session_id":"test","stream":true}'
-# Expected: SSE tokens, then final JSON metadata, then [DONE]</code></pre>
-
-    <p>Run the full test suite to check accuracy:</p>
+    <p>Run the classifier test suite:</p>
     <pre><code>cd sapphire
-pip install -r requirements.txt  # if not done already
-python test_classifier.py
-# Expected: 257/258 (99.6%)</code></pre>
+python test_classifier.py</code></pre>
+
+    <h2 id="debug-mode">Debug Mode</h2>
+
+    <p>Any message can be processed in debug mode to see token counts, timing, and emotion state.</p>
+
+    <p><strong>On Discord (Jade):</strong> prefix your message with <code>-debug</code></p>
+
+    <pre><code>-debug hello, how are you?
+# Bot responds:
+# i'm doing well, thanks for asking!
+# - 12 tokens | 450 in | 3.2s | 3.75 t/s | emo: +0.6v/0.3a | conf: 0.85</code></pre>
+
+    <p>Debug output includes: prompt tokens, completion tokens, time in seconds, tokens/sec, emotional valence/arousal, and classification confidence.</p>
 
     <h2 id="best-practices">Best Practices</h2>
 
     <h3>Production Deployment</h3>
     <ul>
-      <li><strong>Use PM2</strong> for auto-restart: both Krystal instances and Sapphire should be managed by PM2</li>
-      <li><strong>Pin CPU affinity</strong>: dedicate cores to each Krystal instance to avoid context switching</li>
-      <li><strong>Monitor disk space</strong>: GGUF models are 1-6 GB; logs can grow quickly</li>
+      <li><strong>Use PM2</strong> for auto-restart: all four services should be managed by PM2</li>
+      <li><strong>Monitor disk space</strong>: GGUF model is ~1 GB; logs can grow</li>
       <li><strong>Use a reverse proxy</strong> (nginx, cloudflared) if exposing endpoints outside localhost</li>
+      <li><strong>Order matters</strong>: start Krystal → Sapphire → Emerald → bots</li>
     </ul>
 
-    <h3>Model Selection</h3>
+    <h3>Hardware Requirements</h3>
     <table>
-      <thead><tr><th>Scenario</th><th>Recommended</th><th>Why</th></tr></thead>
+      <thead><tr><th>Scenario</th><th>RAM</th><th>Disk</th><th>Notes</th></tr></thead>
       <tbody>
-        <tr><td>Low resources (1-2 cores, &lt;4 GB RAM)</td><td>Luna 1.5B (small only)</td><td>Single instance, fast responses</td></tr>
-        <tr><td>Moderate (4 cores, 8 GB RAM)</td><td>Both small + large</td><td>Full Sapphire routing</td></tr>
-        <tr><td>High (8+ cores, 16+ GB RAM)</td><td>Both; increase context to 16384</td><td>Maximum capability</td></tr>
+        <tr><td>Minimum</td><td>3 GB</td><td>2 GB</td><td>Luna 1.5B Q4_K_M, CPU only</td></tr>
+        <tr><td>Recommended</td><td>4-8 GB</td><td>4 GB</td><td>Room for context window + logs</td></tr>
       </tbody>
     </table>
 
     <h3>Tuning Examples</h3>
     <p>If messages are misclassified, edit <code>sapphire/examples.yml</code>:</p>
     <ul>
-      <li><strong>FUTILE bleeding into INTERESSANT</strong>: add more examples of that type to the <code>futile</code> list</li>
-      <li><strong>INTERESSANT bleeding into FUTILE</strong>: add more examples to the <code>interessant</code> list</li>
-      <li><strong>Weighted examples</strong>: use <code>{text: "example", weight: 5}</code> to give extra weight without duplicating</li>
-      <li>After editing, restart Sapphire to recompute centroids</li>
+      <li>Add more examples of the misbehaving type</li>
+      <li>Use weighted items: <code>{text: "example", weight: 5}</code></li>
+      <li>Restart Sapphire after editing to recompute centroids</li>
       <li>Run <code>python test_classifier.py</code> to verify accuracy</li>
-    </ul>
-
-    <h3>Prompt Caching</h3>
-    <p>Both Krystal instances use <code>--cache-reuse 256</code> and <code>--slot-prompt-similarity 0</code>. This means:</p>
-    <ul>
-      <li>FUTILE messages reuse a shared prompt cache (fast, efficient)</li>
-      <li>INTERESSANT messages get a fresh slot (no cache pollution from trivial chats)</li>
-      <li>Adjust <code>KRYSTAL_N_SLOTS</code> if you need concurrent users</li>
-    </ul>
-
-    <h2 id="performance">Performance Tuning</h2>
-
-    <h3>CPU Affinity</h3>
-    <p>Dedicate specific CPU cores to each Krystal instance. Example for a 4-core system:</p>
-    <pre><code># Krystal-small: core 0
-KRYSTAL_CPU_AFFINITY=0 ./start.sh small
-
-# Krystal-large: cores 1-2
-KRYSTAL_CPU_AFFINITY=1-2 ./start.sh large
-
-# Sapphire: core 3 (optional, uses very little CPU)
-taskset -c 3 python server.py</code></pre>
-
-    <h3>Memory</h3>
-    <ul>
-      <li>Luna 1.5B Q4_K_M: ~1 GB RAM</li>
-      <li>Hermes-8B Q8_0: ~8 GB RAM</li>
-      <li>Sapphire (fastembed): ~200 MB</li>
-      <li>Running both models simultaneously requires ~10 GB RAM</li>
-    </ul>
-
-    <h3>Context Size</h3>
-    <ul>
-      <li><code>KRYSTAL_N_CTX=8192</code> is the default (good for most conversations)</li>
-      <li>Increase to <code>16384</code> for long-running conversations with history</li>
-      <li>Higher context = more RAM usage (roughly +1 GB per 8192 tokens)</li>
     </ul>
 
     <h2 id="troubleshooting">Troubleshooting</h2>
@@ -435,33 +474,26 @@ taskset -c 3 python server.py</code></pre>
     <h3>Bot gets no response</h3>
     <p><strong>Check each layer from bottom up:</strong></p>
     <ul>
-      <li><code>curl http://127.0.0.1:3125/health</code> — Krystal must respond</li>
+      <li><code>curl http://127.0.0.1:3124/health</code> — Krystal must respond</li>
       <li><code>curl http://127.0.0.1:3123/health</code> — Sapphire must respond</li>
-      <li><code>curl http://127.0.0.1:3123/classify -d '{"text":"hi"}'</code> — classification must work</li>
-      <li>Bot config must point <code>sapphire_host: localhost</code> + <code>sapphire_port: 3123</code> (Sapphire, not Krystal directly)</li>
-    </ul>
-
-    <h3>Wrong classification</h3>
-    <ul>
-      <li>Check <code>sapphire/examples.yml</code> — add examples of the misbehaving type</li>
-      <li>Restart Sapphire after editing examples</li>
-      <li>Run <code>python test_classifier.py</code> to measure impact</li>
-      <li>See <a href="#best-practices">Best Practices &rarr; Tuning Examples</a></li>
+      <li><code>curl http://127.0.0.1:3126</code> — Emerald must respond (WebSocket upgrade)</li>
+      <li>Bot config must point <code>emerald_host: localhost</code> + <code>emerald_port: 3126</code></li>
+      <li>Check <code>pm2 logs</code> for each service</li>
     </ul>
 
     <h3>Krystal crashes or OOM</h3>
     <ul>
-      <li>Reduce <code>KRYSTAL_N_CTX</code> (try 4096)</li>
-      <li>Use a smaller quantized model (Q4_K_M instead of Q8_0)</li>
+      <li>Reduce <code>KRYSTAL_N_CTX</code> (try 2048)</li>
+      <li>Use a smaller quantized model (Q4_K_M is already small)</li>
       <li>Reduce <code>KRYSTAL_N_THREADS</code> to match available cores</li>
-      <li>Check <code>pm2 logs krystal-small</code> or <code>pm2 logs krystal-large</code></li>
+      <li>Check <code>pm2 logs krystal</code></li>
     </ul>
 
-    <h3>Streaming not working</h3>
+    <h3>Emerald not receiving bot messages</h3>
     <ul>
-      <li>Sapphire proxies SSE streams. Ensure your bot client supports streaming.</li>
-      <li>Set <code>stream: true</code> in the request body.</li>
-      <li>Check that Krystal was started with <code>--no-slots</code> (required for streaming).</li>
+      <li>Check Emerald logs for WebSocket connection events</li>
+      <li>Verify <code>emerald_host</code>/<code>emerald_port</code> in bot config.yml</li>
+      <li>Ensure Emerald started before the bot</li>
     </ul>
 
   </div>
@@ -484,14 +516,7 @@ taskset -c 3 python server.py</code></pre>
     var h = document.getElementById(id);
     if (h) headings.push({ el: h, link: a });
   });
-  var observer = new IntersectionObserver(function(entries) {
-    var visible = [];
-    entries.forEach(function(e) { if (e.isIntersecting) visible.push(e.target); });
-    if (!visible.length) return;
-    var topMost = visible.reduce(function(a, b) { return a.getBoundingClientRect().top < b.getBoundingClientRect().top ? a : b; });
-    tocLinks.forEach(function(a) { a.classList.remove('active'); });
-    headings.forEach(function(item) { if (item.el === topMost) { item.link.classList.add('active'); item.link.scrollIntoView({ block: 'center', behavior: 'smooth' }); } });
-  }, { rootMargin: '-80px 0px -60% 0px' });
+  var observer = new IntersectionObserver(function(entries) { entries.forEach(function(e) { if (e.isIntersecting) { tocLinks.forEach(function(a) { a.classList.remove('active'); }); headings.forEach(function(item) { if (item.el === e.target) { item.link.classList.add('active'); } }); } }); }, { rootMargin: '-80px 0px -60% 0px' });
   headings.forEach(function(item) { observer.observe(item.el); });
 })();
 </script>

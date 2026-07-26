@@ -4,16 +4,16 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Luna Protocol -- Detailed Overview</title>
-<meta name="description" content="Full technical overview of Luna Protocol: triggers, behaviors, configuration, logs, and dataset.">
+<meta name="description" content="Full technical overview of Luna Protocol: architecture, components, behavior system, debug mode, and configuration.">
 <meta property="og:type" content="article">
 <meta property="og:url" content="https://protocol-luna.github.io/docs/overview.html">
 <meta property="og:site_name" content="Protocol Luna">
 <meta property="og:title" content="Detailed Overview -- Protocol Luna">
-<meta property="og:description" content="Triggers, behaviors, configuration reference, logs, and dataset documentation for Luna Protocol.">
+<meta property="og:description" content="Architecture, components, behavior system, debug mode, and configuration for Luna Protocol.">
 <meta property="og:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Detailed Overview -- Protocol Luna">
-<meta name="twitter:description" content="Triggers, behaviors, configuration reference, logs, and dataset documentation.">
+<meta name="twitter:description" content="Architecture, components, behavior system, debug mode, and configuration.">
 <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,19 +130,23 @@ footer a { color: var(--primary-dim); }
   <div class="doc-layout">
     <div class="doc-header">
       <h1>Detailed Overview</h1>
-      <p>Triggers, behaviors, configuration reference, logs, and dataset documentation for Luna Protocol.</p>
+      <p>Architecture, components, behavior system, debug mode, and configuration for Luna Protocol.</p>
     </div>
     <aside class="doc-sidebar">
       <div class="toc">
         <h3>Table of Contents</h3>
         <ul>
-          <li><a href="#trigger-system">Trigger System</a></li>
-          <li><a href="#response-mechanisms">Response Mechanisms</a></li>
-          <li><a href="#commands">Commands</a></li>
+          <li><a href="#architecture">Architecture</a></li>
+          <li><a href="#emerald">Emerald (Brain)</a></li>
+          <li><a href="#sapphire">Sapphire (LLM Gateway)</a></li>
+          <li><a href="#krystal">Krystal (LLM Server)</a></li>
+          <li><a href="#bots">Bots (Jade / Pixieglow)</a></li>
+          <li><a href="#behavior-system">Behavior System</a></li>
+          <li><a href="#debug-mode">Debug Mode</a></li>
+          <li><a href="#emotion-sampling">Emotion-Aware Sampling</a></li>
+          <li><a href="#protocol">WebSocket Protocol</a></li>
           <li><a href="#configuration">Configuration</a></li>
-          <li><a href="#logs">Logs</a></li>
           <li><a href="#dataset">Dataset</a></li>
-          <li><a href="#discord-portal">Discord Developer Portal</a></li>
         </ul>
       </div>
     </aside>
@@ -150,172 +154,297 @@ footer a { color: var(--primary-dim); }
   <div class="doc-content">
 
     <blockquote>
-      <p><strong>Luna Protocol now has its own official models!</strong><br>
-      The project includes optimized models trained specifically for Discord conversations:<br>
-      &bull; <strong>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5</strong> (Recommended) -- Lightweight, fast, perfect for Discord bots<br>
-      &bull; Available on <a href="https://huggingface.co/fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct">HuggingFace</a></p>
+      <p><strong>Luna Protocol v2 -- Emerald era</strong><br>
+      The architecture was reorganized in July 2026: a new brain service (Emerald) now sits between bots and Sapphire. Bots are thin WebSocket clients with no direct Sapphire or LLM logic.</p>
     </blockquote>
 
     <ul>
       <li>Fine-tuned Qwen2.5 1.5B model, trained on 200k samples from <a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues">Discord-Dialogues</a></li>
-      <li>Quantized GGUF format</li>
-      <li><strong>Few-shot priming</strong>: Inject example conversations to guide model behavior (configured in Sapphire env vars)</li>
-      <li>Architecture: Bot (Jade/Pixieglow) &rarr; Sapphire (classify + route) &rarr; Krystal (llama-server)</li>
-      <li>Event-driven architecture: <code>llmBus</code> for LLM tokens/errors, <code>stateBus</code> for auto-persist</li>
+      <li>Quantized GGUF format (Q4_K_M, 941 MB)</li>
+      <li><strong>Few-shot priming</strong>: Sapphire injects example conversations before the system prompt</li>
+      <li>Architecture: Platform &rarr; Bot (WebSocket) &rarr; Emerald (brain) &rarr; Sapphire (HTTP) &rarr; Krystal (llama.cpp)</li>
+      <li>All behavior and LLM logic lives in Emerald + Sapphire; bots are adapters only</li>
     </ul>
 
-    <h2 id="trigger-system">Trigger System</h2>
+    <h2 id="architecture">Architecture</h2>
 
-    <h3>Trigger priority order</h3>
+    <pre><code>Discord / Matrix
+     |
+     v
+  +----------+    +-------------+
+  | Jade     |    | Pixieglow   |  &lt;-- Thin adapters (WebSocket clients)
+  | (Discord)|    | (Matrix)    |
+  +-----+----+    +------+------+
+        |                |
+        +--------+-------+
+                 |
+           WebSocket :3126
+                 |
+          +------v------+
+          |   Emerald    |  &lt;-- Brain: behavior, Sapphire calls, typo/swap
+          |  (TypeScript)|
+          +------+-------+
+                 |
+            HTTP :3123
+                 |
+          +------v-------+
+          |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion
+          |   (Python)    |
+          +------+--------+
+                 |
+            HTTP :3124
+                 |
+          +------v-------+
+          |   Krystal     |  &lt;-- LLM inference (llama.cpp)
+          |  (C++)        |
+          +---------------+</code></pre>
+
+    <h2 id="emerald">Emerald (Brain)</h2>
+
+    <p>Emerald is the central decision engine. It runs a WebSocket server on port 3126 that platform adapters (Jade, Pixieglow) connect to.</p>
+
+    <h3>How it works</h3>
+    <ol>
+      <li>Bots connect via WebSocket and forward <code>MessageEvent</code>s (with optional <code>debug: true</code>)</li>
+      <li>Emerald evaluates behavior rules: burst cooldown, sleep schedule, typo/swap probability, ignore prefixes</li>
+      <li>For non-empty messages, Emerald calls Sapphire's <code>/v1/respond</code> HTTP API with the message and behavior context</li>
+      <li>When <code>debug</code> is set, Emerald passes <code>"debug": true</code> to Sapphire</li>
+      <li>Emerald receives the response text and optional debug stats</li>
+      <li>Emerald applies typo/swap behavior to the response text</li>
+      <li>Emerald sends a <code>RespondCommand</code> back to the bot with <code>responseText</code> and optional <code>debugStats</code></li>
+    </ol>
+
+    <h3>Key files</h3>
+    <ul>
+      <li><code>src/server.ts</code> — WebSocket server (connection management, event routing, command dispatch)</li>
+      <li><code>src/brain.ts</code> — Decision engine: evaluates behavior, calls Sapphire, applies typo/swap</li>
+      <li><code>src/sapphire-client.ts</code> — HTTP client to Sapphire with snake_case to camelCase mapping</li>
+      <li><code>src/protocol.ts</code> — WebSocket message types (events, commands, debug stats)</li>
+      <li><code>src/behavior/*.ts</code> — Burst, sleep, typo, mannerisms</li>
+      <li><code>src/state/*.ts</code> — State management, triggers, topic fatigue</li>
+    </ul>
+
+    <h2 id="sapphire">Sapphire (LLM Gateway)</h2>
+
+    <p>Sapphire is a Python FastAPI server on port 3123. Emerald is its only client.</p>
+
+    <h3>Capabilities</h3>
+    <ul>
+      <li><strong>Classification</strong>: Message embedding via fastembed + BAAI/bge-small-en-v1.5. Centroid similarity labels each message by conversation category.</li>
+      <li><strong>Emotion scoring</strong>: Four centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. State per conversation decays via EMA.</li>
+      <li><strong>Session management</strong>: Per-channel conversation history with configurable max messages and TTL.</li>
+      <li><strong>Few-shot injection</strong>: Category-matched example conversations injected server-side before the system prompt.</li>
+      <li><strong>Emotion-aware sampling</strong>: Temperature, repeat penalty, and mirostat entropy dynamically adjusted by valence/arousal.</li>
+      <li><strong>Degenerate detection</strong>: Regex-based detection of loops, stutters, and empty replies with automatic retry.</li>
+      <li><strong>Debug mode</strong>: Returns token counts, timing, emotion state, and classification confidence when requested.</li>
+      <li><strong>Single-backend</strong>: All messages forward to one Krystal instance on :3124.</li>
+    </ul>
+
+    <h3>Endpoint: POST /v1/respond</h3>
+
+    <p>Request body:</p>
+    <pre><code>{
+  "model": "default",
+  "messages": [
+    { "role": "system", "content": "..." },
+    { "role": "user", "content": "Hello!" }
+  ],
+  "channel_id": "123456",
+  "user_id": "789012",
+  "bot_username": "Luna",
+  "behavior": {
+    "mannerisms": { "enabled": true, "chance": 0.075 },
+    "sleep": { "enabled": true, "start_hour": 0, "end_hour": 8 }
+  },
+  "debug": false
+}</code></pre>
+
+    <p>Response (debug mode):</p>
+    <pre><code>{
+  "text": "Hello! How can I help you today?",
+  "debug": true,
+  "debug_prompt_tokens": 450,
+  "debug_completion_tokens": 12,
+  "debug_time_ms": 3200,
+  "debug_tokens_per_second": 3.75,
+  "debug_emotion_state_valence": 0.6,
+  "debug_emotion_state_arousal": 0.3,
+  "debug_classification_confidence": 0.85
+}</code></pre>
+
+    <h2 id="krystal">Krystal (LLM Server)</h2>
+
+    <p>Krystal runs <code>llama-server</code> from llama.cpp. In single-backend mode, both Sapphire routes point to the same instance on port 3124:</p>
+
+    <pre><code>KRYSTAL_GENERIC_URL=http://127.0.0.1:3124
+KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
+
+    <p>Current model: <code>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q4_K_M.gguf</code> (941 MB).</p>
+
     <table>
-      <thead><tr><th>#</th><th>Reason</th><th>Conditions</th><th>Bypass ignore</th><th>Bypass pause</th></tr></thead>
+      <thead><tr><th>Parameter</th><th>Value</th></tr></thead>
       <tbody>
-        <tr><td>1</td><td><code>mention</code></td><td>@bot</td><td>Yes (0%)</td><td>Yes</td></tr>
-        <tr><td>2</td><td><code>dm</code></td><td>DM with <code>replyInDM = true</code></td><td>Yes (0%)</td><td>No</td></tr>
-        <tr><td>3</td><td><code>name</code></td><td>"Luna"/"Pixie"/alias (whole word)</td><td>No (8%)</td><td>No</td></tr>
-        <tr><td>4</td><td><code>keyword</code></td><td><code>hello</code>, <code>hi</code>, <code>hey</code>, <code>yo</code>, <code>ai</code>, <code>bot</code>... (whole word)</td><td>No (8%)</td><td>No</td></tr>
-        <tr><td>5</td><td><code>follow-up</code></td><td>Bot was last speaker + &lt; 15s + &lt; 3 / 60s</td><td>--</td><td>--</td></tr>
-        <tr><td>6</td><td><code>random</code></td><td>1.5% chance on non-matching</td><td>No (8%)</td><td>No</td></tr>
+        <tr><td>Port</td><td>3124</td></tr>
+        <tr><td>Context</td><td>4096 tokens</td></tr>
+        <tr><td>GPU layers</td><td>0 (CPU only)</td></tr>
+        <tr><td>Threads</td><td>6</td></tr>
       </tbody>
     </table>
-    <p>Whole word matching (<code>\b</code>): "ai" does not match "mais", "vrai", "lait".</p>
 
-    <h3>Cooldown</h3>
-    <p>8 seconds between two responses in the same channel. Bypassed by mentions and follow-ups.</p>
+    <h2 id="bots">Bots (Jade / Pixieglow)</h2>
 
-    <h3>Follow-up</h3>
-    <p>The bot registers itself as <code>lastSpeaker</code>. Any subsequent message within 15s triggers an immediate response (no timer, no keyword check). Budget: 3 follow-ups per 60s window.</p>
+    <p>Both bots are thin WebSocket clients of Emerald. They have no Sapphire or LLM logic.</p>
 
-    <h2 id="response-mechanisms">Response Mechanisms</h2>
+    <h3>Jade (Discord)</h3>
+    <ul>
+      <li>TypeScript + Eris library</li>
+      <li>Connects to Emerald via WebSocket on connect and on reconnect</li>
+      <li>Listens to Discord messages, forwards as <code>MessageEvent</code>s</li>
+      <li><code>-debug</code> prefix in message content enables per-message debug mode</li>
+      <li>Responds to <code>RespondCommand</code> by posting <code>responseText</code> to Discord</li>
+      <li>In debug mode, appends <code>-# </code> formatted stats lines (token counts, timing, emotion, confidence)</li>
+      <li>Optional Piper TTS for voice messages</li>
+      <li>Config: <code>discord_token</code>, <code>emerald_host</code>, <code>emerald_port</code>, TTS paths</li>
+    </ul>
 
-    <h3>Variable concentration</h3>
-    <table>
-      <thead><tr><th>Trigger</th><th>Min delay</th><th>Max delay</th><th>Ignore</th><th>Reaction</th></tr></thead>
-      <tbody>
-        <tr><td><code>mention</code></td><td>300ms</td><td>1500ms</td><td>0%</td><td>8%</td></tr>
-        <tr><td><code>dm</code></td><td>400ms</td><td>1800ms</td><td>0%</td><td>5%</td></tr>
-        <tr><td><code>name</code></td><td>800ms</td><td>4000ms</td><td>5%</td><td>6%</td></tr>
-        <tr><td><code>keyword</code></td><td>1000ms</td><td>3500ms</td><td>8%</td><td>4%</td></tr>
-        <tr><td><code>follow-up</code></td><td>500ms</td><td>2000ms</td><td>0%</td><td>3%</td></tr>
-        <tr><td><code>random</code></td><td>1500ms</td><td>5000ms</td><td>15%</td><td>2%</td></tr>
-      </tbody>
-    </table>
+    <h3>Pixieglow (Matrix)</h3>
+    <ul>
+      <li>TypeScript + Bun + Matrix client-server API</li>
+      <li>Connects to Emerald via WebSocket</li>
+      <li>Sync loop polls Matrix API for new messages, forwards to Emerald</li>
+      <li>Responds to <code>RespondCommand</code> by posting <code>responseText</code> to Matrix rooms</li>
+      <li>Config: <code>matrix.homeserver_url</code>, <code>matrix.access_token</code>, <code>emerald_host</code>, <code>emerald_port</code></li>
+    </ul>
 
-    <h3>Typos</h3>
-    <p>Configurable probability (<code>typo_chance</code>, default 6%) of replacing a letter with an adjacent key (AZERTY/QWERTY). Correction after 2-4s:</p>
-    <table>
-      <thead><tr><th>Style</th><th>Behavior</th></tr></thead>
-      <tbody>
-        <tr><td><code>edit</code></td><td>Edits the message</td></tr>
-        <tr><td><code>message</code></td><td>New message: <code>word*</code></td></tr>
-        <tr><td><code>mixed</code></td><td>50/50 random (default)</td></tr>
-      </tbody>
-    </table>
-    <p>AZERTY example: <code>bonjour &rarr; bonjpur</code>, <code>salut &rarr; slaut</code>, <code>comment &rarr; cpmment</code>.</p>
+    <h2 id="behavior-system">Behavior System</h2>
 
-    <h3>Voice Messages (TTS)</h3>
-    <p>Configurable probability (<code>voice_message_chance</code>, default 8%). Full pipeline: sanitize &rarr; synthesize (Piper) &rarr; convert (ffmpeg) &rarr; upload (Discord CDN).</p>
+    <p>All behaviors are evaluated by Emerald before calling Sapphire and applied after receiving the response. The bot itself has no behavior logic.</p>
 
-    <h3>Typing indicator</h3>
-    <p><code>startTyping()</code> is called before <code>askLLM()</code> -- the typing indicator stays active during generation (refreshed every 8s).</p>
+    <h3>Burst</h3>
+    <p>When engaged in an active conversation, Emerald allows faster follow-ups (2-6s delay) for up to 2 messages, then a 60s cooldown. Prevents the bot from dominating a thread.</p>
 
-    <h3>Real-time response</h3>
-    <p>The LLM streams its response line by line (<code>\n</code>). Each line is split into words, emitted one by one. No simulated delay: the pace is the LLM's own.</p>
-
-    <h3>Reactions</h3>
-    <p>30% server custom emoji, 70% unicode emoji.</p>
-
-    <h3>Sleep schedules</h3>
+    <h3>Sleep Schedule</h3>
     <table>
       <thead><tr><th>Mode</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td><code>sleep</code></td><td>Only mentions and DMs pass through</td></tr>
-        <tr><td><code>slow</code></td><td>Delay &times;3-5, reactions nearly zero</td></tr>
-        <tr><td><code>short</code></td><td>Ignore chance +30%, reactions nearly zero</td></tr>
+        <tr><td><code>sleep</code></td><td>Only mentions pass through; all other messages ignored</td></tr>
+        <tr><td><code>slow</code></td><td>Response delay multiplied by 3-5x</td></tr>
+        <tr><td><code>short</code></td><td>Ignore chance increased by 30%</td></tr>
       </tbody>
     </table>
 
-    <h3>Spontaneous Messages</h3>
-    <p>Every 5 minutes, 12% chance the bot posts a message on its own initiative.</p>
+    <h3>Typos / Letter-Swap</h3>
+    <p>Applied to the response text after receiving it from Sapphire. Configurable probability (default 8%) of replacing a letter with an adjacent key (AZERTY layout). Swap chance (default 12%) for transposing adjacent letters.</p>
 
-    <h3>Hesitation</h3>
-    <p>The bot sometimes starts its response with a hesitation word: <code>uh...</code>, <code>um...</code>, <code>well...</code>, <code>i mean...</code>, <code>hmm...</code>, <code>so...</code>.</p>
+    <h3>Mannerisms</h3>
+    <p>Configurable chance (default 7.5%) of injecting mannerism patterns into the response.</p>
 
-    <h3>Forgetfulness</h3>
-    <p>Even after matching a trigger, the bot can "forget" to respond with a probability of <code>forget_chance</code> (default 3%).</p>
+    <h3>Ignore Prefixes</h3>
+    <p>Messages starting with configured prefixes (e.g. <code>!</code>) are ignored by Emerald and not forwarded to Sapphire.</p>
 
-    <h3>Inactivity warmup</h3>
-    <p>If the bot has not been active for <code>inactivity_warmup_minutes</code> (default 10 min), the response delay is multiplied by <code>inactivity_warmup_multiplier</code>.</p>
+    <h2 id="debug-mode">Debug Mode</h2>
 
-    <h3>Dynamic Discord Status</h3>
-    <p>The Discord status alternates between several configured presets, rotating every <code>dynamic_status_interval_minutes</code> minutes.</p>
+    <p>Debug mode flows through the entire stack:</p>
 
-    <h3>Anti-spam</h3>
-    <p>Key <code>channelId:userId</code>. Only one message queued per user per channel.</p>
+    <ol>
+      <li><strong>Bot level</strong>: Message starts with <code>-debug</code> prefix → sets <code>debug: true</code> on the <code>MessageEvent</code></li>
+      <li><strong>Emerald</strong>: Passes <code>debug: true</code> to Sapphire's <code>/v1/respond</code></li>
+      <li><strong>Sapphire</strong>: Returns <code>debug_prompt_tokens</code>, <code>debug_completion_tokens</code>, <code>debug_time_ms</code>, <code>debug_tokens_per_second</code>, <code>debug_emotion_state_valence</code>, <code>debug_emotion_state_arousal</code>, <code>debug_classification_confidence</code></li>
+      <li><strong>Emerald</strong>: Maps snake_case → camelCase into <code>DebugStats</code> object, included in <code>RespondCommand</code></li>
+      <li><strong>Bot</strong>: Appends <code>-# </code> formatted lines to the Discord/Matrix response</li>
+    </ol>
 
-    <h3>Persistence</h3>
-    <p><strong>Persisted:</strong> pendingMessages, paused, cooldowns, timestamps, lastSpeaker, follow-up counters.<br>
-    <strong>Auto-save:</strong> any state mutation emits on <code>stateBus</code> &rarr; automatic save (debounce 500ms).</p>
+    <p>Example debug output on Discord:</p>
 
-    <h2 id="commands">Commands</h2>
-    <p><strong>By text:</strong> <code>-stop</code> (pause + reset), <code>-start</code> (resume), <code>-clear</code> (reset history)</p>
-    <p><strong>By reactions</strong> on one of the bot's messages:</p>
+    <pre><code>Hey, how are you?
+-# 12 tokens | 450 in | 3.2s | 3.75 t/s | emo: +0.6v/0.3a | conf: 0.85</code></pre>
+
+    <h2 id="emotion-sampling">Emotion-Aware Sampling</h2>
+
+    <p>Sapphire dynamically adjusts Krystal's sampling parameters based on the classified emotional state of the conversation:</p>
+
     <table>
-      <thead><tr><th>Emoji</th><th>Effect</th></tr></thead>
+      <thead><tr><th>Parameter</th><th>Formula</th><th>Effect</th></tr></thead>
       <tbody>
-        <tr><td>&#x274C;</td><td>Stop</td></tr>
-        <tr><td>&#x25B6;&#xFE0F;</td><td>Start</td></tr>
-        <tr><td>&#x1F5D1;&#xFE0F;</td><td>Clear</td></tr>
+        <tr><td>Temperature</td><td><code>clamp(0.7 + arousal &times; 0.3, 0.4, 1.0)</code></td><td>Higher arousal = more randomness</td></tr>
+        <tr><td>Repeat penalty</td><td><code>clamp(1.15 - valence &times; 0.1, 1.0, 1.3)</code></td><td>Higher valence (positive) = less penalty</td></tr>
+        <tr><td>Mirostat entropy</td><td><code>clamp(6.0 + arousal &times; 2.0, 3.0, 8.0)</code></td><td>Higher arousal = more entropy</td></tr>
       </tbody>
     </table>
 
-    <h2 id="sapphire-gateway">Sapphire Gateway (unified LLM endpoint)</h2>
-    <p>Sapphire is a Python middleware that sits between all bots and the LLM backends. It provides a unified <code>/v1/respond</code> endpoint (with SSE streaming) that:</p>
-    <ul>
-      <li>Receives <code>{ username, text, session_id, stream }</code> from any bot (Jade, Pixieglow)</li>
-      <li>Classifies the message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed)</li>
-      <li>Manages conversation sessions (TTL-based expiry, history trimming, slot hash pinning)</li>
-      <li>Injects few-shot examples server-side before the system prompt</li>
-      <li>Scores emotion (valence/arousal axes) via centroid comparison</li>
-      <li>Routes to the appropriate Krystal instance</li>
-      <li>Detects degenerate output and retries automatically</li>
-      <li>Streams tokens back in real-time via SSE, then sends final metadata event</li>
-    </ul>
-    <p><strong>How classification works:</strong> Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~1100 curated examples in <code>examples.yml</code> (579 futile + 545 interessant, weighted items supported). The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list. Achieves <strong>97.3% accuracy</strong> (398 tests).</p>
-    <p><strong>Emotion scoring:</strong> Four additional centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. A configurable deadzone (default 0.06) filters noise. Emotional state per conversation key decays via EMA (default 0.85).</p>
-    <p><strong>Routing:</strong></p>
-    <ul>
-      <li><strong>FUTILE</strong> (trivial) — chit-chat, greetings, commands &rarr; Krystal-GENERIC (<code>:3124</code>, Luna 1.5B)</li>
-      <li><strong>INTERESSANT</strong> (serious) — facts, personal info, complex questions &rarr; Krystal-SEMANTIC (<code>:3125</code>, e.g. Hermes-8B)</li>
-    </ul>
-    <p><strong>Setup:</strong></p>
-    <pre><code>git clone https://github.com/protocol-luna/sapphire
-cd sapphire
-pip install -r requirements.txt
-python server.py
-# listens on 127.0.0.1:3123
-</code></pre>
-    <p><strong>Endpoints:</strong></p>
+    <p>This replaces prompt-based mood injection. For a 1.5B model, adjusting sampling parameters is more reliable than injecting mood descriptions into the system prompt.</p>
+
+    <h2 id="protocol">WebSocket Protocol</h2>
+
+    <p>Emerald communicates with bots via JSON messages over WebSocket.</p>
+
+    <h3>Events (Bot → Emerald)</h3>
     <table>
-      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <thead><tr><th>Event</th><th>Fields</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><code>/v1/respond</code></td><td>POST</td><td>Main endpoint — classify + session + few-shot + route + stream. Input: <code>{ username, text, session_id, stream }</code>. Returns SSE tokens then final JSON metadata event with <code>{ text, label, backend, valence, arousal }</code>.</td></tr>
-        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>OpenAI-compatible chat completions (no sessions, no few-shot). For external tools.</td></tr>
-        <tr><td><code>/v1/reset</code></td><td>POST</td><td>Reset one or all conversation sessions.</td></tr>
-        <tr><td><code>/classify</code></td><td>POST</td><td>Classify only, returns label + similarity scores + emotion scores.</td></tr>
-        <tr><td><code>/emotion/{conv_key}</code></td><td>GET</td><td>Current emotional state (valence/arousal) for a conversation key.</td></tr>
-        <tr><td><code>/health</code></td><td>GET</td><td>Server status + active sessions + configuration.</td></tr>
+        <tr><td><code>message</code></td><td><code>channelId</code>, <code>userId</code>, <code>userName</code>, <code>content</code>, <code>debug?</code></td><td>User message forwarded from platform</td></tr>
       </tbody>
     </table>
-    <p><strong>Environment variables:</strong></p>
+
+    <h3>Commands (Emerald → Bot)</h3>
+    <table>
+      <thead><tr><th>Command</th><th>Fields</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>respond</code></td><td><code>channelId</code>, <code>responseText</code>, <code>debugStats?</code></td><td>Response text to post</td></tr>
+        <tr><td><code>typing</code></td><td><code>channelId</code></td><td>Show typing indicator</td></tr>
+      </tbody>
+    </table>
+
+    <h3>DebugStats</h3>
+    <pre><code>{
+  promptTokens: number;
+  completionTokens: number;
+  timeMs: number;
+  tokensPerSecond: number;
+  emotionState: { valence: number; arousal: number };
+  classificationConfidence: number;
+}</code></pre>
+
+    <h2 id="configuration">Configuration</h2>
+
+    <h3>Emerald (config.yml)</h3>
+    <pre><code>host: "0.0.0.0"
+port: 3126
+sapphire_host: "localhost"
+sapphire_port: 3123
+sapphire_timeout: 10
+bot_username: "Luna"
+behavior:
+  burst:
+    enabled: true
+    min_interval: 2.0
+    max_interval: 6.0
+    max_messages: 2
+    cooldown: 60
+    reply_chance: 0.3
+  sleep:
+    enabled: true
+    start_hour: 0
+    end_hour: 8
+    timezone: "UTC"
+  typo:
+    enabled: true
+    chance: 0.08
+    swap_chance: 0.12
+  mannerisms:
+    enabled: true
+    chance: 0.075
+  ignore_prefixes:
+    - "!"</code></pre>
+
+    <h3>Sapphire (environment variables)</h3>
     <table>
       <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Sapphire server port</td></tr>
-        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
-        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
-        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to classification example list</td></tr>
-        <tr><td><code>SAPPHIRE_EMOTION_EXAMPLES</code></td><td><code>./examples_emotion.yml</code></td><td>Path to emotion example list</td></tr>
+        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for all messages (single-backend)</td></tr>
+        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Classification + few-shot examples</td></tr>
+        <tr><td><code>SAPPHIRE_EMOTION_EXAMPLES</code></td><td><code>./examples_emotion.yml</code></td><td>Emotion centroid examples</td></tr>
         <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>System prompt for all conversations</td></tr>
         <tr><td><code>SAPPHIRE_LLM_SESSION_TTL</code></td><td><code>600</code></td><td>Session expiry in seconds</td></tr>
         <tr><td><code>SAPPHIRE_LLM_MAX_HISTORY</code></td><td><code>20</code></td><td>Max user/assistant pairs in context</td></tr>
@@ -326,74 +455,26 @@ python server.py
         <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td><code>0.06</code></td><td>Noise threshold for emotion deltas</td></tr>
       </tbody>
     </table>
-    <p><strong>Bot config:</strong> Both Jade and Pixieglow point their <code>sapphire_host</code>/<code>sapphire_port</code> to Sapphire (<code>localhost:3123</code>). No per-bot classifier, few-shot, or session logic needed — all handled server-side by Sapphire.</p>
 
-    <h2 id="configuration">Configuration</h2>
-    <p>Single <code>config.yml</code> file. Shell env vars override YAML keys if present. Hot-reload for dynamic values.</p>
+    <h3>Bots (config.yml)</h3>
+    <p>Both Jade and Pixieglow only need platform auth keys and Emerald connection details:</p>
 
-    <h3>Hot-reload legend</h3>
-    <table>
-      <thead><tr><th>Icon</th><th>Meaning</th></tr></thead>
-      <tbody>
-        <tr><td>&#x2705;</td><td>Hot-reloadable -- changes picked up at runtime</td></tr>
-        <tr><td>&#x274C;</td><td>Requires restart</td></tr>
-      </tbody>
-    </table>
+    <p><strong>Jade (Discord):</strong></p>
+    <pre><code>discord_token: "your_token"
+emerald_host: "localhost"
+emerald_port: 3126
+tts:
+  model_path: "/path/to/model.onnx"
+  config_path: "/path/to/model.json"
+  output_dir: "/tmp/tts"
+  voice_chance: 0.05</code></pre>
 
-    <h3>Secrets &amp; Paths (&#x274C;)</h3>
-    <ul>
-      <li><code>discord_token</code> -- Discord bot token</li>
-      <li><code>matrix_token</code> / <code>matrix_homeserver</code> -- Matrix connection</li>
-      <li><code>sapphire_host</code> / <code>sapphire_port</code> -- Sapphire gateway connection</li>
-      <li><code>tts_model_path</code>, <code>tts_binary_path</code>, <code>ffmpeg_path</code>, <code>ffprobe_path</code> -- TTS &amp; audio paths</li>
-    </ul>
-
-    <h3>Triggers (&#x2705;)</h3>
-    <p><code>names</code>, <code>keywords</code>, <code>random_chance</code>, <code>cooldown_seconds</code>, <code>reply_in_dm</code></p>
-
-    <h3>Mannerisms -- Concentration (&#x2705;)</h3>
-    <p>Per-trigger delays, ignore &amp; reaction chances.</p>
-
-    <h3>Typos (&#x2705;)</h3>
-    <p><code>typo_chance</code>, <code>typo_layout</code> (azerty/qwerty), <code>typo_correction_style</code> (edit/message/mixed)</p>
-
-    <h3>Message Burst (&#x2705;)</h3>
-    <p><code>burst_chance</code>, <code>burst_delay_min</code>, <code>burst_delay_max</code></p>
-
-    <h3>Topic Fatigue (&#x2705;)</h3>
-    <p>Detects repetitive topics per channel. Configurable window, threshold, multiplier.</p>
-
-    <h3>Human-like Behaviors (&#x2705;)</h3>
-    <p><code>hesitation_chance</code>, <code>hesitation_words</code>, <code>forget_chance</code>, <code>inactivity_warmup</code></p>
-
-    <h3>Dynamic Status (&#x2705;)</h3>
-    <p>Rotation interval + status presets (Playing, Watching, Listening, etc.)</p>
-
-    <h3>Sleep Schedules (&#x2705;)</h3>
-    <p>Time-based behavior switching (sleep/slow/short).</p>
-
-    <h3>Session Limits (&#x2705;)</h3>
-    <p>Max exchanges before pause, pause duration, reset timer.</p>
-
-    <h3>TTS / Voice Messages (&#x2705;)</h3>
-    <p>Voice message probability.</p>
-
-    <h3>Reply Styles (&#x2705;)</h3>
-    <p>Weighted message_reference + mention_replied_user configs.</p>
-
-    <h2 id="logs">Logs</h2>
-    <table>
-      <thead><tr><th>Prefix</th><th>Info</th></tr></thead>
-      <tbody>
-        <tr><td><code>[trigger]</code></td><td>Evaluation + result of each message</td></tr>
-        <tr><td><code>[mannerisms]</code></td><td>Delay, ignore, reaction, msgLength, inactivity</td></tr>
-        <tr><td><code>[bot]</code></td><td>Decision, follow-up, reply style, forget</td></tr>
-        <tr><td><code>[tts]</code></td><td>Synthesis, upload, voice message</td></tr>
-        <tr><td><code>[persist]</code></td><td>Save/restore</td></tr>
-        <tr><td><code>[llm-core]</code></td><td>Queue, proxy/online, LLM events</td></tr>
-        <tr><td><code>[llmBus]</code></td><td>LLM events (token, done, flush, error, ready)</td></tr>
-      </tbody>
-    </table>
+    <p><strong>Pixieglow (Matrix):</strong></p>
+    <pre><code>matrix:
+  homeserver_url: "https://matrix.example.com"
+  access_token: "your_token"
+emerald_host: "localhost"
+emerald_port: 3126</code></pre>
 
     <h2 id="dataset">Dataset</h2>
     <p><a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues"><strong>Discord-Dialogues</strong></a> -- 7.3M exchanges, 17M turns, 140M words. Real Discord conversations spring-summer 2025, filtered PII/ToS/bots/commands. Apache 2.0.</p>
@@ -407,13 +488,6 @@ python server.py
         <tr><td>Tokenizer</td><td>Hermes-3-Llama-3.1-8B</td></tr>
       </tbody>
     </table>
-
-    <h2 id="discord-portal">Discord Developer Portal</h2>
-    <ul>
-      <li><strong>Message Content Intent</strong> (Bot tab)</li>
-      <li>Scope <code>bot</code> + permissions: <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code></li>
-      <li>Gateway intents: <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code></li>
-    </ul>
 
   </div>
   </div>

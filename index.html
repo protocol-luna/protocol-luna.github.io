@@ -276,7 +276,7 @@ img { max-width: 100%; height: auto; }
       <a href="#setup">Setup</a>
       <a href="#projects">Projects</a>
       <a href="#architecture">Architecture</a>
-      <a href="#state-machine">State Machine</a>
+      <a href="#state-machine">Behaviors</a>
       <a href="#showcase">Showcase</a>
       <a href="#timeline">Timeline</a>
       <a href="#use-cases">Use Cases</a>
@@ -360,41 +360,55 @@ img { max-width: 100%; height: auto; }
   <div class="container">
     <div class="section-label">Get Started</div>
     <h2 class="section-title">How to Setup</h2>
-    <p class="section-sub">Three components, three setups. All local, no cloud APIs required. <a href="docs/getting-started.html" style="color:var(--primary-light);font-weight:600;">Full guide &rarr;</a></p>
+    <p class="section-sub">Four components, four setups. All local, no cloud APIs required. <a href="docs/getting-started.html" style="color:var(--primary-light);font-weight:600;">Full guide &rarr;</a></p>
 
     <div class="setup-block">
       <h3><span class="setup-badge">1</span> Krystal -- LLM Inference Server</h3>
-      <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API. Runs in two modes:</p>
-      <pre><code>git clone https://github.com/protocol-luna/Krystal.git
-cd Krystal
+      <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API. Single-backend mode on :3124:</p>
+      <pre><code>git clone https://github.com/protocol-luna/krystal.git
+cd krystal
 npm install
-./start.sh small    # Luna 1.5B  on :3124 (GENERIC — fast)
-./start.sh large    # Hermes-8B  on :3125 (SEMANTIC — deep)</code></pre>
-      <p>Both can run simultaneously. Configurable via <code>KRYSTAL_*</code> environment variables (or legacy <code>LLM_*</code>).</p>
+./start.sh    # Luna 1.5B on :3124</code></pre>
+      <p>Configurable via <code>KRYSTAL_*</code> environment variables.</p>
     </div>
 
     <div class="setup-block">
-      <h3><span class="setup-badge">2</span> Jade -- Discord Bot</h3>
-      <p>TypeScript bot using Eris. Connects to Krystal for LLM inference.</p>
-      <pre><code>git clone https://github.com/protocol-luna/jade.git
+      <h3><span class="setup-badge">2</span> Sapphire -- LLM Gateway</h3>
+      <p>Python middleware that sits between Emerald and Krystal. Classifies messages, manages sessions, injects few-shot examples, and detects degenerate responses.</p>
+      <pre><code>git clone https://github.com/protocol-luna/sapphire.git
+cd sapphire
+pip install -r requirements.txt
+python server.py    # listens on :3123</code></pre>
+    </div>
+
+    <div class="setup-block">
+      <h3><span class="setup-badge">3</span> Emerald -- Brain Service</h3>
+      <p>TypeScript WebSocket server that connects bots to Sapphire. Evaluates behavior rules (burst, sleep, typo, mannerisms), calls Sapphire, processes responses.</p>
+      <pre><code>git clone https://github.com/protocol-luna/emerald.git
+cd emerald
+npm install
+cp config.example.yml config.yml
+npm start    # WebSocket server on :3126</code></pre>
+    </div>
+
+    <div class="setup-block">
+      <h3><span class="setup-badge">4</span> Bot -- Jade (Discord) or Pixieglow (Matrix)</h3>
+      <p>Thin WebSocket clients of Emerald. No LLM logic -- just forward messages and post responses.</p>
+      <pre><code># Jade (Discord)
+git clone https://github.com/protocol-luna/jade.git
 cd jade
 npm install
-# configure config.yml with your discord token + Krystal URL
-npm start</code></pre>
-      <p>Generate an OAuth2 URL from the <a href="https://discord.com/developers/applications" target="_blank" rel="noopener">Discord Developer Portal</a>: scope <code>bot</code>, permissions <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code>, intents <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code>.</p>
-    </div>
+# configure config.yml: discord_token, emerald_host/port
+npm start
 
-    <div class="setup-block">
-      <h3><span class="setup-badge">3</span> Pixieglow -- Matrix Bot</h3>
-      <p>Matrix bot written in TypeScript with <a href="https://bun.sh" target="_blank" rel="noopener">Bun</a>. Connects to Krystal for LLM inference.</p>
-      <pre><code>git clone https://github.com/protocol-luna/pixieglow.git
+# Pixieglow (Matrix)
+git clone https://github.com/protocol-luna/pixieglow.git
 cd pixieglow
 bun install
-cp config.example.yml config.yml
-# edit config.yml: matrix_homeserver, matrix_token, llm_host/port
+# configure config.yml: matrix access token, emerald_host/port
 bun start</code></pre>
-      <p>The bot auto-joins rooms it&rsquo;s invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). The bot needs a <code>discord_token</code>? No -- it&rsquo;s Matrix-native, no Discord involved.</p>
-      <p>Invite <code>@pixieglow:protocol-luna.github.io</code> on this server to test it -- no guarantee it&rsquo;s awake, though.</p>
+      <p>Generate a Discord OAuth2 URL: scope <code>bot</code>, permissions <code>Send Messages</code>, <code>Read Message History</code>, <code>Add Reactions</code>, intents <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code>.</p>
+      <p>For Matrix: invite <code>@pixieglow:protocol-luna.github.io</code> to test. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>).</p>
     </div>
 
     <div class="setup-block setup-block-model">
@@ -414,23 +428,32 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Projects</div>
     <h2 class="section-title">The Stack</h2>
-    <p class="section-sub">Three components working together: an inference server, two bot clients, and a shared LLM behavior core.</p>
+    <p class="section-sub">Four services working together: an LLM inference server, a gateway, a brain service, and two platform adapters.</p>
     <div class="projects-grid">
       <div class="project-card">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h3>Krystal</h3>
-        <p>LLM inference server wrapping llama.cpp. Serves GGUF models via an OpenAI-compatible HTTP API. Small/large mode support. Managed by PM2.</p>
+        <p>LLM inference server wrapping llama.cpp. Serves GGUF models via an OpenAI-compatible HTTP API. Single-backend mode on :3124. Managed by PM2.</p>
         <div class="tags"><span>llama.cpp</span><span>C++</span><span>PM2</span></div>
         <a href="https://github.com/protocol-luna/krystal" class="card-link" aria-label="Krystal repo"></a>
+      </div>
+      <div class="project-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 1 10 10c0 5-4 9-10 9S2 17 2 12 6 2 12 2z"/><path d="M8 12h8"/><path d="M12 8v8"/></svg>
+        </div>
+        <h3>Emerald</h3>
+        <p>Brain and decision engine. WebSocket server (:3126) that connects platform adapters to Sapphire. Evaluates behavior rules, processes responses, and sends commands. Debug mode across all layers.</p>
+        <div class="tags"><span>TypeScript</span><span>WebSocket</span><span>PM2</span></div>
+        <a href="https://github.com/protocol-luna/emerald" class="card-link" aria-label="Emerald repo"></a>
       </div>
       <div class="project-card">
         <div class="icon-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
         </div>
         <h3>Jade</h3>
-        <p>Discord bot client with human-like behaviors. Connects to Krystal or any OpenAI-compatible API. TTS, typos, sleep schedules, and more.</p>
+        <p>Discord adapter for Emerald. Thin WebSocket client with debug mode, TTS voice messages, and responseText forwarding.</p>
         <div class="tags"><span>TypeScript</span><span>Eris</span><span>Discord</span></div>
         <a href="https://github.com/protocol-luna/jade" class="card-link" aria-label="Jade repo"></a>
       </div>
@@ -439,7 +462,7 @@ huggingface-cli download \
           <svg viewBox="0 0 24 24" fill="none" stroke="#c084fc" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         </div>
         <h3>Pixieglow</h3>
-        <p>Matrix bot built for tuwunel. Port of the same LLM core to the Matrix protocol. Auto-joins rooms, handles mentions, spontaneous messages.</p>
+        <p>Matrix adapter for Emerald. Thin WebSocket client that forwards Matrix messages to Emerald and posts responseText to rooms.</p>
         <div class="tags"><span>TypeScript</span><span>Bun</span><span>Matrix</span></div>
         <a href="https://github.com/protocol-luna/pixieglow" class="card-link" aria-label="Pixieglow repo"></a>
       </div>
@@ -451,23 +474,23 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Architecture</div>
     <h2 class="section-title">How It Works</h2>
-    <p class="section-sub">24 state-machine diagrams document every component -- from message processing to typo correction.</p>
+    <p class="section-sub">The brain (Emerald) manages behavior and Sapphire communication. Bots are thin WebSocket clients.</p>
     <div class="diagram-wrapper" onclick="openDiagram('diagrams/architecture-overview.svg')">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
-      <div class="diagram-caption">High-level system architecture: bot &rarr; Sapphire (classification + routing) &rarr; Krystal instances</div>
+      <div class="diagram-caption">High-level system architecture: platform &rarr; bot &rarr; Emerald (brain) &rarr; Sapphire (gateway) &rarr; Krystal (LLM)</div>
     </div>
     <div class="diagram-grid">
       <div class="diagram-card" onclick="openDiagram('diagrams/02-message-processing.svg')">
         <h4>Message Processing</h4>
-        <p>The main state machine -- every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
+        <p>Every message goes through trigger evaluation, behavior layer, Sapphire call, and post-processing -- orchestrated by Emerald.</p>
       </div>
       <div class="diagram-card" onclick="openDiagram('diagrams/03-trigger-evaluation.svg')">
         <h4>Trigger Evaluation</h4>
         <p>Cascade of checks: mentions, DMs, names, keywords, random chance. Each maps to specific delay and ignore thresholds.</p>
       </div>
-      <div class="diagram-card" onclick="openDiagram('diagrams/04-llm-core-queue.svg')">
-        <h4>LLM Core Queue</h4>
-        <p>FIFO request queue dispatching to direct (llama-server) or online (OpenAI API) backends with word-level emission.</p>
+      <div class="diagram-card">
+        <h4>Emerald Brain</h4>
+        <p>Central WebSocket server (:3126). Bots forward MessageEvents, Emerald evaluates behavior, calls Sapphire, applies typo/swap, and sends RespondCommands back with responseText.</p>
       </div>
       <div class="diagram-card" onclick="openDiagram('diagrams/16-sleep-schedule.svg')">
         <h4>Sleep Schedule</h4>
@@ -479,11 +502,11 @@ huggingface-cli download \
       </div>
       <div class="diagram-card" onclick="openDiagram('diagrams/22-complete-lifecycle.svg')">
         <h4>Complete Lifecycle</h4>
-        <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle.</p>
+        <p>Master diagram unifying all sub-systems into one end-to-end lifecycle.</p>
       </div>
       <div class="diagram-card">
         <h4>Sapphire Gateway</h4>
-        <p>Unified LLM gateway. All bots (Jade, Pixieglow) talk to Sapphire. Classifies each message as FUTILE or INTERESSANT via embedding centroid similarity (BAAI/bge-small-en-v1.5, 99.6% accuracy), then routes to the right Krystal instance — Luna 1.5B (fast) or Discord-Hermes-8B (deep).</p>
+        <p>Python LLM gateway called by Emerald. Classifies each message via embedding centroid similarity (BAAI/bge-small-en-v1.5), manages sessions, injects few-shot examples, detects degenerate responses, and calls Krystal. Single-backend mode (:3124).</p>
       </div>
     </div>
   </div>
