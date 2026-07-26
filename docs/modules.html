@@ -54,7 +54,7 @@
       <p>Krystal wraps llama.cpp's <code>llama-server</code> to serve GGUF models via an OpenAI-compatible HTTP API. It's the lowest layer of the stack — the actual neural network inference.</p>
 
       <h3>Architecture</h3>
-      <p>Single-backend mode: both Sapphire route classifications (FUTILE and INTERESSANT) point to the same Krystal instance on port 3124. This means every message, regardless of classification, is served by the same model.</p>
+      <p>Sapphire routes FUTILE messages to <code>KRYSTAL_GENERIC_URL</code> (<code>:3124</code> by default) and INTERESSANT to <code>KRYSTAL_SEMANTIC_URL</code> (<code>:3125</code> by default). In our deployment both point to the same Krystal instance via <code>KRYSTAL_SEMANTIC_URL</code> env var override. See <a href="#sapphire">Sapphire</a> for env vars.</p>
 
       <h3>Features</h3>
       <ul>
@@ -148,7 +148,7 @@ data: [DONE]</code></pre>
         <tbody>
           <tr><td><code>SAPPHIRE_PORT</code></td><td>3123</td><td>HTTP server port</td></tr>
           <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>FUTILE backend</td></tr>
-          <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>INTERESSANT backend</td></tr>
+          <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>INTERESSANT backend</td></tr>
           <tr><td><code>SAPPHIRE_BOT_NAME</code></td><td><code>"Luna"</code></td><td>Bot persona name</td></tr>
           <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>Full system prompt</td></tr>
           <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td>0.005</td><td>Noise threshold for emotion deltas</td></tr>

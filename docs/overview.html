@@ -152,7 +152,7 @@
       <li><strong>Degenerate detection</strong>: Regex-based detection with retry (non-streaming) or silent discard (streaming).</li>
       <li><strong>Streaming SSE</strong>: Returns an SSE stream of content tokens, then final metadata, then <code>[DONE]</code>.</li>
       <li><strong>Debug mode</strong>: Returns token counts, timing, emotion state, and classification confidence when requested.</li>
-      <li><strong>Single-backend</strong>: Both FUTILE and INTERESSANT routes forward to one Krystal instance on :3124.</li>
+      <li><strong>Backend routing</strong>: FUTILE → <code>KRYSTAL_GENERIC_URL</code> (:3124), INTERESSANT → <code>KRYSTAL_SEMANTIC_URL</code> (:3125). Set both to the same URL for single-backend mode.</li>
     </ul>
 
     <h3>Endpoint: POST /v1/respond</h3>
@@ -194,10 +194,10 @@ data: [DONE]</code></pre>
 
     <h2 id="krystal">Krystal (LLM Server)</h2>
 
-    <p>Krystal runs <code>llama-server</code> from llama.cpp. Single-backend mode — both Sapphire routes point to the same instance on port 3124:</p>
+    <p>Krystal runs <code>llama-server</code> from llama.cpp. Sapphire routes FUTILE to the generic backend and INTERESSANT to the semantic backend. By default they use different ports; set both to the same URL for single-backend mode:</p>
 
     <pre><code>KRYSTAL_GENERIC_URL=http://127.0.0.1:3124
-KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
+KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
 
     <p>Current model: <code>Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5-200k-instruct.Q4_K_M.gguf</code> (941 MB).</p>
 
@@ -389,7 +389,7 @@ forget_chance: 0.03
       <tbody>
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Sapphire server port</td></tr>
         <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
-        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for INTERESSANT messages</td></tr>
+        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
         <tr><td><code>SAPPHIRE_BOT_NAME</code></td><td><code>"Luna"</code></td><td>Bot persona name (injected into system prompt)</td></tr>
         <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>Full system prompt (with no-echo instruction)</td></tr>
         <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td><code>0.005</code></td><td>Noise threshold for emotion state updates</td></tr>
