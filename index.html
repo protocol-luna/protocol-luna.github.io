@@ -762,12 +762,10 @@ huggingface-cli download \
   </div>
 </footer>
 
-<dialog id="diagram-modal" style="background:#f5f3ff; border:1px solid var(--border); border-radius:var(--radius-lg); padding:0; max-width:90vw; max-height:90vh; overflow:hidden; color:#333;">
-  <div style="position:relative;">
-    <button onclick="document.getElementById('diagram-modal').close()" style="position:absolute;top:12px;right:12px;z-index:10;width:32px;height:32px;border-radius:50%;border:1px solid #d0d0e0;background:#fff;color:#333;font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">&#x2715;</button>
-    <img id="diagram-modal-img" src="" alt="Diagram" style="max-width:100%;max-height:90vh;display:block;padding:12px;">
-  </div>
-</dialog>
+<div id="diagram-overlay" onclick="closeDiagram()" style="display:none;position:fixed;inset:0;z-index:999;background:rgba(0,0,0,0.85);backdrop-filter:blur(8px);justify-content:center;align-items:center;padding:40px;cursor:zoom-out;">
+  <button onclick="event.stopPropagation();closeDiagram()" style="position:absolute;top:20px;right:28px;z-index:10;width:36px;height:36px;border-radius:50%;border:none;background:rgba(255,255,255,0.15);color:#fff;font-size:1.3rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s;" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.15)'">&#x2715;</button>
+  <img id="diagram-overlay-img" src="" alt="Diagram" style="max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+</div>
 
 <script>
 (function initStars() {
@@ -785,11 +783,19 @@ huggingface-cli download \
 })();
 
 function openDiagram(src) {
-  var modal = document.getElementById('diagram-modal');
-  var img = document.getElementById('diagram-modal-img');
+  var overlay = document.getElementById('diagram-overlay');
+  var img = document.getElementById('diagram-overlay-img');
   img.src = src;
-  modal.showModal();
+  overlay.style.display = 'flex';
 }
+
+function closeDiagram() {
+  document.getElementById('diagram-overlay').style.display = 'none';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeDiagram();
+});
 </script>
 </body>
 </html>
