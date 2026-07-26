@@ -83,11 +83,13 @@ nav .back:hover { color: var(--primary-light); text-decoration: none; }
 .doc-content blockquote { border-left: 3px solid var(--primary); padding: 12px 20px; margin: 0 0 20px; background: rgba(147,112,219,0.08); border-radius: 0 var(--radius) var(--radius) 0; }
 .doc-content blockquote p { margin-bottom: 0; color: var(--text-muted); }
 
-.toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; margin-bottom: 40px; }
+.doc-layout { display: grid; grid-template-columns: 220px 1fr; gap: 40px; align-items: start; }
+.doc-sidebar { position: sticky; top: 80px; }
+.toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; }
 .toc h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-dim); margin-bottom: 12px; }
 .toc ul { list-style: none; margin: 0; padding: 0; }
 .toc li { margin-bottom: 6px; }
-.toc a { color: var(--text-muted); font-size: 0.9rem; }
+.toc a { color: var(--text-muted); font-size: 0.85rem; transition: color .2s; }
 .toc a:hover { color: var(--primary-light); }
 
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
@@ -99,6 +101,8 @@ footer a { color: var(--primary-dim); }
   .doc-content h2 { font-size: 1.3rem; }
   .container { padding: 0 16px; }
   .doc-content pre { padding: 14px; font-size: 0.8rem; }
+  .doc-layout { grid-template-columns: 1fr; gap: 0; }
+  .doc-sidebar { position: static; margin-bottom: 24px; }
 }
 </style>
 </head>
@@ -120,18 +124,21 @@ footer a { color: var(--primary-dim); }
     <p>Triggers, behaviors, configuration reference, logs, and dataset documentation for Luna Protocol.</p>
   </div>
 
-  <div class="toc">
-    <h3>Table of Contents</h3>
-    <ul>
-      <li><a href="#trigger-system">Trigger System</a></li>
-      <li><a href="#response-mechanisms">Response Mechanisms</a></li>
-      <li><a href="#commands">Commands</a></li>
-      <li><a href="#configuration">Configuration</a></li>
-      <li><a href="#logs">Logs</a></li>
-      <li><a href="#dataset">Dataset</a></li>
-      <li><a href="#discord-portal">Discord Developer Portal</a></li>
-    </ul>
-  </div>
+  <div class="doc-layout">
+    <aside class="doc-sidebar">
+      <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+          <li><a href="#trigger-system">Trigger System</a></li>
+          <li><a href="#response-mechanisms">Response Mechanisms</a></li>
+          <li><a href="#commands">Commands</a></li>
+          <li><a href="#configuration">Configuration</a></li>
+          <li><a href="#logs">Logs</a></li>
+          <li><a href="#dataset">Dataset</a></li>
+          <li><a href="#discord-portal">Discord Developer Portal</a></li>
+        </ul>
+      </div>
+    </aside>
 
   <div class="doc-content">
 
@@ -376,6 +383,7 @@ python server.py
       <li>Gateway intents: <code>guilds</code>, <code>guildMessages</code>, <code>guildMessageReactions</code>, <code>messageContent</code>, <code>directMessages</code></li>
     </ul>
 
+  </div>
   </div>
 </div>
 
