@@ -99,14 +99,14 @@ footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: cente
 footer a { color: var(--primary-dim); }
 
 @media (max-width: 768px) {
-  .doc-header { grid-column: auto; padding: 80px 0 30px; }
+  .doc-header { grid-column: auto; min-width: 0; padding: 80px 0 30px; }
   .doc-header h1 { font-size: 1.8rem; }
   .doc-content h2 { font-size: 1.3rem; }
   .container { padding: 0 16px; }
   .doc-content pre { padding: 14px; font-size: 0.8rem; }
-  .doc-layout { grid-template-columns: 1fr; gap: 0; }
+  .doc-layout { grid-template-columns: 1fr; gap: 0; min-width: 0; }
   .doc-sidebar { display: none; }
-  .doc-content { grid-column: 1; }
+  .doc-content { grid-column: 1; min-width: 0; overflow-wrap: break-word; }
 }
 </style>
 </head>
