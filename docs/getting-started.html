@@ -61,7 +61,7 @@ nav .logo span { color: var(--primary-light); }
 nav .back { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
 nav .back:hover { color: var(--primary-light); text-decoration: none; }
 
-.doc-header { padding: 100px 0 40px; }
+.doc-header { grid-column: 2; padding: 100px 0 40px; }
 .doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
 
@@ -103,7 +103,7 @@ footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: cente
 footer a { color: var(--primary-dim); }
 
 @media (max-width: 768px) {
-  .doc-header { padding: 80px 0 30px; }
+  .doc-header { grid-column: auto; padding: 80px 0 30px; }
   .doc-header h1 { font-size: 1.8rem; }
   .doc-content h2 { font-size: 1.3rem; }
   .container { padding: 0 16px; }
@@ -127,12 +127,11 @@ footer a { color: var(--primary-dim); }
 </nav>
 
 <div class="container">
-  <div class="doc-header">
-    <h1>Getting Started</h1>
-    <p>From zero to running bot in 15 minutes. Beginner and advanced guides for the full Luna Protocol stack.</p>
-  </div>
-
   <div class="doc-layout">
+    <div class="doc-header">
+      <h1>Getting Started</h1>
+      <p>From zero to running bot in 15 minutes. Beginner and advanced guides for the full Luna Protocol stack.</p>
+    </div>
     <aside class="doc-sidebar">
       <div class="toc">
         <h3>Table of Contents</h3>
