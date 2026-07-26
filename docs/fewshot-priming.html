@@ -15,6 +15,9 @@
 <meta name="twitter:title" content="Few-Shot Priming Guide -- Protocol Luna">
 <meta name="twitter:description" content="How to guide LLM behavior with example conversations -- show, don't tell.">
 <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
 <style>
 :root {
@@ -37,7 +40,7 @@
 * { margin: 0; padding: 0; box-sizing: border-box; }
 html { overflow-x: hidden; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.7;
@@ -45,8 +48,9 @@ body {
   overflow-x: hidden;
 }
 ::selection { background: var(--primary); color: #fff; }
-a { color: var(--primary-light); text-decoration: none; }
+a { color: var(--primary-light); text-decoration: none; transition: color .2s; }
 a:hover { text-decoration: underline; }
+code, pre, .doc-content code { font-family: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace; }
 .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }

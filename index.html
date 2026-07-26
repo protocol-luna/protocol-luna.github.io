@@ -15,6 +15,9 @@
 <meta name="twitter:title" content="Protocol Luna">
 <meta name="twitter:description" content="Autonomous, sentient-like bots powered by local LLM inference.">
 <meta name="twitter:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
 <style>
 :root {
@@ -41,12 +44,16 @@
 html { overflow-x: hidden; }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.6;
   min-height: 100vh;
   overflow-x: hidden;
+}
+
+code, pre, .terminal-title, .hero-note code, .setup-block pre code {
+  font-family: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace;
 }
 
 ::selection { background: var(--primary); color: #fff; }
@@ -64,7 +71,8 @@ body {
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
 nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
-nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
+nav .logo img { width: 28px; height: 28px; border-radius: 50%; transition: transform .3s; }
+nav .logo:hover img { transform: rotate(360deg); }
 nav .logo span { color: var(--primary-light); }
 nav .links { display: flex; gap: 24px; align-items: center; }
 nav .links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
@@ -76,7 +84,7 @@ nav .links a:hover { color: var(--primary-light); }
 .hero h1 { font-size: clamp(2.8rem, 7vw, 4.5rem); font-weight: 800; letter-spacing: -1px; line-height: 1.1; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .hero p { margin-top: 20px; font-size: 1.15rem; color: var(--text-muted); max-width: 620px; margin-inline: auto; }
 .hero-actions { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 100px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all .2s; cursor: pointer; border: none; }
+.btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 28px; border-radius: 100px; font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: all .25s ease; cursor: pointer; border: none; }
 .btn-primary { background: var(--primary); color: #fff; }
 .btn-primary:hover { background: var(--primary-light); transform: translateY(-2px); box-shadow: 0 8px 30px var(--glow); }
 .btn-outline { background: transparent; color: var(--primary-light); border: 1px solid var(--border); }
@@ -91,26 +99,36 @@ section { padding: 90px 0; }
 .section-sub { color: var(--text-muted); max-width: 600px; margin-bottom: 48px; }
 
 .projects-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
-.project-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; transition: all .25s; position: relative; overflow: hidden; }
+.project-card { background: var(--bg-surface); border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; transition: all .3s ease; position: relative; overflow: hidden; }
 .project-card:hover { border-color: var(--primary); transform: translateY(-4px); box-shadow: 0 12px 40px var(--glow); }
-.project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity .25s; }
+.project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, var(--primary), var(--accent)); opacity: 0; transition: opacity .3s ease; }
 .project-card:hover::before { opacity: 1; }
 .project-card .icon-wrap { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; background: rgba(147,112,219,0.12); border: 1px solid rgba(147,112,219,0.2); }
 .project-card .icon-wrap svg { width: 22px; height: 22px; }
 .project-card h3 { font-size: 1.2rem; margin-bottom: 8px; }
 .project-card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 16px; line-height: 1.5; }
 .project-card .tags { display: flex; flex-wrap: wrap; gap: 6px; font-size: 0.75rem; }
-.project-card .tags span { padding: 3px 10px; border-radius: 100px; background: rgba(147,112,219,0.08); color: var(--text-muted); border: 1px solid var(--border); }
+.project-card .tags span { padding: 3px 10px; border-radius: 100px; background: rgba(147,112,219,0.08); color: var(--text-muted); border: 1px solid var(--border); transition: all .2s; }
+.project-card:hover .tags span { border-color: rgba(147,112,219,0.3); }
 .project-card .card-link { position: absolute; inset: 0; z-index: 1; }
 
-.diagram-wrapper { background: #f5f3ff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; overflow-x: auto; }
-.diagram-wrapper img { width: 100%; height: auto; display: block; }
+.diagram-wrapper { background: #f5f3ff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; overflow: hidden; cursor: zoom-in; position: relative; }
+.diagram-wrapper img { width: 100%; height: auto; display: block; transition: transform .3s ease; }
+.diagram-wrapper:hover img { transform: scale(1.02); }
+.diagram-wrapper::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background .3s; pointer-events: none; }
 .diagram-caption { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
 .diagram-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
-.diagram-card { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; cursor: pointer; transition: all .2s; color: var(--text); }
-.diagram-card:hover { border-color: var(--primary-dim); }
+.diagram-card { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; cursor: pointer; transition: all .25s ease; color: var(--text); }
+.diagram-card:hover { border-color: var(--primary-dim); transform: translateY(-2px); box-shadow: 0 4px 20px var(--glow); }
 .diagram-card h4 { font-size: 0.95rem; margin-bottom: 4px; }
 .diagram-card p { font-size: 0.8rem; color: var(--text-muted); }
+
+/* Lightbox for diagram */
+.lightbox { display: none; position: fixed; inset: 0; z-index: 999; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); justify-content: center; align-items: center; cursor: zoom-out; padding: 40px; }
+.lightbox.active { display: flex; }
+.lightbox img { max-width: 100%; max-height: 100%; border-radius: var(--radius); box-shadow: 0 20px 60px rgba(0,0,0,0.5); }
+.lightbox-close { position: absolute; top: 20px; right: 28px; color: #fff; font-size: 2rem; cursor: pointer; opacity: 0.6; transition: opacity .2s; background: none; border: none; }
+.lightbox-close:hover { opacity: 1; }
 
 .showcase-grid { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; }
 .showcase-screenshot { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; }
@@ -436,7 +454,7 @@ huggingface-cli download \
     <div class="section-label">Architecture</div>
     <h2 class="section-title">How It Works</h2>
     <p class="section-sub">24 state-machine diagrams document every component -- from message processing to typo correction.</p>
-    <div class="diagram-wrapper">
+    <div class="diagram-wrapper" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/architecture-overview.svg'">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
       <div class="diagram-caption">High-level system architecture: bot &rarr; Sapphire (classification + routing) &rarr; Krystal instances</div>
     </div>
