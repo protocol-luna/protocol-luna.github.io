@@ -162,10 +162,9 @@ footer a { color: var(--primary-dim); }
 
     <pre><code># 1. Start the LLM server (Krystal, small mode = Luna 1.5B)
 git clone https://github.com/protocol-luna/krystal
-cd krystal &amp;&amp; npm install
-npx pm2 start taskset -- -c 0 ./bin/llama/llama-server \
-  -m ./models/Luna-Protocol-1.5B-Fine-Tuned-Qwen2.5.Q4_K_M.gguf \
-  -t 1 -c 8192 --host 127.0.0.1 --port 3125 --no-slots
+cd krystal
+npm install
+./start.sh small   # starts on :3124 with Luna 1.5B
 
 # 2. Start the classifier gateway (Sapphire)
 git clone https://github.com/protocol-luna/sapphire
@@ -177,7 +176,7 @@ python server.py &amp;
 git clone https://github.com/protocol-luna/pixieglow
 cd pixieglow
 cp config.example.yml config.yml
-# edit config.yml with your Matrix token and homeserver
+# edit config.yml: set matrix_token, sapphire_host=localhost, sapphire_port=3123
 bun run src/index.ts</code></pre>
 
     <h2 id="architecture">Architecture Overview</h2>
@@ -302,19 +301,20 @@ python server.py
     <pre><code>git clone https://github.com/protocol-luna/jade
 cd jade
 cp config.example.yml config.yml
-# edit config.yml: set discord_token, llm_host=localhost, llm_port=3123
+# edit config.yml: set discord_token, sapphire_host=localhost, sapphire_port=3123
 npm install
+npm run build
 npm start</code></pre>
 
     <h3>Pixieglow (Matrix)</h3>
     <pre><code>git clone https://github.com/protocol-luna/pixieglow
 cd pixieglow
 cp config.example.yml config.yml
-# edit config.yml: set matrix_token, matrix_host, llm_host=localhost, llm_port=3123
+# edit config.yml: set matrix_token, matrix_homeserver, sapphire_host=localhost, sapphire_port=3123
 bun install
 bun run src/index.ts</code></pre>
 
-    <p>Both bots point their <code>llm_host</code> / <code>llm_port</code> to <strong>Sapphire</strong> (<code>localhost:3123</code>), not directly to Krystal. Sapphire handles classification and routing.</p>
+    <p>Both bots are thin SSE clients — they call <code>POST /v1/respond</code> on <strong>Sapphire</strong> (<code>localhost:3123</code>) which handles classification, session management, few-shot injection, emotion scoring, and routing to Krystal. No per-bot LLM logic needed.</p>
 
     <h2 id="testing">Testing Your Setup</h2>
 
@@ -322,7 +322,7 @@ bun run src/index.ts</code></pre>
 
     <pre><code># 1. Krystal is running
 curl http://127.0.0.1:3124/health   # small mode
-curl http://127.0.0.1:3125/health   # large mode
+curl http://127.0.0.1:3125/health   # large mode (if running)
 
 # 2. Sapphire is running
 curl http://127.0.0.1:3123/health
@@ -331,18 +331,24 @@ curl http://127.0.0.1:3123/health
 curl -X POST http://127.0.0.1:3123/classify \
   -H 'Content-Type: application/json' \
   -d '{"text":"hello"}'
-# Expected: {"label":"FUTILE","confidence":0.1461,...}
+# Expected: {"label":"FUTILE",...}
 
 curl -X POST http://127.0.0.1:3123/classify \
   -H 'Content-Type: application/json' \
   -d '{"text":"how does quantum computing work"}'
 # Expected: {"label":"INTERESSANT",...}
 
-# 4. Full routing works
-curl -X POST http://127.0.0.1:3123/v1/chat/completions \
+# 4. Full /v1/respond pipeline (non-streaming)
+curl -X POST http://127.0.0.1:3123/v1/respond \
   -H 'Content-Type: application/json' \
-  -d '{"messages":[{"role":"user","content":"hello"}]}'
-# Expected: response from Krystal-small (:3124)</code></pre>
+  -d '{"username":"test","text":"hello","session_id":"test","stream":false}'
+# Expected: {"text":"...","label":"FUTILE","backend":"http://127.0.0.1:3124",...}
+
+# 5. Streaming /v1/respond
+curl -N -X POST http://127.0.0.1:3123/v1/respond \
+  -H 'Content-Type: application/json' \
+  -d '{"username":"test","text":"hello","session_id":"test","stream":true}'
+# Expected: SSE tokens, then final JSON metadata, then [DONE]</code></pre>
 
     <p>Run the full test suite to check accuracy:</p>
     <pre><code>cd sapphire
@@ -432,7 +438,7 @@ taskset -c 3 python server.py</code></pre>
       <li><code>curl http://127.0.0.1:3125/health</code> — Krystal must respond</li>
       <li><code>curl http://127.0.0.1:3123/health</code> — Sapphire must respond</li>
       <li><code>curl http://127.0.0.1:3123/classify -d '{"text":"hi"}'</code> — classification must work</li>
-      <li>Bot config must point <code>llm_host: localhost</code> + <code>llm_port: 3123</code> (Sapphire, not Krystal directly)</li>
+      <li>Bot config must point <code>sapphire_host: localhost</code> + <code>sapphire_port: 3123</code> (Sapphire, not Krystal directly)</li>
     </ul>
 
     <h3>Wrong classification</h3>

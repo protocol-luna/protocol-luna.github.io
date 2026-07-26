@@ -159,8 +159,8 @@ footer a { color: var(--primary-dim); }
     <ul>
       <li>Fine-tuned Qwen2.5 1.5B model, trained on 200k samples from <a href="https://huggingface.co/datasets/mookiezi/Discord-Dialogues">Discord-Dialogues</a></li>
       <li>Quantized GGUF format</li>
-      <li><strong>Few-shot priming</strong>: Inject example conversations to guide model behavior (configurable in <code>config.yml</code>)</li>
-      <li>Two LLM modes: <code>direct</code> (bot &rarr; llama-server directly, shared model / prompt cache), <code>online</code> (OpenAI-compatible API)</li>
+      <li><strong>Few-shot priming</strong>: Inject example conversations to guide model behavior (configured in Sapphire env vars)</li>
+      <li>Architecture: Bot (Jade/Pixieglow) &rarr; Sapphire (classify + route) &rarr; Krystal (llama-server)</li>
       <li>Event-driven architecture: <code>llmBus</code> for LLM tokens/errors, <code>stateBus</code> for auto-persist</li>
     </ul>
 
@@ -270,18 +270,23 @@ footer a { color: var(--primary-dim); }
     </table>
 
     <h2 id="sapphire-gateway">Sapphire Gateway (unified LLM endpoint)</h2>
-    <p>Sapphire is a middleware service that sits between all bots and the LLM backends. It provides a single <code>/v1/chat/completions</code> endpoint (OpenAI-compatible) that:</p>
+    <p>Sapphire is a Python middleware that sits between all bots and the LLM backends. It provides a unified <code>/v1/respond</code> endpoint (with SSE streaming) that:</p>
     <ul>
-      <li>Receives the request from any bot (Jade, Pixieglow)</li>
-      <li>Classifies the last user message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed, 99.6% accuracy on test suite)</li>
+      <li>Receives <code>{ username, text, session_id, stream }</code> from any bot (Jade, Pixieglow)</li>
+      <li>Classifies the message as <strong>FUTILE</strong> (trivial) or <strong>INTERESSANT</strong> (serious) using embedding centroid similarity (<code>fastembed</code> + BAAI/bge-small-en-v1.5, ~100 MB, no GPU needed)</li>
+      <li>Manages conversation sessions (TTL-based expiry, history trimming, slot hash pinning)</li>
+      <li>Injects few-shot examples server-side before the system prompt</li>
+      <li>Scores emotion (valence/arousal axes) via centroid comparison</li>
       <li>Routes to the appropriate Krystal instance</li>
-      <li>Streams the response back to the client</li>
+      <li>Detects degenerate output and retries automatically</li>
+      <li>Streams tokens back in real-time via SSE, then sends final metadata event</li>
     </ul>
-    <p><strong>How classification works:</strong> Instead of a trained classifier, Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~200 curated examples in <code>examples.yml</code> (weighted items supported). The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list. Achieves <strong>99.6% accuracy</strong> (257/258 on the test suite).</p>
+    <p><strong>How classification works:</strong> Sapphire computes cosine similarity between the query embedding and two pre-computed centroids (futile / interessant). The centroids are derived from ~1100 curated examples in <code>examples.yml</code> (579 futile + 545 interessant, weighted items supported). The label with higher similarity wins. This is zero-shot — no training, no fine-tuning, and easy to adjust by editing the example list. Achieves <strong>97.3% accuracy</strong> (398 tests).</p>
+    <p><strong>Emotion scoring:</strong> Four additional centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. A configurable deadzone (default 0.06) filters noise. Emotional state per conversation key decays via EMA (default 0.85).</p>
     <p><strong>Routing:</strong></p>
     <ul>
       <li><strong>FUTILE</strong> (trivial) — chit-chat, greetings, commands &rarr; Krystal-GENERIC (<code>:3124</code>, Luna 1.5B)</li>
-      <li><strong>INTERESSANT</strong> (serious) — facts, personal info, complex questions &rarr; Krystal-SEMANTIC (<code>:3125</code>, Discord-Hermes-8B)</li>
+      <li><strong>INTERESSANT</strong> (serious) — facts, personal info, complex questions &rarr; Krystal-SEMANTIC (<code>:3125</code>, e.g. Hermes-8B)</li>
     </ul>
     <p><strong>Setup:</strong></p>
     <pre><code>git clone https://github.com/protocol-luna/sapphire
@@ -290,6 +295,18 @@ pip install -r requirements.txt
 python server.py
 # listens on 127.0.0.1:3123
 </code></pre>
+    <p><strong>Endpoints:</strong></p>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/v1/respond</code></td><td>POST</td><td>Main endpoint — classify + session + few-shot + route + stream. Input: <code>{ username, text, session_id, stream }</code>. Returns SSE tokens then final JSON metadata event with <code>{ text, label, backend, valence, arousal }</code>.</td></tr>
+        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>OpenAI-compatible chat completions (no sessions, no few-shot). For external tools.</td></tr>
+        <tr><td><code>/v1/reset</code></td><td>POST</td><td>Reset one or all conversation sessions.</td></tr>
+        <tr><td><code>/classify</code></td><td>POST</td><td>Classify only, returns label + similarity scores + emotion scores.</td></tr>
+        <tr><td><code>/emotion/{conv_key}</code></td><td>GET</td><td>Current emotional state (valence/arousal) for a conversation key.</td></tr>
+        <tr><td><code>/health</code></td><td>GET</td><td>Server status + active sessions + configuration.</td></tr>
+      </tbody>
+    </table>
     <p><strong>Environment variables:</strong></p>
     <table>
       <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
@@ -297,10 +314,19 @@ python server.py
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Sapphire server port</td></tr>
         <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
         <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3125</code></td><td>Backend for INTERESSANT messages</td></tr>
-        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to curated example list</td></tr>
+        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Path to classification example list</td></tr>
+        <tr><td><code>SAPPHIRE_EMOTION_EXAMPLES</code></td><td><code>./examples_emotion.yml</code></td><td>Path to emotion example list</td></tr>
+        <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>System prompt for all conversations</td></tr>
+        <tr><td><code>SAPPHIRE_LLM_SESSION_TTL</code></td><td><code>600</code></td><td>Session expiry in seconds</td></tr>
+        <tr><td><code>SAPPHIRE_LLM_MAX_HISTORY</code></td><td><code>20</code></td><td>Max user/assistant pairs in context</td></tr>
+        <tr><td><code>SAPPHIRE_LLM_MAX_RETRIES</code></td><td><code>2</code></td><td>Retries on degenerate output</td></tr>
+        <tr><td><code>SAPPHIRE_FEW_SHOT_ENABLED</code></td><td><code>true</code></td><td>Enable/disable few-shot priming</td></tr>
+        <tr><td><code>SAPPHIRE_MIROSTAT_ENABLED</code></td><td><code>true</code></td><td>Enable mirostat sampling</td></tr>
+        <tr><td><code>SAPPHIRE_EMOTION_DECAY</code></td><td><code>0.85</code></td><td>EMA decay factor for emotion state</td></tr>
+        <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td><code>0.06</code></td><td>Noise threshold for emotion deltas</td></tr>
       </tbody>
     </table>
-    <p><strong>Bot config:</strong> Both Jade and Pixieglow point their <code>llm_host</code>/<code>llm_port</code> to Sapphire (<code>localhost:3123</code>). No per-bot classifier needed.</p>
+    <p><strong>Bot config:</strong> Both Jade and Pixieglow point their <code>sapphire_host</code>/<code>sapphire_port</code> to Sapphire (<code>localhost:3123</code>). No per-bot classifier, few-shot, or session logic needed — all handled server-side by Sapphire.</p>
 
     <h2 id="configuration">Configuration</h2>
     <p>Single <code>config.yml</code> file. Shell env vars override YAML keys if present. Hot-reload for dynamic values.</p>
@@ -317,9 +343,8 @@ python server.py
     <h3>Secrets &amp; Paths (&#x274C;)</h3>
     <ul>
       <li><code>discord_token</code> -- Discord bot token</li>
-      <li><code>llama_model_path</code> -- Path to GGUF model</li>
-      <li><code>llm_host</code> / <code>llm_port</code> -- LLM server connection</li>
-      <li><code>llm_mode</code> -- <code>direct</code> (local llama-server) or <code>online</code> (OpenAI API)</li>
+      <li><code>matrix_token</code> / <code>matrix_homeserver</code> -- Matrix connection</li>
+      <li><code>sapphire_host</code> / <code>sapphire_port</code> -- Sapphire gateway connection</li>
       <li><code>tts_model_path</code>, <code>tts_binary_path</code>, <code>ffmpeg_path</code>, <code>ffprobe_path</code> -- TTS &amp; audio paths</li>
     </ul>
 
