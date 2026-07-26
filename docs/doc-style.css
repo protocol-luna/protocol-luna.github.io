@@ -76,8 +76,11 @@ footer a { color: var(--primary-dim); }
   .doc-content { grid-column: auto; min-width: 0; overflow-wrap: break-word; }
   .doc-content h2 { font-size: 1.3rem; }
   .doc-content pre { padding: 14px; font-size: 0.8rem; }
-  .doc-content table { display: block; overflow-x: auto; max-width: 100%; }
+  .doc-content table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .container { padding: 0 16px; }
   .doc-layout { grid-template-columns: 1fr; gap: 0; min-width: 0; }
   .doc-sidebar { display: none; }
+  nav .container { gap: 8px; }
+  nav .back { font-size: 0.8rem; white-space: nowrap; }
+  nav [style*="display:flex"] { flex-shrink: 0; overflow-x: auto; }
 }
