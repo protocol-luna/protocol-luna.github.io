@@ -28,6 +28,8 @@ a { color: var(--primary-light); text-decoration: none; transition: color .2s; }
 a:hover { text-decoration: underline; }
 code, pre, .doc-content code { font-family: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace; }
 .container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+html { overflow-x: hidden; }
+body { overflow-x: hidden; }
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
 nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
@@ -35,9 +37,10 @@ nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
 nav .logo span { color: var(--primary-light); }
 nav .back { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
 nav .back:hover { color: var(--primary-light); text-decoration: none; }
-.doc-header { padding: 100px 0 40px; }
+.doc-header { grid-column: 2; padding: 100px 0 40px; }
 .doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
 .doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
+.doc-content { grid-column: 2; min-width: 0; }
 .doc-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--text); scroll-margin-top: 80px; }
 .doc-content h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; color: var(--primary-light); scroll-margin-top: 80px; }
 .doc-content h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
@@ -68,10 +71,13 @@ nav .back:hover { color: var(--primary-light); text-decoration: none; }
 footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
 footer a { color: var(--primary-dim); }
 @media (max-width: 768px) {
+  .doc-header { grid-column: auto; padding: 80px 0 30px; }
   .doc-header h1 { font-size: 1.8rem; }
+  .doc-content { grid-column: auto; min-width: 0; overflow-wrap: break-word; }
   .doc-content h2 { font-size: 1.3rem; }
   .doc-content pre { padding: 14px; font-size: 0.8rem; }
   .doc-content table { display: block; overflow-x: auto; max-width: 100%; }
-  .doc-layout { grid-template-columns: 1fr; }
+  .container { padding: 0 16px; }
+  .doc-layout { grid-template-columns: 1fr; gap: 0; min-width: 0; }
   .doc-sidebar { display: none; }
 }
