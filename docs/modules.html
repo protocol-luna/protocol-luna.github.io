@@ -174,7 +174,7 @@ data: [DONE]</code></pre>
 
       <h3>Developer Notes</h3>
       <ul>
-        <li>Runs under <code>/home/lsannier/sapphire/venv/bin/python</code> (not system python)</li>
+        <li>Runs under <code>./venv/bin/python</code> (not system python)</li>
         <li>Model centroids are computed at startup (~10s for embedding + classification)</li>
         <li>Debug fields use <code>snake_case</code> in Sapphire JSON but are mapped to <code>camelCase</code> in Emerald's TypeScript types</li>
         <li>The system prompt must explicitly forbid echoing (the 1.5B model tends to repeat user input otherwise)</li>
