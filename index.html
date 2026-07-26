@@ -75,7 +75,7 @@ nav .logo img { width: 28px; height: 28px; border-radius: 50%; transition: trans
 nav .logo:hover img { transform: rotate(360deg); }
 nav .logo span { color: var(--primary-light); }
 nav .links { display: flex; gap: 24px; align-items: center; }
-nav .links a { color: var(--text-muted); text-decoration: none; font-size: 0.9rem; transition: color .2s; }
+nav .links a { color: var(--text-muted); text-decoration: none; font-size: 0.85rem; transition: color .2s; }
 nav .links a:hover { color: var(--primary-light); }
 
 .hero { padding: 160px 0 80px; text-align: center; position: relative; }
@@ -112,11 +112,9 @@ section { padding: 90px 0; }
 .project-card:hover .tags span { border-color: rgba(147,112,219,0.3); }
 .project-card .card-link { position: absolute; inset: 0; z-index: 1; }
 
-.diagram-wrapper { background: #f5f3ff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; overflow: hidden; cursor: zoom-in; position: relative; }
-.diagram-wrapper img { width: 100%; height: auto; display: block; transition: transform .3s ease; }
-.diagram-wrapper:hover img { transform: scale(1.02); }
-.diagram-wrapper::after { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background .3s; pointer-events: none; }
-.diagram-caption { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); text-align: center; }
+.diagram-wrapper { background: #f5f3ff; border-radius: var(--radius-lg); border: 1px solid var(--border); padding: 32px; margin-bottom: 24px; overflow-x: auto; cursor: pointer; }
+.diagram-wrapper img { width: 100%; height: auto; display: block; }
+.diagram-caption { margin-top: 12px; font-size: 0.85rem; color: var(--text-muted); text-align: center; pointer-events: none; }
 .diagram-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
 .diagram-card { background: var(--bg-surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; cursor: pointer; transition: all .25s ease; color: var(--text); }
 .diagram-card:hover { border-color: var(--primary-dim); transform: translateY(-2px); box-shadow: 0 4px 20px var(--glow); }
@@ -454,32 +452,32 @@ huggingface-cli download \
     <div class="section-label">Architecture</div>
     <h2 class="section-title">How It Works</h2>
     <p class="section-sub">24 state-machine diagrams document every component -- from message processing to typo correction.</p>
-    <div class="diagram-wrapper" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/architecture-overview.svg'">
+    <div class="diagram-wrapper" onclick="openDiagram('diagrams/architecture-overview.svg')">
       <img src="diagrams/architecture-overview.svg" alt="Architecture Overview Diagram">
       <div class="diagram-caption">High-level system architecture: bot &rarr; Sapphire (classification + routing) &rarr; Krystal instances</div>
     </div>
     <div class="diagram-grid">
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/02-message-processing.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/02-message-processing.svg')">
         <h4>Message Processing</h4>
         <p>The main state machine -- every message goes through trigger evaluation, behavior layer, LLM call, and post-processing.</p>
       </div>
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/03-trigger-evaluation.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/03-trigger-evaluation.svg')">
         <h4>Trigger Evaluation</h4>
         <p>Cascade of checks: mentions, DMs, names, keywords, random chance. Each maps to specific delay and ignore thresholds.</p>
       </div>
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/04-llm-core-queue.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/04-llm-core-queue.svg')">
         <h4>LLM Core Queue</h4>
         <p>FIFO request queue dispatching to direct (llama-server) or online (OpenAI API) backends with word-level emission.</p>
       </div>
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/16-sleep-schedule.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/16-sleep-schedule.svg')">
         <h4>Sleep Schedule</h4>
         <p>Circadian rhythm with three behaviors: sleep (ignore all but mentions), slow (3-5&times; delay), short (+30% ignore).</p>
       </div>
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/24-topic-fatigue.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/24-topic-fatigue.svg')">
         <h4>Topic Fatigue</h4>
         <p>Tracks word frequency per channel. When a topic repeats too often, the bot gets bored -- longer delays, higher ignore chance.</p>
       </div>
-      <div class="diagram-card" onclick="document.getElementById('diagram-modal').showModal(); document.getElementById('diagram-modal-img').src='diagrams/22-complete-lifecycle.svg'">
+      <div class="diagram-card" onclick="openDiagram('diagrams/22-complete-lifecycle.svg')">
         <h4>Complete Lifecycle</h4>
         <p>Master diagram unifying all 23 sub-systems into one end-to-end lifecycle.</p>
       </div>
@@ -785,6 +783,13 @@ huggingface-cli download \
     container.appendChild(star);
   }
 })();
+
+function openDiagram(src) {
+  var modal = document.getElementById('diagram-modal');
+  var img = document.getElementById('diagram-modal-img');
+  img.src = src;
+  modal.showModal();
+}
 </script>
 </body>
 </html>
