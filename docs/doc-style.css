@@ -27,9 +27,9 @@ body {
 a { color: var(--primary-light); text-decoration: none; transition: color .2s; }
 a:hover { text-decoration: underline; }
 code, pre, .doc-content code { font-family: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace; }
-.container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
+.container { width: 100%; max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
 html { overflow-x: hidden; }
-body { overflow-x: hidden; }
+body { width: 100%; max-width: 100%; overflow-x: hidden; }
 nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
 nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
 nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
@@ -75,9 +75,9 @@ footer a { color: var(--primary-dim); }
   .doc-header h1 { font-size: 1.8rem; }
   .doc-content { grid-column: auto; min-width: 0; overflow-wrap: break-word; }
   .doc-content h2 { font-size: 1.3rem; }
-  .doc-content pre { padding: 14px; font-size: 0.8rem; }
+  .doc-content pre { padding: 14px; font-size: 0.8rem; white-space: pre-wrap; word-break: break-word; }
   .doc-content table { display: block; width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .container { padding: 0 16px; }
+  .container { width: 100%; max-width: 100%; padding: 0 16px; }
   .doc-layout { grid-template-columns: 1fr; gap: 0; min-width: 0; }
   .doc-sidebar { display: none; }
   nav .container { gap: 8px; }
