@@ -19,97 +19,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
-<style>
-:root {
-  --bg: #0d0d1a;
-  --bg-surface: #16162e;
-  --bg-card: #1a1a3e;
-  --bg-hover: #222255;
-  --primary: #9370DB;
-  --primary-light: #b388ff;
-  --primary-dim: #7c5cbf;
-  --accent: #c084fc;
-  --text: #e0dff0;
-  --text-muted: #9595b5;
-  --text-dim: #6b6b8a;
-  --border: #2d2d5e;
-  --glow: rgba(147, 112, 219, 0.15);
-  --radius: 12px;
-  --radius-lg: 20px;
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { overflow-x: hidden; }
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.7;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-::selection { background: var(--primary); color: #fff; }
-a { color: var(--primary-light); text-decoration: none; transition: color .2s; }
-a:hover { text-decoration: underline; }
-code, pre, .doc-content code { font-family: 'JetBrains Mono', 'SF Mono', Monaco, Consolas, monospace; }
-.container { max-width: 900px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 1; }
-
-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; backdrop-filter: blur(16px); background: rgba(13, 13, 26, 0.8); border-bottom: 1px solid var(--border); }
-nav .container { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-nav .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; text-decoration: none; color: var(--text); }
-nav .logo img { width: 28px; height: 28px; border-radius: 50%; }
-nav .logo span { color: var(--primary-light); }
-nav .back { color: var(--text-muted); font-size: 0.9rem; text-decoration: none; }
-nav .back:hover { color: var(--primary-light); text-decoration: none; }
-
-.doc-header { grid-column: 2; padding: 100px 0 40px; }
-.doc-header h1 { font-size: 2.2rem; font-weight: 800; margin-bottom: 12px; background: linear-gradient(135deg, var(--text) 0%, var(--primary-light) 60%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.doc-header p { color: var(--text-muted); font-size: 1.05rem; max-width: 700px; }
-
-.doc-content { grid-column: 2; padding: 0 0 80px; }
-.doc-content h2 { font-size: 1.5rem; font-weight: 700; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); color: var(--text); scroll-margin-top: 80px; }
-.doc-content h3 { font-size: 1.15rem; font-weight: 600; margin: 32px 0 12px; color: var(--primary-light); scroll-margin-top: 80px; }
-.doc-content h4 { font-size: 1rem; font-weight: 600; margin: 24px 0 8px; color: var(--text); }
-.doc-content p { margin-bottom: 16px; color: var(--text-muted); }
-.doc-content strong { color: var(--text); }
-.doc-content ul, .doc-content ol { margin: 0 0 16px 24px; color: var(--text-muted); }
-.doc-content li { margin-bottom: 6px; }
-.doc-content code { background: rgba(147,112,219,0.15); padding: 2px 6px; border-radius: 4px; font-size: 0.85em; font-family: 'SF Mono', Monaco, Consolas, monospace; color: var(--primary-light); }
-.doc-content pre { background: #0c0c0c; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px; overflow-x: auto; margin-bottom: 20px; }
-.doc-content pre code { background: none; padding: 0; color: #e0dff0; font-size: 0.85rem; }
-.doc-content table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 0.9rem; }
-.doc-content th { background: var(--bg-surface); color: var(--text); font-weight: 600; text-align: left; padding: 10px 14px; border: 1px solid var(--border); }
-.doc-content td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text-muted); }
-.doc-content tr:hover td { background: rgba(147,112,219,0.05); }
-.doc-content blockquote { border-left: 3px solid var(--primary); padding: 12px 20px; margin: 0 0 20px; background: rgba(147,112,219,0.08); border-radius: 0 var(--radius) var(--radius) 0; }
-.doc-content blockquote p { margin-bottom: 0; color: var(--text-muted); }
-
-.doc-layout { display: grid; grid-template-columns: 220px 1fr; gap: 40px; align-items: start; }
-.doc-sidebar { position: fixed; top: 115px; left: max(24px, calc((100vw - 900px) / 2 + 24px)); width: 220px; max-height: calc(100vh - 115px); overflow-y: auto; }
-.doc-sidebar::-webkit-scrollbar { width: 4px; }
-.doc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
-.toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; }
-.toc h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-dim); margin-bottom: 12px; }
-.toc ul { list-style: none; margin: 0; padding: 0; }
-.toc li { margin-bottom: 6px; }
-.toc a { color: var(--text-muted); font-size: 0.85rem; transition: color .2s, border-color .2s; display: block; border-left: 2px solid transparent; padding-left: 8px; }
-.toc a:hover { color: var(--primary-light); }
-.toc a.active { color: var(--primary-light); border-left-color: var(--primary); }
-
-footer { border-top: 1px solid var(--border); padding: 40px 0; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
-footer a { color: var(--primary-dim); }
-
-@media (max-width: 768px) {
-  .doc-header { grid-column: auto; min-width: 0; padding: 80px 0 30px; }
-  .doc-header h1 { font-size: 1.8rem; }
-  .doc-content h2 { font-size: 1.3rem; }
-  .container { padding: 0 16px; }
-  .doc-content pre { padding: 14px; font-size: 0.8rem; }
-  .doc-content table { display: block; overflow-x: auto; max-width: 100%; }
-  .doc-layout { grid-template-columns: 1fr; gap: 0; min-width: 0; }
-  .doc-sidebar { display: none; }
-  .doc-content { grid-column: 1; min-width: 0; overflow-wrap: break-word; }
-}
-</style>
+<link rel="stylesheet" href="../doc-style.css">
 </head>
 <body>
 
@@ -121,6 +31,7 @@ footer a { color: var(--primary-dim); }
     </a>
     <div style="display:flex;gap:16px;">
       <a href="getting-started.html" class="back">Getting Started</a>
+      <a href="modules.html" class="back">Modules</a>
       <a href="../" class="back">&larr; Back to site</a>
     </div>
   </div>
@@ -181,14 +92,14 @@ footer a { color: var(--primary-dim); }
            WebSocket :3126
                  |
           +------v------+
-          |   Emerald    |  &lt;-- Brain: behavior, Sapphire calls, typo/swap
+          |   Emerald    |  &lt;-- Brain: behavior, Sapphire streaming, typo/swap, voice decision
           |  (TypeScript)|
           +------+-------+
                  |
             HTTP :3123
                  |
           +------v-------+
-          |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion
+          |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion, streaming
           |   (Python)    |
           +------+--------+
                  |
@@ -203,23 +114,26 @@ footer a { color: var(--primary-dim); }
 
     <p>Emerald is the central decision engine. It runs a WebSocket server on port 3126 that platform adapters (Jade, Pixieglow) connect to.</p>
 
-    <h3>How it works</h3>
+    <h3>Streaming flow</h3>
     <ol>
       <li>Bots connect via WebSocket and forward <code>MessageEvent</code>s (with optional <code>debug: true</code>)</li>
-      <li>Emerald evaluates behavior rules: burst cooldown, sleep schedule, typo/swap probability, ignore prefixes</li>
-      <li>For non-empty messages, Emerald calls Sapphire's <code>/v1/respond</code> HTTP API with the message and behavior context</li>
-      <li>When <code>debug</code> is set, Emerald passes <code>"debug": true</code> to Sapphire</li>
-      <li>Emerald receives the response text and optional debug stats</li>
+      <li>Emerald evaluates behavior rules: burst cooldown, sleep schedule, typo/swap probability, voice chance</li>
+      <li><strong>Mention stripping</strong>: bot mentions (<code>@Kalupso</code>, <code>&lt;@userId&gt;</code>) are removed from the text</li>
+      <li>Emerald calls Sapphire via <strong>streaming</strong> (<code>askStream</code>) — the response arrives token by token</li>
+      <li><strong>On the first token</strong>, Emerald sends a <code>TypingCommand</code> to the bot — the typing indicator appears before generation completes</li>
+      <li>Emerald buffers the streaming tokens until the full response is received</li>
+      <li>Sapphire checks for degenerate output; if degenerate, the stream is discarded silently</li>
       <li>Emerald applies typo/swap behavior to the response text</li>
-      <li>Emerald sends a <code>RespondCommand</code> back to the bot with <code>responseText</code> and optional <code>debugStats</code></li>
+      <li>Emerald sends a <code>RespondCommand</code> back with <code>responseText</code>, optional <code>voice</code> flag, and optional <code>debugStats</code></li>
+      <li>The bot posts the response (optionally as a voice message if <code>voice: true</code>)</li>
     </ol>
 
     <h3>Key files</h3>
     <ul>
       <li><code>src/server.ts</code> — WebSocket server (connection management, event routing, command dispatch)</li>
-      <li><code>src/brain.ts</code> — Decision engine: evaluates behavior, calls Sapphire, applies typo/swap</li>
-      <li><code>src/sapphire-client.ts</code> — HTTP client to Sapphire with snake_case to camelCase mapping</li>
-      <li><code>src/protocol.ts</code> — WebSocket message types (events, commands, debug stats)</li>
+      <li><code>src/brain.ts</code> — Decision engine: evaluates behavior, calls Sapphire via streaming, applies typo/swap</li>
+      <li><code>src/sapphire-client.ts</code> — HTTP client with <code>ask()</code> (non-streaming) and <code>askStream()</code> (SSE streaming)</li>
+      <li><code>src/protocol.ts</code> — WebSocket message types (events, commands, debug stats, behavior debug)</li>
       <li><code>src/behavior/*.ts</code> — Burst, sleep, typo, mannerisms</li>
       <li><code>src/state/*.ts</code> — State management, triggers, topic fatigue</li>
     </ul>
@@ -230,39 +144,35 @@ footer a { color: var(--primary-dim); }
 
     <h3>Capabilities</h3>
     <ul>
-      <li><strong>Classification</strong>: Message embedding via fastembed + BAAI/bge-small-en-v1.5. Centroid similarity labels each message by conversation category.</li>
-      <li><strong>Emotion scoring</strong>: Four centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. State per conversation decays via EMA.</li>
+      <li><strong>Classification</strong>: Message embedding via fastembed + BAAI/bge-small-en-v1.5. Centroid similarity labels each message FUTILE or INTERESSANT.</li>
+      <li><strong>Emotion scoring</strong>: Four centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. State per conversation decays via EMA. Deadzone: 0.005.</li>
       <li><strong>Session management</strong>: Per-channel conversation history with configurable max messages and TTL.</li>
-      <li><strong>Few-shot injection</strong>: Category-matched example conversations injected server-side before the system prompt.</li>
+      <li><strong>Few-shot injection</strong>: Example conversations from <code>few_shot_examples.yml</code> injected server-side after the system prompt.</li>
       <li><strong>Emotion-aware sampling</strong>: Temperature, repeat penalty, and mirostat entropy dynamically adjusted by valence/arousal.</li>
-      <li><strong>Degenerate detection</strong>: Regex-based detection of loops, stutters, and empty replies with automatic retry.</li>
+      <li><strong>Degenerate detection</strong>: Regex-based detection with retry (non-streaming) or silent discard (streaming).</li>
+      <li><strong>Streaming SSE</strong>: Returns an SSE stream of content tokens, then final metadata, then <code>[DONE]</code>.</li>
       <li><strong>Debug mode</strong>: Returns token counts, timing, emotion state, and classification confidence when requested.</li>
-      <li><strong>Single-backend</strong>: All messages forward to one Krystal instance on :3124.</li>
+      <li><strong>Single-backend</strong>: Both FUTILE and INTERESSANT routes forward to one Krystal instance on :3124.</li>
     </ul>
 
     <h3>Endpoint: POST /v1/respond</h3>
 
     <p>Request body:</p>
     <pre><code>{
-  "model": "default",
-  "messages": [
-    { "role": "system", "content": "..." },
-    { "role": "user", "content": "Hello!" }
-  ],
-  "channel_id": "123456",
-  "user_id": "789012",
-  "bot_username": "Luna",
-  "behavior": {
-    "mannerisms": { "enabled": true, "chance": 0.075 },
-    "sleep": { "enabled": true, "start_hour": 0, "end_hour": 8 }
-  },
+  "username": "User",
+  "text": "Hello!",
+  "session_id": "jade:123456",
+  "stream": false,
   "debug": false
 }</code></pre>
 
-    <p>Response (debug mode):</p>
+    <p>Response (debug mode, non-streaming):</p>
     <pre><code>{
   "text": "Hello! How can I help you today?",
-  "debug": true,
+  "label": "FUTILE",
+  "backend": "http://127.0.0.1:3124",
+  "valence": 0.12,
+  "arousal": -0.04,
   "debug_prompt_tokens": 450,
   "debug_completion_tokens": 12,
   "debug_time_ms": 3200,
@@ -272,9 +182,19 @@ footer a { color: var(--primary-dim); }
   "debug_classification_confidence": 0.85
 }</code></pre>
 
+    <p>Streaming (SSE):</p>
+    <pre><code>data: Hello
+data: !
+data:  How
+data:  can
+data:  I
+data: ...
+data: {"text":"Hello! How can I ...","label":"FUTILE","backend":"...","valence":0.12,"arousal":-0.04,"time_ms":3200}
+data: [DONE]</code></pre>
+
     <h2 id="krystal">Krystal (LLM Server)</h2>
 
-    <p>Krystal runs <code>llama-server</code> from llama.cpp. In single-backend mode, both Sapphire routes point to the same instance on port 3124:</p>
+    <p>Krystal runs <code>llama-server</code> from llama.cpp. Single-backend mode — both Sapphire routes point to the same instance on port 3124:</p>
 
     <pre><code>KRYSTAL_GENERIC_URL=http://127.0.0.1:3124
 KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
@@ -293,35 +213,33 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
 
     <h2 id="bots">Bots (Jade / Pixieglow)</h2>
 
-    <p>Both bots are thin WebSocket clients of Emerald. They have no Sapphire or LLM logic.</p>
+    <p>Both bots are thin WebSocket clients of Emerald. They have no Sapphire or LLM logic. All behavior decisions (typo, burst, voice chance, sleep) are made by Emerald.</p>
 
     <h3>Jade (Discord)</h3>
     <ul>
       <li>TypeScript + Eris library</li>
-      <li>Connects to Emerald via WebSocket on connect and on reconnect</li>
-      <li>Listens to Discord messages, forwards as <code>MessageEvent</code>s</li>
-      <li><code>-debug</code> prefix in message content enables per-message debug mode</li>
-      <li>Responds to <code>RespondCommand</code> by posting <code>responseText</code> to Discord</li>
-      <li>In debug mode, appends <code>-# </code> formatted stats lines (token counts, timing, emotion, confidence)</li>
-      <li>Optional Piper TTS for voice messages</li>
-      <li>Config: <code>discord_token</code>, <code>emerald_host</code>, <code>emerald_port</code>, TTS paths</li>
+      <li>Connects to Emerald via WebSocket and forwards Discord messages as <code>MessageEvent</code>s</li>
+      <li><code>-debug</code> toggle enables per-message debug mode</li>
+      <li>Executes Emerald commands: <code>respond</code>, <code>typing</code>, <code>set_presence</code>, reaction plans, burst fragments</li>
+      <li>Generates Piper TTS voice messages when Emerald sets <code>voice: true</code></li>
+      <li>In debug mode, appends <code>-# </code> formatted stat lines (tokens, timing, emotion, behavior config)</li>
+      <li>Config: <code>discord_token</code>, <code>emerald_host</code>, <code>emerald_port</code>, TTS paths (no voice chance — that's in Emerald)</li>
     </ul>
 
     <h3>Pixieglow (Matrix)</h3>
     <ul>
       <li>TypeScript + Bun + Matrix client-server API</li>
-      <li>Connects to Emerald via WebSocket</li>
       <li>Sync loop polls Matrix API for new messages, forwards to Emerald</li>
-      <li>Responds to <code>RespondCommand</code> by posting <code>responseText</code> to Matrix rooms</li>
+      <li>Executes Emerald commands: <code>respond</code>, <code>typing</code>, <code>set_presence</code></li>
       <li>Config: <code>matrix.homeserver_url</code>, <code>matrix.access_token</code>, <code>emerald_host</code>, <code>emerald_port</code></li>
     </ul>
 
     <h2 id="behavior-system">Behavior System</h2>
 
-    <p>All behaviors are evaluated by Emerald before calling Sapphire and applied after receiving the response. The bot itself has no behavior logic.</p>
+    <p>All behaviors are evaluated by Emerald before and after calling Sapphire. The bot itself has no behavior logic.</p>
 
     <h3>Burst</h3>
-    <p>When engaged in an active conversation, Emerald allows faster follow-ups (2-6s delay) for up to 2 messages, then a 60s cooldown. Prevents the bot from dominating a thread.</p>
+    <p>When engaged in an active conversation, Emerald splits long responses into fragments sent with delays. Configurable probability (default 15%) and delay range (1.5-4s between fragments). Prevents the bot from dominating a thread.</p>
 
     <h3>Sleep Schedule</h3>
     <table>
@@ -334,30 +252,49 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
     </table>
 
     <h3>Typos / Letter-Swap</h3>
-    <p>Applied to the response text after receiving it from Sapphire. Configurable probability (default 8%) of replacing a letter with an adjacent key (AZERTY layout). Swap chance (default 12%) for transposing adjacent letters.</p>
+    <p>Applied to the response text after receiving it from Sapphire. Typo chance (default 6%) replaces a letter with an adjacent key (AZERTY or QWERTY). Swap chance (default 4%) transposes adjacent letters. Corrections are sent as edits with configurable delay (2-4s).</p>
 
-    <h3>Mannerisms</h3>
-    <p>Configurable chance (default 7.5%) of injecting mannerism patterns into the response.</p>
+    <h3>Hesitation Markers</h3>
+    <p>Configurable chance (default 15%) of injecting a hesitation word (<code>uh...</code>, <code>hmm...</code>, <code>well...</code>) at the start of the response.</p>
 
-    <h3>Ignore Prefixes</h3>
-    <p>Messages starting with configured prefixes (e.g. <code>!</code>) are ignored by Emerald and not forwarded to Sapphire.</p>
+    <h3>Topic Fatigue</h3>
+    <p>Tracks word frequency per channel. When a topic repeats too often (default threshold: 3 mentions in last 10 messages), response delay doubles and ignore chance increases (default +15%). Resets after 10 new messages.</p>
+
+    <h3>Voice Messages</h3>
+    <p>Emerald decides whether the response should be sent as a voice message (configurable chance, default 12%). If <code>voice: true</code> is set on the respond command, the bot (Jade) generates Piper TTS audio and uploads it as a Discord voice message.</p>
+
+    <h3>Forgetting</h3>
+    <p>Configurable chance (default 3%) that Emerald returns a <code>forgot</code> command instead of responding — mimicking the bot losing track of the conversation.</p>
 
     <h2 id="debug-mode">Debug Mode</h2>
 
-    <p>Debug mode flows through the entire stack:</p>
+    <p>Debug mode flows through the entire stack. Toggle it by typing <code>-debug</code> in any channel:</p>
 
     <ol>
-      <li><strong>Bot level</strong>: Message starts with <code>-debug</code> prefix → sets <code>debug: true</code> on the <code>MessageEvent</code></li>
+      <li><strong>Bot level</strong>: Message starts with <code>-debug</code> prefix → toggles debug for that channel, sets <code>debug: true</code> on subsequent <code>MessageEvent</code>s</li>
       <li><strong>Emerald</strong>: Passes <code>debug: true</code> to Sapphire's <code>/v1/respond</code></li>
-      <li><strong>Sapphire</strong>: Returns <code>debug_prompt_tokens</code>, <code>debug_completion_tokens</code>, <code>debug_time_ms</code>, <code>debug_tokens_per_second</code>, <code>debug_emotion_state_valence</code>, <code>debug_emotion_state_arousal</code>, <code>debug_classification_confidence</code></li>
-      <li><strong>Emerald</strong>: Maps snake_case → camelCase into <code>DebugStats</code> object, included in <code>RespondCommand</code></li>
+      <li><strong>Sapphire</strong>: Returns debug fields in the response (or stream metadata)</li>
+      <li><strong>Emerald</strong>: Maps snake_case → camelCase into <code>DebugStats</code> + <code>BehaviorDebug</code>, included in <code>RespondCommand</code></li>
       <li><strong>Bot</strong>: Appends <code>-# </code> formatted lines to the Discord/Matrix response</li>
     </ol>
 
     <p>Example debug output on Discord:</p>
 
     <pre><code>Hey, how are you?
--# 12 tokens | 450 in | 3.2s | 3.75 t/s | emo: +0.6v/0.3a | conf: 0.85</code></pre>
+-# 🚀 12 tok · 3200ms · 3.8 tok/s · 450 prompt
+-# 😊 valence=0.014 · arousal=-0.040
+-# 📊 state v=0.023 · a=0.012
+-# 🏷️ FUTILE (42.1%)
+-# ⚙️ typo=6% · swap=4% · burst=15% · hesitate=15% · voice=12% ✨ · forget=3% · fatigue=1.0x</code></pre>
+
+    <p>Fields explained:</p>
+    <ul>
+      <li><code>🚀</code> — completion tokens, total time, tokens/second, prompt tokens</li>
+      <li><code>😊</code> — per-message emotion scores (valence, arousal)</li>
+      <li><code>📊</code> — running emotion state (decayed EMA across conversation)</li>
+      <li><code>🏷️</code> — classification label (FUTILE/INTERESSANT) + confidence</li>
+      <li><code>⚙️</code> — all behavior config chances + which were <code>✨</code> applied</li>
+    </ul>
 
     <h2 id="emotion-sampling">Emotion-Aware Sampling</h2>
 
@@ -372,17 +309,20 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
       </tbody>
     </table>
 
-    <p>This replaces prompt-based mood injection. For a 1.5B model, adjusting sampling parameters is more reliable than injecting mood descriptions into the system prompt.</p>
+    <p>Emotion state has a deadzone of 0.005: per-message valence/arousal scores below this threshold don't update the running state, preventing drift from noise. The state decays via EMA (decay factor 0.85).</p>
 
     <h2 id="protocol">WebSocket Protocol</h2>
 
-    <p>Emerald communicates with bots via JSON messages over WebSocket.</p>
+    <p>Emerald communicates with bots via JSON messages over WebSocket. Messages use the format <code>{"event": "in", "payload": {...}}</code> for bot-to-Emerald events and <code>{"event": "command", "command": {...}}</code> for Emerald-to-bot commands.</p>
 
     <h3>Events (Bot → Emerald)</h3>
     <table>
       <thead><tr><th>Event</th><th>Fields</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><code>message</code></td><td><code>channelId</code>, <code>userId</code>, <code>userName</code>, <code>content</code>, <code>debug?</code></td><td>User message forwarded from platform</td></tr>
+        <tr><td><code>message</code></td><td><code>id</code>, <code>client</code>, <code>channel</code>, <code>user</code>, <code>text</code>, <code>timestamp</code>, <code>isDM</code>, <code>mentions?</code>, <code>debug?</code></td><td>User message forwarded from platform</td></tr>
+        <tr><td><code>ready</code></td><td><code>client</code>, <code>userId</code>, <code>username</code></td><td>Bot connection handshake</td></tr>
+        <tr><td><code>bot_message</code></td><td><code>client</code>, <code>channel</code>, <code>text</code>, <code>timestamp</code></td><td>Bot's own messages (for context)</td></tr>
+        <tr><td><code>presence</code></td><td><code>client</code>, <code>status</code></td><td>Bot status update</td></tr>
       </tbody>
     </table>
 
@@ -390,8 +330,11 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
     <table>
       <thead><tr><th>Command</th><th>Fields</th><th>Description</th></tr></thead>
       <tbody>
-        <tr><td><code>respond</code></td><td><code>channelId</code>, <code>responseText</code>, <code>debugStats?</code></td><td>Response text to post</td></tr>
-        <tr><td><code>typing</code></td><td><code>channelId</code></td><td>Show typing indicator</td></tr>
+        <tr><td><code>respond</code></td><td><code>id</code>, <code>channel</code>, <code>text</code>, <code>responseText</code>, <code>delay</code>, <code>replyTo</code>, <code>replyStyle</code>, <code>hesitationWord?</code>, <code>burstPlan?</code>, <code>react?</code>, <code>voice?</code>, <code>sessionId?</code>, <code>debugStats?</code></td><td>Response text to post</td></tr>
+        <tr><td><code>typing</code></td><td><code>id</code>, <code>channel</code>, <code>duration</code></td><td>Show typing indicator</td></tr>
+        <tr><td><code>set_presence</code></td><td><code>id</code>, <code>status</code>, <code>text?</code>, <code>activityType?</code></td><td>Update bot presence/activity</td></tr>
+        <tr><td><code>forgot</code></td><td><code>id</code>, <code>channel</code></td><td>Bot forgot the conversation</td></tr>
+        <tr><td><code>spontaneous</code></td><td><code>id</code>, <code>channel</code>, <code>sessionId</code></td><td>Initiate spontaneous message</td></tr>
       </tbody>
     </table>
 
@@ -401,73 +344,72 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3124</code></pre>
   completionTokens: number;
   timeMs: number;
   tokensPerSecond: number;
-  emotionState: { valence: number; arousal: number };
+  emotionStateValence: number;
+  emotionStateArousal: number;
+  classificationLabel: string;
   classificationConfidence: number;
+  messageValence: number;
+  messageArousal: number;
+  behavior?: BehaviorDebug;
+}
+
+BehaviorDebug {
+  typoChance, typoApplied,
+  swapChance, swapApplied,
+  burstChance, burstApplied,
+  hesitationChance, hesitationApplied,
+  voiceChance, voiceApplied,
+  forgetChance,
+  sleepMode: string | null,
+  fatigueMultiplier: number,
 }</code></pre>
 
     <h2 id="configuration">Configuration</h2>
 
     <h3>Emerald (config.yml)</h3>
-    <pre><code>host: "0.0.0.0"
-port: 3126
-sapphire_host: "localhost"
+    <p>All behavior configuration is centralized in Emerald's config. Key parameters:</p>
+    <pre><code>port: 3126
+sapphire_host: "127.0.0.1"
 sapphire_port: 3123
-sapphire_timeout: 10
-bot_username: "Luna"
-behavior:
-  burst:
-    enabled: true
-    min_interval: 2.0
-    max_interval: 6.0
-    max_messages: 2
-    cooldown: 60
-    reply_chance: 0.3
-  sleep:
-    enabled: true
-    start_hour: 0
-    end_hour: 8
-    timezone: "UTC"
-  typo:
-    enabled: true
-    chance: 0.08
-    swap_chance: 0.12
-  mannerisms:
-    enabled: true
-    chance: 0.075
-  ignore_prefixes:
-    - "!"</code></pre>
+sapphire_bot_username: "User"
+names: ["Luna", "Pixie"]
+random_chance: 0.015
+cooldown_seconds: 8
+burst_chance: 0.15
+hesitation_chance: 0.15
+typo_chance: 0.06
+letter_swap_chance: 0.04
+voice_message_chance: 0.12
+forget_chance: 0.03
+# See config.example.yml for full details</code></pre>
 
     <h3>Sapphire (environment variables)</h3>
     <table>
       <thead><tr><th>Variable</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td><code>SAPPHIRE_PORT</code></td><td><code>3123</code></td><td>Sapphire server port</td></tr>
-        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for all messages (single-backend)</td></tr>
-        <tr><td><code>SAPPHIRE_EXAMPLES</code></td><td><code>./examples.yml</code></td><td>Classification + few-shot examples</td></tr>
-        <tr><td><code>SAPPHIRE_EMOTION_EXAMPLES</code></td><td><code>./examples_emotion.yml</code></td><td>Emotion centroid examples</td></tr>
-        <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>System prompt for all conversations</td></tr>
-        <tr><td><code>SAPPHIRE_LLM_SESSION_TTL</code></td><td><code>600</code></td><td>Session expiry in seconds</td></tr>
-        <tr><td><code>SAPPHIRE_LLM_MAX_HISTORY</code></td><td><code>20</code></td><td>Max user/assistant pairs in context</td></tr>
-        <tr><td><code>SAPPHIRE_LLM_MAX_RETRIES</code></td><td><code>2</code></td><td>Retries on degenerate output</td></tr>
-        <tr><td><code>SAPPHIRE_FEW_SHOT_ENABLED</code></td><td><code>true</code></td><td>Enable/disable few-shot priming</td></tr>
-        <tr><td><code>SAPPHIRE_MIROSTAT_ENABLED</code></td><td><code>true</code></td><td>Enable mirostat sampling</td></tr>
+        <tr><td><code>KRYSTAL_GENERIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for FUTILE messages</td></tr>
+        <tr><td><code>KRYSTAL_SEMANTIC_URL</code></td><td><code>http://127.0.0.1:3124</code></td><td>Backend for INTERESSANT messages</td></tr>
+        <tr><td><code>SAPPHIRE_BOT_NAME</code></td><td><code>"Luna"</code></td><td>Bot persona name (injected into system prompt)</td></tr>
+        <tr><td><code>SAPPHIRE_SYSTEM_PROMPT</code></td><td><code>"Your name is Luna..."</code></td><td>Full system prompt (with no-echo instruction)</td></tr>
+        <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td><code>0.005</code></td><td>Noise threshold for emotion state updates</td></tr>
         <tr><td><code>SAPPHIRE_EMOTION_DECAY</code></td><td><code>0.85</code></td><td>EMA decay factor for emotion state</td></tr>
-        <tr><td><code>SAPPHIRE_EMOTION_DEADZONE</code></td><td><code>0.06</code></td><td>Noise threshold for emotion deltas</td></tr>
+        <tr><td><code>SAPPHIRE_FEW_SHOT_ENABLED</code></td><td><code>true</code></td><td>Enable/disable few-shot priming</td></tr>
+        <tr><td><code>SAPPHIRE_LLM_MAX_RETRIES</code></td><td><code>2</code></td><td>Retries on degenerate output (non-streaming)</td></tr>
+        <tr><td><code>SAPPHIRE_MIROSTAT_ENABLED</code></td><td><code>true</code></td><td>Enable mirostat sampling</td></tr>
       </tbody>
     </table>
 
     <h3>Bots (config.yml)</h3>
-    <p>Both Jade and Pixieglow only need platform auth keys and Emerald connection details:</p>
+    <p>Both Jade and Pixieglow only need platform auth keys, Emerald connection details, and TTS paths (Jade only). No behavior parameters — all decisions are in Emerald.</p>
 
     <p><strong>Jade (Discord):</strong></p>
     <pre><code>discord_token: "your_token"
 emerald_host: "localhost"
 emerald_port: 3126
-tts:
-  model_path: "/path/to/model.onnx"
-  config_path: "/path/to/model.json"
-  output_dir: "/tmp/tts"
-  voice_chance: 0.05</code></pre>
+tts_model_path: "./tts-engine/en_GB-southern_english_female-low.onnx"
+tts_binary_path: "bin/piper/piper"
+# voice_message_chance is NOW in Emerald's config, not here</code></pre>
 
     <p><strong>Pixieglow (Matrix):</strong></p>
     <pre><code>matrix:
@@ -495,7 +437,7 @@ emerald_port: 3126</code></pre>
 
 <footer>
   <div class="container">
-    <a href="../">Protocol Luna</a> &middot; <a href="getting-started.html">Getting Started</a> &middot; <a href="fewshot-priming.html">Few-Shot Priming Guide</a> &middot; <a href="https://github.com/protocol-luna">GitHub</a>
+    <a href="../">Protocol Luna</a> &middot;     <a href="getting-started.html">Getting Started</a> &middot; <a href="modules.html">Modules</a> &middot; <a href="https://github.com/protocol-luna">GitHub</a>
   </div>
 </footer>
 
