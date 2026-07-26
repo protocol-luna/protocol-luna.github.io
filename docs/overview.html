@@ -84,7 +84,9 @@ nav .back:hover { color: var(--primary-light); text-decoration: none; }
 .doc-content blockquote p { margin-bottom: 0; color: var(--text-muted); }
 
 .doc-layout { display: grid; grid-template-columns: 220px 1fr; gap: 40px; align-items: start; }
-.doc-sidebar { position: static; }
+.doc-sidebar { position: fixed; top: 80px; left: max(24px, calc((100vw - 900px) / 2 + 24px)); width: 220px; max-height: calc(100vh - 80px); overflow-y: auto; }
+.doc-sidebar::-webkit-scrollbar { width: 4px; }
+.doc-sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 .toc { background: var(--bg-surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px 28px; }
 .toc h3 { font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; color: var(--primary-dim); margin-bottom: 12px; }
 .toc ul { list-style: none; margin: 0; padding: 0; }
@@ -415,7 +417,7 @@ python server.py
     var topMost = visible.reduce(function(a, b) { return a.getBoundingClientRect().top < b.getBoundingClientRect().top ? a : b; });
     tocLinks.forEach(function(a) { a.classList.remove('active'); });
     headings.forEach(function(item) {
-      if (item.el === topMost) item.link.classList.add('active');
+      if (item.el === topMost) { item.link.classList.add('active'); item.link.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
     });
   }, { rootMargin: '-80px 0px -60% 0px' });
 
