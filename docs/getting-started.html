@@ -209,20 +209,25 @@ Adapter Layer     ┌──────▼───────┐  ┌───
                          │                  │
                          └────────┬─────────┘
                                   │ WebSocket :3126
-Brain Layer       ┌───────────────▼──────────────┐
-(Emerald)         │      Emerald (Brain)          │
-                  │  behavior + Sapphire client   │
-                  └───────────────┬───────────────┘
+Brain Layer       ┌────────────────▼───────────────┐
+(Emerald)         │      Emerald (Brain)             │
+                  │  behavior + Sapphire client      │
+                  └────────────────┬────────────────┘
                                   │ HTTP :3123
-Gateway Layer     ┌───────────────▼──────────────┐
-(Sapphire)        │     Sapphire (Gateway)       │
-                  │  classify + session + emotion│
-                  └───────────────┬───────────────┘
-                                  │ HTTP :3124
-LLM Layer         ┌───────────────▼──────────────┐
-(Krystal)         │  Krystal (llama.cpp)         │
-                  │  Luna 1.5B Q4_K_M            │
-                  └──────────────────────────────┘</code></pre>
+Gateway Layer     ┌────────────────▼────────────────┐
+(Sapphire)        │     Sapphire (Gateway)            │
+                  │  classify FUTILE / INTERESSANT   │
+                  └──────┬─────────────────┬────────┘
+                         │                 │
+                    FUTILE            INTERESSANT
+                         │                 │
+                    HTTP :3124         HTTP :3125
+                         │                 │
+                  ┌──────▼──────┐  ┌──────▼───────┐
+LLM Layer         │  Krystal A  │  │  Krystal B   │
+(Krystal)         │  llama.cpp  │  │  llama.cpp   │
+                  │  small Q4   │  │  large model │
+                  └─────────────┘  └──────────────┘</code></pre>
 
     <h2 id="prerequisites">Prerequisites</h2>
 
@@ -239,7 +244,7 @@ LLM Layer         ┌───────────────▼───�
 
     <h2 id="step-krystal">Step 1: Krystal (LLM Server)</h2>
 
-    <p>Krystal wraps <code>llama-server</code> from llama.cpp. Single-backend mode on port 3124:</p>
+    <p>Krystal wraps <code>llama-server</code> from llama.cpp. You can run two instances — one for FUTILE messages on port 3124 (smaller model, faster) and one for INTERESSANT messages on port 3125 (larger model, smarter), or point both Sapphire routes to the same instance via environment variables.</p>
 
     <pre><code>git clone https://github.com/protocol-luna/krystal
 cd krystal

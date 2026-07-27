@@ -101,14 +101,17 @@
           +------v-------+
           |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion, streaming
           |   (Python)    |
-          +------+--------+
-                 |
-            HTTP :3124
-                 |
-          +------v-------+
-          |   Krystal     |  &lt;-- LLM inference (llama.cpp)
-          |  (C++)        |
-          +---------------+</code></pre>
+           +---+-------^---+
+               |       |
+               |  FUTILE / INTERESSANT
+               |       |
+          HTTP :3124  HTTP :3125
+               |       |
+        +------v---+ +-v--------+
+        | Krystal   | | Krystal  |  &lt;-- LLM inference (llama.cpp)
+        | small Q4  | | large    |
+        | (C++)     | | (C++)    |
+        +-----------+ +----------+</code></pre>
 
     <h2 id="emerald">Emerald (Brain)</h2>
 
