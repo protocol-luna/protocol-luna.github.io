@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Centroid Classification -- Protocol Luna</title>
+<meta name="description" content="Deep dive into Sapphire's centroid-based classification: why embeddings beat neural classifiers, how INTERESSANT/FUTILE routing works, and how valence/arousal emotional state persists across conversation turns.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://protocol-luna.github.io/docs/centroids.html">
+<meta property="og:site_name" content="Protocol Luna">
+<meta property="og:title" content="Centroid Classification & Emotional State -- Protocol Luna">
+<meta property="og:description" content="Embedding centroids, INTERESSANT/FUTILE routing, valence/arousal emotional state, and why DistilBERT couldn't compete.">
+<meta property="og:image" content="https://avatars.githubusercontent.com/u/295615117?v=4">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Centroid Classification & Emotional State -- Protocol Luna">
+<meta name="twitter:description" content="Embedding centroids, FUTILE/INTERESSANT routing, and valence/arousal emotion tracking.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="icon" href="https://avatars.githubusercontent.com/u/295615117?v=4">
+<link rel="stylesheet" href="doc-style.css">
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <a href="../" class="logo">
+      <img src="https://avatars.githubusercontent.com/u/295615117?v=4" alt="" crossorigin="anonymous">
+      Protocol <span>Luna</span>
+    </a>
+    <div style="display:flex;gap:16px;">
+      <a href="overview.html" class="back">Overview</a>
+      <a href="modules.html" class="back">Modules</a>
+      <a href="../" class="back">&larr; Back to site</a>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="doc-layout">
+    <div class="doc-header">
+      <h1>Centroid Classification &amp; Emotional State</h1>
+      <p>How Sapphire uses embedding centroids to route messages, track emotion, and adjust LLM parameters -- all without a single neural classifier.</p>
+    </div>
+    <aside class="doc-sidebar">
+      <div class="toc">
+        <h3>Table of Contents</h3>
+        <ul>
+          <li><a href="#intro">What Is a Centroid?</a></li>
+          <li><a href="#why-not-distilbert">Why DistilBERT Couldn't Help</a></li>
+          <li><a href="#futile-interessant">FUTILE vs INTERESSANT</a></li>
+          <li><a href="#visualization">Visualizing the Centroid Space</a></li>
+          <li><a href="#valence-arousal">Valence and Arousal</a></li>
+          <li><a href="#state-persistence">Emotional State Persistence</a></li>
+          <li><a href="#llm-parameters">How Emotion Controls the LLM</a></li>
+          <li><a href="#practical">Practical Impact</a></li>
+        </ul>
+      </div>
+    </aside>
+    <div class="doc-content">
+
+<section id="intro">
+<h2>What Is a Centroid?</h2>
+
+<p>A <strong>centroid</strong> is the geometric center of a set of points. In Sapphire, each point is a <strong>384-dimensional embedding vector</strong> produced by the <code>BAAI/bge-small-en-v1.5</code> model -- a lightweight, CPU-friendly embedding model that converts any text into a fixed-size numerical vector representing its semantic meaning.</p>
+
+<p>The idea is simple: gather dozens of example messages for a category, embed each one, and average the resulting vectors. The average <em>is</em> the centroid -- it represents the "typical" meaning of that category in embedding space.</p>
+
+<p>Classifying a new message then becomes a distance problem instead of a learning problem:</p>
+
+<pre><code>def classify(text, embedder, centroids):
+    emb = embedder.query_embed(text)            # 384-D vector
+    scores = {
+        name: cosine_similarity(emb, centroid)
+        for name, centroid in centroids.items()
+    }
+    return max(scores, key=scores.get), scores</code></pre>
+
+<p>The centroid closest to the new embedding (by cosine similarity) wins. No training, no gradient descent, no GPU required -- just a dot product and a comparison.</p>
+</section>
+
+<section id="why-not-distilbert">
+<h2>Why DistilBERT Couldn't Help</h2>
+
+<p>Before centroids, Sapphire used a <strong>DistilBERT classifier</strong> fine-tuned on the same example data. DistilBERT is a distilled version of BERT -- smaller and faster, but still a full transformer model. It seemed like the right tool: a neural classifier should be more accurate than a simple centroid, right?</p>
+
+<p>In practice, it failed for three reasons:</p>
+
+<h3>1. Training Instability</h3>
+<p>DistilBERT needs a proper train/validation split, label-balanced batches, and early stopping -- or it overfits badly. With only ~1000 examples and a model of 66 million parameters, overfitting was the default behavior. Every time I added or removed examples, I had to re-tune hyperparameters. The centroid approach has zero hyperparameters -- you just compute means.</p>
+
+<h3>2. Cold Start for New Categories</h3>
+<p>Adding a new classification category (like the emotion centroids that came later) meant labeling examples, re-training the entire DistilBERT model, and hoping the decision boundary didn't shift for old categories. With centroids, adding a category is a single line of code: <code>centroids["new_category"] = mean(embed(examples))</code>.</p>
+
+<h3>3. Opaque Decisions</h3>
+<p>A DistilBERT classifier outputs a probability distribution over classes. When it misclassifies something, you can't easily tell <em>why</em>. With centroids, you can inspect the nearest examples, look at the raw similarity scores, and see exactly which examples are pulling the centroid toward a given region. The decision boundary is transparent by construction.</p>
+
+<p>Centroids trade a small amount of accuracy (in theory) for massive gains in <strong>maintainability, interpretability, and flexibility</strong>. In practice, the accuracy gap didn't materialize -- the centroid classifier matches DistilBERT's F1 score on our data, because the embedding space already separates the categories well.</p>
+
+<blockquote>
+<p><strong>Key insight:</strong> A centroid classifier doesn't learn a decision boundary -- it inherits one from the embedding model. The quality of the classification depends almost entirely on the quality of the embedding space, not on the classifier itself. This is why choosing <code>bge-small-en-v1.5</code> (a model trained on 1.1B training pairs specifically for semantic similarity) was more important than any classifier architecture.</p>
+</blockquote>
+</section>
+
+<section id="futile-interessant">
+<h2>FUTILE vs INTERESSANT</h2>
+
+<p>Sapphire maintains two classification centroids:</p>
+
+<table>
+  <thead>
+    <tr><th>Centroid</th><th>Examples</th><th>Count</th><th>LLM Backend</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><code>futile</code></td><td>"lol", "ok", "hello", "nm just chillin u", "sup", "nice"</td><td>~580</td><td>Luna 1.5B (fast, :3124)</td></tr>
+    <tr><td><code>interessant</code></td><td>"how does the fine-tuning work?", "i feel really sad today", "what do you think about...", technical questions, confidences</td><td>~545</td><td>Hermes 3B/8B (deep, :3125)</td></tr>
+  </tbody>
+</table>
+
+<p>When a message arrives, Sapphire computes two cosine similarities and makes a decision:</p>
+
+<pre><code>sim_futile = cos(emb, centroid_futile)
+sim_inter  = cos(emb, centroid_interessant)
+diff = sim_inter - sim_futile
+
+if diff > 0:
+    label = "INTERESSANT"
+    backend = KRYSTAL_SEMANTIC  # port 3125
+else:
+    label = "FUTILE"
+    backend = KRYSTAL_GENERIC    # port 3124</code></pre>
+
+<p>The <code>diff</code> value also measures <strong>confidence</strong>. A diff of +0.31 means the message is clearly interesting; a diff of -0.02 means it's barely futile. In practice, about <strong>5.8% of messages</strong> fall within the ambiguous zone where the classifier isn't confident (diff close to zero) -- these are rendered with black outlines in the visualization below.</p>
+
+<p>The routing has a concrete impact: <strong>~70% of messages are classified FUTILE</strong> and handled by the fast 1.5B model, leaving the larger model available for conversations that genuinely need it.</p>
+</section>
+
+<section id="visualization">
+<h2>Visualizing the Centroid Space</h2>
+
+<p>The 384-dimensional embedding space can be projected down to 3 dimensions using PCA for visualization. Each point below is a real example message. Blue points are futile examples, yellow points are interesting ones. The two diamond markers are the centroids. Hover over any point to see the original text, similarity scores, and classification.</p>
+
+<iframe src="../assets/centroids-plot.html" style="width:100%;height:550px;border:none;border-radius:8px;margin:20px 0;" loading="lazy" title="Interactive centroid visualization"></iframe>
+
+<p>Two test examples are shown in red: <strong>"lol"</strong> (classified FUTILE, landing in the blue cluster) and <strong>"i feel sad today"</strong> (classified INTERESSANT, landing in the yellow cluster). Even after reducing from 384 to 3 dimensions (15.6% explained variance), the separation between the two clusters is clearly visible. In the full 384-D space, the boundary is much sharper.</p>
+
+<p>The annotation at the top shows the exact counts: 579 futile examples (of which some are ambiguous, classified as interesting), 545 interesting examples (similarly with ambiguous ones falling on the futile side), and the total explained variance of the PCA projection.</p>
+</section>
+
+<section id="valence-arousal">
+<h2>Valence and Arousal</h2>
+
+<p>Classification is only half of what centroids do. Sapphire uses <strong>the exact same mechanism</strong> on a second, independent set of centroids to measure the emotional content of every message:</p>
+
+<table>
+  <thead>
+    <tr><th>Axis</th><th>Positive pole</th><th>Negative pole</th></tr>
+  </thead>
+  <tbody>
+    <tr><td><strong>Valence</strong></td><td>"hell yeah", "love that", "this is great", "amazing"</td><td>"shut up", "i hate this", "this sucks", "terrible"</td></tr>
+    <tr><td><strong>Arousal</strong></td><td>"WHAT THE HELL", "omg omg omg", "AAAAA", "NO WAY"</td><td>"just chilling", "meh", "i guess", "whatever"</td></tr>
+  </tbody>
+</table>
+
+<p>Each axis is computed as a <strong>difference of cosine similarities</strong> against opposing centroid pairs:</p>
+
+<pre><code>valence = sim(emb, positive_centroid) - sim(emb, negative_centroid)
+arousal = sim(emb, high_arousal_centroid) - sim(emb, low_arousal_centroid)</code></pre>
+
+<p>Both values range from <strong>-1.0 to +1.0</strong>. Together they form the <strong>circumplex model of affect</strong> (Russell, 1980) -- the same psychological framework that inspired the PARRY chatbot in 1972.</p>
+
+<p>The valence/arousal pair tells us not just <em>what</em> someone said, but <em>how</em> they said it: a calm "i hate this" (negative valence, low arousal) is different from an explosive "I HATE THIS" (negative valence, high arousal), and both are different from an excited "hell yeah!" (positive valence, high arousal).</p>
+</section>
+
+<section id="state-persistence">
+<h2>Emotional State Persistence</h2>
+
+<p>Raw valence and arousal from a single message are noisy. One angry outburst shouldn't define the entire conversation. Sapphire solves this with an <strong>exponential moving average (EMA)</strong> that maintains a smoothed emotional state per session:</p>
+
+<pre><code>class EmotionState:
+    def __init__(self, decay=0.85, deadzone=0.06):
+        self.decay = decay
+        self.deadzone = deadzone
+        self._states = {}
+
+    def update(self, session_key, valence_delta, arousal_delta):
+        # Deadzone: ignore tiny fluctuations
+        if abs(valence_delta) < self.deadzone:
+            valence_delta = 0.0
+        if abs(arousal_delta) < self.deadzone:
+            arousal_delta = 0.0
+
+        s = self._states.setdefault(session_key,
+                                     {"valence": 0.0, "arousal": 0.0})
+        # EMA: 85% old state, 15% new signal
+        s["valence"] = s["valence"] * self.decay \
+                       + valence_delta * (1 - self.decay)
+        s["arousal"] = s["arousal"] * self.decay \
+                       + arousal_delta * (1 - self.decay)
+        return s</code></pre>
+
+<p>This is the formalization of how emotions persist across conversation turns:</p>
+
+<table>
+  <thead>
+    <tr><th>Concept</th><th>Mathematical expression</th><th>What it means</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>State at turn N</td>
+      <td><code>E<sub>N</sub></code></td>
+      <td>The emotional state after processing N messages</td>
+    </tr>
+    <tr>
+      <td>Decay</td>
+      <td><code>&lambda; = 0.85</code></td>
+      <td>85% of the previous state is preserved each turn</td>
+    </tr>
+    <tr>
+      <td>Input at turn N+1</td>
+      <td><code>e<sub>N+1</sub></code></td>
+      <td>Raw valence/arousal of the new message</td>
+    </tr>
+    <tr>
+      <td>State at turn N+1</td>
+      <td><code>E<sub>N+1</sub> = &lambda;E<sub>N</sub> + (1-&lambda;)e<sub>N+1</sub></code></td>
+      <td>The new state blends old and new</td>
+    </tr>
+    <tr>
+      <td>Half-life</td>
+      <td><code>t<sub>1/2</sub> = ln(0.5)/ln(0.85) &asymp; 4.3</code></td>
+      <td>A spike decays to half its influence after ~4 messages</td>
+    </tr>
+    <tr>
+      <td>Steady state</td>
+      <td><code>E<sub>&infin;</sub> &asymp; &mu;</code></td>
+      <td>After many messages, the state converges to the mean input</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The <strong>deadzone</strong> (0.06) is a threshold: small emotional fluctuations (a mildly positive "ok") are treated as neutral. This prevents gradual drift -- the state only moves when the signal is strong enough to matter.</p>
+
+<h3>Why this matters for n+1 transitivity</h3>
+
+<p>Because the state is an EMA, <strong>the order of messages matters</strong>. Consider two sequences:</p>
+
+<pre><code>Sequence A:  sad, sad, sad, happy, happy, happy
+Sequence B:  happy, happy, happy, sad, sad, sad</code></pre>
+
+<p>After all 6 messages, the aggregate valence is the same (3 sad + 3 happy = neutral). But with the EMA, <strong>Sequence A ends in a positive state</strong> (the recent happy messages dominate) while <strong>Sequence B ends in a negative state</strong> (the recent sad messages dominate). The state at turn N+1 depends on both the new input and the entire trajectory of previous states, weighted by recency.</p>
+
+<p>This transitivity property is what makes the bot "feel" like it has a mood: an insult at message 2 still colors the bot's responses at message 10, but by message 20 it's faded. A series of positive exchanges slowly lifts the bot's mood, regardless of what started the conversation.</p>
+
+<p>The state is scoped by <strong>session key</strong> (derived from the conversation's id_slot in llama.cpp), so different conversations maintain independent emotional states. The bot can be furious in one thread and cheerful in another.</p>
+</section>
+
+<section id="llm-parameters">
+<h2>How Emotion Controls the LLM</h2>
+
+<p>The emotional state doesn't just sit there -- it actively controls the LLM's sampling parameters. This is where PARRY's influence becomes concrete: instead of choosing response templates based on fear/anger variables, Sapphire <strong>adjusts the generation parameters</strong> based on valence and arousal.</p>
+
+<h3>Temperature follows arousal</h3>
+
+<pre><code>temperature = clamp(0.7 + arousal * 0.3, 0.4, 1.0)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Arousal</th><th>Temperature</th><th>Effect on responses</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>-1.0 (calm)</td><td>0.40</td><td>Predictable, repetitive, "tired" answers</td></tr>
+    <tr><td>0.0 (neutral)</td><td>0.70</td><td>Default creativity, normal variation</td></tr>
+    <tr><td>+1.0 (excited)</td><td>1.00</td><td>Unpredictable, creative, "hyped" answers</td></tr>
+  </tbody>
+</table>
+
+<p>When the conversation is heated (high arousal), the model produces more varied and surprising responses -- like a real person who gets more animated. When it's calm, responses are measured and predictable.</p>
+
+<h3>Repeat penalty follows valence</h3>
+
+<pre><code>repeat_penalty = clamp(1.15 - valence * 0.1, 1.0, 1.3)</code></pre>
+
+<table>
+  <thead>
+    <tr><th>Valence</th><th>Repeat Penalty</th><th>Effect on responses</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>-1.0 (negative)</td><td>1.25</td><td>Avoids repetition forcefully, "searching for words"</td></tr>
+    <tr><td>0.0 (neutral)</td><td>1.15</td><td>Default repetition control</td></tr>
+    <tr><td>+1.0 (positive)</td><td>1.05</td><td>Allows casual repetition, "chatty" mode</td></tr>
+  </tbody>
+</table>
+
+<p>Negative conversations get a higher repeat penalty -- the model avoids falling into repetitive loops, mimicking someone who's carefully choosing their words in a tense exchange. Positive conversations allow more natural repetition, like casual banter.</p>
+</section>
+
+<section id="practical">
+<h2>Practical Impact</h2>
+
+<p>The centroid-based system has been running in production for months. The key numbers:</p>
+
+<ul>
+  <li><strong>~70% of messages</strong> are classified FUTILE and handled by the fast 1.5B model (average response: ~400ms)</li>
+  <li><strong>~30% of messages</strong> are classified INTERESSANT and routed to the larger model (~800ms average)</li>
+  <li><strong>~5.8% of messages</strong> fall in the ambiguous zone (diff near zero) -- still handled correctly, just with lower confidence</li>
+  <li><strong>Zero classifier retraining</strong> since deployment: adding examples to a centroid means appending to a YAML file, not re-running training</li>
+  <li><strong>~250ms for a full classification + emotion pass</strong> on CPU (embeddings only, no GPU required)</li>
+</ul>
+
+<p>The centroid approach turned a machine learning problem into a geometry problem -- and geometry is easier to debug, maintain, and improve.</p>
+</section>
+
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    Protocol Luna -- <a href="https://github.com/protocol-luna">GitHub</a> &middot; <a href="https://fox3000foxy.com">Blog</a>
+  </div>
+</footer>
+
+</body>
+</html>
