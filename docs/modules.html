@@ -48,10 +48,10 @@
     <div class="doc-content">
 
       <!-- KRYSTAL -->
-      <h2 id="krystal">Krystal — LLM Inference Server</h2>
+      <h2 id="krystal">Krystal -- LLM Inference Server</h2>
       <p><strong>Language:</strong> C++ (llama.cpp) &middot; <strong>Port:</strong> 3124 &middot; <strong>Runtime:</strong> PM2</p>
 
-      <p>Krystal wraps llama.cpp's <code>llama-server</code> to serve GGUF models via an OpenAI-compatible HTTP API. It's the lowest layer of the stack — the actual neural network inference.</p>
+      <p>Krystal wraps llama.cpp's <code>llama-server</code> to serve GGUF models via an OpenAI-compatible HTTP API. It's the lowest layer of the stack -- the actual neural network inference.</p>
 
       <h3>Architecture</h3>
       <p>Sapphire routes FUTILE messages to <code>KRYSTAL_GENERIC_URL</code> (<code>:3124</code> by default) and INTERESSANT to <code>KRYSTAL_SEMANTIC_URL</code> (<code>:3125</code> by default). In our deployment both point to the same Krystal instance via <code>KRYSTAL_SEMANTIC_URL</code> env var override. See <a href="#sapphire">Sapphire</a> for env vars.</p>
@@ -86,7 +86,7 @@
 
       <h3>Developer Notes</h3>
       <ul>
-        <li>No Sapphire-specific changes needed — standard llama.cpp server with default endpoint</li>
+        <li>No Sapphire-specific changes needed -- standard llama.cpp server with default endpoint</li>
         <li>To add a second backend, set <code>KRYSTAL_SEMANTIC_URL</code> to a different port and run another instance</li>
         <li>Model swapping requires PM2 restart: <code>pm2 restart krystal-small</code></li>
         <li>Disk space for models: ~1 GB per Q4_K_M 1.5B model</li>
@@ -99,7 +99,7 @@
       </ul>
 
       <!-- SAPPHIRE -->
-      <h2 id="sapphire">Sapphire — LLM Gateway</h2>
+      <h2 id="sapphire">Sapphire -- LLM Gateway</h2>
       <p><strong>Language:</strong> Python (FastAPI) &middot; <strong>Port:</strong> 3123 &middot; <strong>Runtime:</strong> PM2 (venv/python)</p>
 
       <p>Sapphire sits between Emerald (the brain) and Krystal (llama.cpp). It's called exclusively by Emerald and handles all LLM-related logic: classification, session management, few-shot injection, emotion scoring, degenerate detection, and prompt construction.</p>
@@ -115,7 +115,7 @@
         <li><strong>FUTILE/INTERESSANT</strong>: 579 futile + 545 interessant examples from <code>examples.yml</code></li>
         <li><strong>Emotion axes</strong>: 83 positive, 79 negative, 85 high-arousal, 116 low-arousal from <code>examples_emotion.yml</code></li>
       </ul>
-      <p>Classification is a single cosine similarity comparison — zero additional latency beyond the embedding itself.</p>
+      <p>Classification is a single cosine similarity comparison -- zero additional latency beyond the embedding itself.</p>
 
       <h4>Session Management</h4>
       <p>Each conversation (keyed by <code>session_id</code>) stores up to 20 message pairs. Sessions expire after 600s of inactivity. The session store maps sessions to llama.cpp slots for prompt caching.</p>
@@ -130,7 +130,7 @@ repeat_penalty = clamp(1.15 - valence * 0.1,  1.0, 1.3)
 mirostat_ent   = clamp(6.0  + arousal * 2.0,  3.0, 8.0)</code></pre>
 
       <h4>Degenerate Detection</h4>
-      <p>Regex checks for empty, too-short, or character-repetitive outputs. In non-streaming mode, Sapphire retries up to 2 times. In streaming mode, the full response is buffered before checking — if degenerate, the stream ends silently with no metadata.</p>
+      <p>Regex checks for empty, too-short, or character-repetitive outputs. In non-streaming mode, Sapphire retries up to 2 times. In streaming mode, the full response is buffered before checking -- if degenerate, the stream ends silently with no metadata.</p>
 
       <h4>Streaming SSE</h4>
       <p>When <code>stream: true</code> is set, Sapphire returns a Server-Sent Events stream:</p>
@@ -186,7 +186,7 @@ data: [DONE]</code></pre>
       </ul>
 
       <!-- EMERALD -->
-      <h2 id="emerald">Emerald — Brain Service</h2>
+      <h2 id="emerald">Emerald -- Brain Service</h2>
       <p><strong>Language:</strong> TypeScript &middot; <strong>Port:</strong> 3126 (WebSocket) &middot; <strong>Runtime:</strong> PM2 (esbuild → self-cli.cjs)</p>
 
       <p>Emerald is the central decision engine. Bots connect via WebSocket and Emerald orchestrates the entire response pipeline: trigger evaluation, behavior decisions, Sapphire streaming, response text processing, and command dispatch.</p>
@@ -197,7 +197,7 @@ data: [DONE]</code></pre>
       <h3>Features</h3>
 
       <h4>Streaming + First-Token Typing</h4>
-      <p>Emerald calls Sapphire with <code>stream: true</code> and consumes the SSE response token by token. <strong>The first token immediately triggers a <code>TypingCommand</code> to the bot</strong> — the user sees "typing..." before the model has finished generating. This replaces the old fixed-delay approach where typing started after a computed wait.</p>
+      <p>Emerald calls Sapphire with <code>stream: true</code> and consumes the SSE response token by token. <strong>The first token immediately triggers a <code>TypingCommand</code> to the bot</strong> -- the user sees "typing..." before the model has finished generating. This replaces the old fixed-delay approach where typing started after a computed wait.</p>
       <p>The streaming response is buffered in Emerald; when the full text is received, degeneracy is checked (Sapphire-side), and the <code>RespondCommand</code> is sent. If degenerate, typing expires naturally and no message is posted.</p>
 
       <h4>Centralized Behavior Config</h4>
@@ -237,7 +237,7 @@ data: [DONE]</code></pre>
       <table>
         <thead><tr><th>Type</th><th>Key fields</th><th>Purpose</th></tr></thead>
         <tbody>
-          <tr><td><code>ready</code></td><td>client, userId, username</td><td>Handshake — register bot identity</td></tr>
+          <tr><td><code>ready</code></td><td>client, userId, username</td><td>Handshake -- register bot identity</td></tr>
           <tr><td><code>message</code></td><td>id, channel, user, text, timestamp, isDM, mentions?, debug?</td><td>Forward user message</td></tr>
           <tr><td><code>bot_message</code></td><td>client, channel, text, timestamp</td><td>Bot's own output for context tracking</td></tr>
           <tr><td><code>presence</code></td><td>client, status</td><td>Bot status update</td></tr>
@@ -308,7 +308,7 @@ forget_chance: 0.03
       </ul>
 
       <!-- JADE -->
-      <h2 id="jade">Jade — Discord Adapter</h2>
+      <h2 id="jade">Jade -- Discord Adapter</h2>
       <p><strong>Language:</strong> TypeScript &middot; <strong>Library:</strong> Eris &middot; <strong>Runtime:</strong> PM2 (esbuild → self-cli.cjs)</p>
 
       <p>Jade connects to Discord and acts as a transparent WebSocket proxy to Emerald. It has no LLM logic, no behavior decisions, and no Sapphire calls. All intelligence is in Emerald.</p>
@@ -350,7 +350,7 @@ forget_chance: 0.03
       <p>The bot auto-reacts to certain emoji combinations on its own messages (✅ for ❌, ▶️, 🗑️ reactions) to simulate acknowledgment.</p>
 
       <h3>Configuration</h3>
-      <p>Config (<code>config.yml</code>) is minimal — no behavior parameters at all:</p>
+      <p>Config (<code>config.yml</code>) is minimal -- no behavior parameters at all:</p>
       <pre><code>discord_token: "your_bot_token"
 emerald_host: "127.0.0.1"
 emerald_port: 3126
@@ -375,7 +375,7 @@ ffprobe_path: "bin/ffmpeg/ffprobe"</code></pre>
       </ul>
 
       <!-- PIXIEGLOW -->
-      <h2 id="pixieglow">Pixieglow — Matrix Adapter</h2>
+      <h2 id="pixieglow">Pixieglow -- Matrix Adapter</h2>
       <p><strong>Language:</strong> TypeScript &middot; <strong>Runtime:</strong> Bun &middot; <strong>Protocol:</strong> Matrix Client-Server API</p>
 
       <p>Pixieglow is the Matrix equivalent of Jade. It connects to a Matrix homeserver and forwards room messages to Emerald via WebSocket. Identical architecture, different platform.</p>
@@ -402,7 +402,7 @@ emerald_port: 3126</code></pre>
       <ul>
         <li>Runs on Bun (not Node.js)</li>
         <li>No TTS support (Matrix doesn't have Discord-style voice messages)</li>
-        <li>No debug mode formatting (no <code>-# </code> lines — Matrix doesn't support Discord-style markup)</li>
+        <li>No debug mode formatting (no <code>-# </code> lines -- Matrix doesn't support Discord-style markup)</li>
         <li>Tested with <a href="https://github.com/tuwunel/tuwunel">tuwunel</a> homeserver</li>
         <li>Matrix user: <code>@pixieglow:protocol-luna.github.io</code> (delegated via well-known)</li>
       </ul>

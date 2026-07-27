@@ -244,7 +244,7 @@ LLM Layer         │  Krystal A  │  │  Krystal B   │
 
     <h2 id="step-krystal">Step 1: Krystal (LLM Server)</h2>
 
-    <p>Krystal wraps <code>llama-server</code> from llama.cpp. You can run two instances — one for FUTILE messages on port 3124 (smaller model, faster) and one for INTERESSANT messages on port 3125 (larger model, smarter), or point both Sapphire routes to the same instance via environment variables.</p>
+    <p>Krystal wraps <code>llama-server</code> from llama.cpp. You can run two instances -- one for FUTILE messages on port 3124 (smaller model, faster) and one for INTERESSANT messages on port 3125 (larger model, smarter), or point both Sapphire routes to the same instance via environment variables.</p>
 
     <pre><code>git clone https://github.com/protocol-luna/krystal
 cd krystal
@@ -487,9 +487,9 @@ python test_classifier.py</code></pre>
     <h3>Bot gets no response</h3>
     <p><strong>Check each layer from bottom up:</strong></p>
     <ul>
-      <li><code>curl http://127.0.0.1:3124/health</code> — Krystal must respond</li>
-      <li><code>curl http://127.0.0.1:3123/health</code> — Sapphire must respond</li>
-      <li><code>curl http://127.0.0.1:3126</code> — Emerald must respond (WebSocket upgrade)</li>
+      <li><code>curl http://127.0.0.1:3124/health</code> -- Krystal must respond</li>
+      <li><code>curl http://127.0.0.1:3123/health</code> -- Sapphire must respond</li>
+      <li><code>curl http://127.0.0.1:3126</code> -- Emerald must respond (WebSocket upgrade)</li>
       <li>Bot config must point <code>emerald_host: localhost</code> + <code>emerald_port: 3126</code></li>
       <li>Check <code>pm2 logs</code> for each service</li>
     </ul>

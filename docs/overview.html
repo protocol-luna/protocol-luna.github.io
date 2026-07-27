@@ -122,8 +122,8 @@
       <li>Bots connect via WebSocket and forward <code>MessageEvent</code>s (with optional <code>debug: true</code>)</li>
       <li>Emerald evaluates behavior rules: burst cooldown, sleep schedule, typo/swap probability, voice chance</li>
       <li><strong>Mention stripping</strong>: bot mentions (<code>@Kalupso</code>, <code>&lt;@userId&gt;</code>) are removed from the text</li>
-      <li>Emerald calls Sapphire via <strong>streaming</strong> (<code>askStream</code>) — the response arrives token by token</li>
-      <li><strong>On the first token</strong>, Emerald sends a <code>TypingCommand</code> to the bot — the typing indicator appears before generation completes</li>
+      <li>Emerald calls Sapphire via <strong>streaming</strong> (<code>askStream</code>) -- the response arrives token by token</li>
+      <li><strong>On the first token</strong>, Emerald sends a <code>TypingCommand</code> to the bot -- the typing indicator appears before generation completes</li>
       <li>Emerald buffers the streaming tokens until the full response is received</li>
       <li>Sapphire checks for degenerate output; if degenerate, the stream is discarded silently</li>
       <li>Emerald applies typo/swap behavior to the response text</li>
@@ -133,12 +133,12 @@
 
     <h3>Key files</h3>
     <ul>
-      <li><code>src/server.ts</code> — WebSocket server (connection management, event routing, command dispatch)</li>
-      <li><code>src/brain.ts</code> — Decision engine: evaluates behavior, calls Sapphire via streaming, applies typo/swap</li>
-      <li><code>src/sapphire-client.ts</code> — HTTP client with <code>ask()</code> (non-streaming) and <code>askStream()</code> (SSE streaming)</li>
-      <li><code>src/protocol.ts</code> — WebSocket message types (events, commands, debug stats, behavior debug)</li>
-      <li><code>src/behavior/*.ts</code> — Burst, sleep, typo, mannerisms</li>
-      <li><code>src/state/*.ts</code> — State management, triggers, topic fatigue</li>
+      <li><code>src/server.ts</code> -- WebSocket server (connection management, event routing, command dispatch)</li>
+      <li><code>src/brain.ts</code> -- Decision engine: evaluates behavior, calls Sapphire via streaming, applies typo/swap</li>
+      <li><code>src/sapphire-client.ts</code> -- HTTP client with <code>ask()</code> (non-streaming) and <code>askStream()</code> (SSE streaming)</li>
+      <li><code>src/protocol.ts</code> -- WebSocket message types (events, commands, debug stats, behavior debug)</li>
+      <li><code>src/behavior/*.ts</code> -- Burst, sleep, typo, mannerisms</li>
+      <li><code>src/state/*.ts</code> -- State management, triggers, topic fatigue</li>
     </ul>
 
     <h2 id="sapphire">Sapphire (LLM Gateway)</h2>
@@ -226,7 +226,7 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
       <li>Executes Emerald commands: <code>respond</code>, <code>typing</code>, <code>set_presence</code>, reaction plans, burst fragments</li>
       <li>Generates Piper TTS voice messages when Emerald sets <code>voice: true</code></li>
       <li>In debug mode, appends <code>-# </code> formatted stat lines (tokens, timing, emotion, behavior config)</li>
-      <li>Config: <code>discord_token</code>, <code>emerald_host</code>, <code>emerald_port</code>, TTS paths (no voice chance — that's in Emerald)</li>
+      <li>Config: <code>discord_token</code>, <code>emerald_host</code>, <code>emerald_port</code>, TTS paths (no voice chance -- that's in Emerald)</li>
     </ul>
 
     <h3>Pixieglow (Matrix)</h3>
@@ -267,7 +267,7 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
     <p>Emerald decides whether the response should be sent as a voice message (configurable chance, default 12%). If <code>voice: true</code> is set on the respond command, the bot (Jade) generates Piper TTS audio and uploads it as a Discord voice message.</p>
 
     <h3>Forgetting</h3>
-    <p>Configurable chance (default 3%) that Emerald returns a <code>forgot</code> command instead of responding — mimicking the bot losing track of the conversation.</p>
+    <p>Configurable chance (default 3%) that Emerald returns a <code>forgot</code> command instead of responding -- mimicking the bot losing track of the conversation.</p>
 
     <h2 id="debug-mode">Debug Mode</h2>
 
@@ -292,11 +292,11 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
 
     <p>Fields explained:</p>
     <ul>
-      <li><code>🚀</code> — completion tokens, total time, tokens/second, prompt tokens</li>
-      <li><code>😊</code> — per-message emotion scores (valence, arousal)</li>
-      <li><code>📊</code> — running emotion state (decayed EMA across conversation)</li>
-      <li><code>🏷️</code> — classification label (FUTILE/INTERESSANT) + confidence</li>
-      <li><code>⚙️</code> — all behavior config chances + which were <code>✨</code> applied</li>
+      <li><code>🚀</code> -- completion tokens, total time, tokens/second, prompt tokens</li>
+      <li><code>😊</code> -- per-message emotion scores (valence, arousal)</li>
+      <li><code>📊</code> -- running emotion state (decayed EMA across conversation)</li>
+      <li><code>🏷️</code> -- classification label (FUTILE/INTERESSANT) + confidence</li>
+      <li><code>⚙️</code> -- all behavior config chances + which were <code>✨</code> applied</li>
     </ul>
 
     <h2 id="emotion-sampling">Emotion-Aware Sampling</h2>
@@ -404,7 +404,7 @@ forget_chance: 0.03
     </table>
 
     <h3>Bots (config.yml)</h3>
-    <p>Both Jade and Pixieglow only need platform auth keys, Emerald connection details, and TTS paths (Jade only). No behavior parameters — all decisions are in Emerald.</p>
+    <p>Both Jade and Pixieglow only need platform auth keys, Emerald connection details, and TTS paths (Jade only). No behavior parameters -- all decisions are in Emerald.</p>
 
     <p><strong>Jade (Discord):</strong></p>
     <pre><code>discord_token: "your_token"

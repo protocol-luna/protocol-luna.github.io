@@ -260,7 +260,7 @@ python server.py</code></pre>
       <li><code>inject_few_shot_into_conversation()</code> inserts them after the system prompt, before conversation history</li>
       <li>Model receives: <code>[system_prompt] + [examples] + [conversation_history]</code></li>
     </ol>
-    <p>Bots are thin SSE clients — they send <code>{ username, text, session_id }</code> to Sapphire and receive streamed tokens. No few-shot logic runs in the bot.</p>
+    <p>Bots are thin SSE clients -- they send <code>{ username, text, session_id }</code> to Sapphire and receive streamed tokens. No few-shot logic runs in the bot.</p>
 
     <h3>Token Usage</h3>
     <ul>
@@ -345,7 +345,7 @@ python server.py</code></pre>
     <h3>Issue: Changes not taking effect</h3>
     <p><strong>Solution</strong>:</p>
     <ul>
-      <li>Few-shot examples are loaded at Sapphire startup — restart Sapphire after editing <code>few_shot_examples.yml</code></li>
+      <li>Few-shot examples are loaded at Sapphire startup -- restart Sapphire after editing <code>few_shot_examples.yml</code></li>
       <li>Set <code>SAPPHIRE_FEW_SHOT_ENABLED=false</code> env var to disable temporarily</li>
       <li>Check Sapphire logs for load errors on startup</li>
     </ul>
