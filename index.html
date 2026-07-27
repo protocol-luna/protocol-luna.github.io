@@ -367,7 +367,6 @@ img { max-width: 100%; height: auto; }
       <p>Wraps llama.cpp to serve GGUF models via an OpenAI-compatible HTTP API. Single-backend mode on :3124:</p>
       <pre><code>git clone https://github.com/protocol-luna/krystal.git
 cd krystal
-npm install
 ./start.sh    # Luna 1.5B on :3124</code></pre>
       <p>Configurable via <code>KRYSTAL_*</code> environment variables.</p>
     </div>
@@ -438,7 +437,7 @@ huggingface-cli download \
   <div class="container">
     <div class="section-label">Projects</div>
     <h2 class="section-title">The Stack</h2>
-    <p class="section-sub">Four services working together: an LLM inference server, a gateway, a brain service, and two platform adapters.</p>
+    <p class="section-sub">Six services working together: LLM inference, gateway, brain, Markov chain, and two platform adapters.</p>
     <div class="projects-grid">
       <div class="project-card">
         <div class="icon-wrap">

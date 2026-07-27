@@ -179,13 +179,10 @@ arousal = sim(emb, high_arousal_centroid) - sim(emb, low_arousal_centroid)</code
 <p>Raw valence and arousal from a single message are noisy. One angry outburst shouldn't define the entire conversation. Sapphire solves this with an <strong>exponential moving average (EMA)</strong> that maintains a smoothed emotional state per session:</p>
 
 <pre><code>class EmotionState:
-    def __init__(self, decay=0.85, deadzone=0.06):
+    def __init__(self, decay=0.85, deadzone=0.005):
         self.decay = decay
         self.deadzone = deadzone
-        self._states = {}
 
-    def update(self, session_key, valence_delta, arousal_delta):
-        # Deadzone: ignore tiny fluctuations
         if abs(valence_delta) < self.deadzone:
             valence_delta = 0.0
         if abs(arousal_delta) < self.deadzone:
@@ -240,7 +237,7 @@ arousal = sim(emb, high_arousal_centroid) - sim(emb, low_arousal_centroid)</code
   </tbody>
 </table>
 
-<p>The <strong>deadzone</strong> (0.06) is a threshold: small emotional fluctuations (a mildly positive "ok") are treated as neutral. This prevents gradual drift -- the state only moves when the signal is strong enough to matter.</p>
+<p>The <strong>deadzone</strong> (0.005) is a threshold: small emotional fluctuations (a mildly positive "ok") are treated as neutral. This prevents gradual drift -- the state only moves when the signal is strong enough to matter.</p>
 
 <h3>Why this matters for n+1 transitivity</h3>
 
