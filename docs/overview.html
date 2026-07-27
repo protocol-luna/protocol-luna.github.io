@@ -32,6 +32,7 @@
     <div style="display:flex;gap:16px;">
       <a href="getting-started.html" class="back">Getting Started</a>
       <a href="modules.html" class="back">Modules</a>
+      <a href="getting-started.html" class="back">Getting Started</a>
       <a href="../" class="back">&larr; Back to site</a>
     </div>
   </div>
@@ -51,6 +52,7 @@
           <li><a href="#emerald">Emerald (Brain)</a></li>
           <li><a href="#sapphire">Sapphire (LLM Gateway)</a></li>
           <li><a href="#krystal">Krystal (LLM Server)</a></li>
+          <li><a href="#ruby">Ruby (Markov Chain)</a></li>
           <li><a href="#bots">Bots (Jade / Pixieglow)</a></li>
           <li><a href="#behavior-system">Behavior System</a></li>
           <li><a href="#debug-mode">Debug Mode</a></li>
@@ -98,20 +100,20 @@
                  |
             HTTP :3123
                  |
-          +------v-------+
-          |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion, streaming
-          |   (Python)    |
-           +---+-------^---+
-               |       |
-               |  FUTILE / INTERESSANT
-               |       |
-          HTTP :3124  HTTP :3125
-               |       |
-        +------v---+ +-v--------+
-        | Krystal   | | Krystal  |  &lt;-- LLM inference (llama.cpp)
-        | small Q4  | | large    |
-        | (C++)     | | (C++)    |
-        +-----------+ +----------+</code></pre>
+           +------v-------+
+           |   Sapphire    |  &lt;-- Gateway: classification, sessions, few-shot, emotion, streaming
+           |   (Python)    |
+            +---+-------^---+-------------------+
+                |       |                       |
+                |  FUTILE / INTERESSANT         |
+                |       |                  HTTP :3127
+           HTTP :3124  HTTP :3125               |
+                |       |              +--------v--------+
+         +------v---+ +-v--------+     | Ruby            |
+         | Krystal   | | Krystal  |     | Markov Chain    |
+         | small Q4  | | large    |     | (TypeScript)   |
+         | (C++)     | | (C++)    |     +-----------------+
+         +-----------+ +----------+</code></pre>
 
     <h2 id="emerald">Emerald (Brain)</h2>
 
@@ -158,7 +160,20 @@
       <li><strong>Backend routing</strong>: FUTILE → <code>KRYSTAL_GENERIC_URL</code> (:3124), INTERESSANT → <code>KRYSTAL_SEMANTIC_URL</code> (:3125). Set both to the same URL for single-backend mode.</li>
     </ul>
 
-    <h3>Endpoint: POST /v1/respond</h3>
+    <h3>Endpoints</h3>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/v1/respond</code></td><td>POST</td><td>Classify + session + few-shot + emotion + generate. Main pipeline.</td></tr>
+        <tr><td><code>/v1/chat/completions</code></td><td>POST</td><td>OpenAI-compatible chat completions (no session, no few-shot). For external tools.</td></tr>
+        <tr><td><code>/v1/reset</code></td><td>POST</td><td>Reset a conversation session.</td></tr>
+        <tr><td><code>/classify</code></td><td>POST</td><td>Classify text without generation. Returns label + similarity + emotion scores.</td></tr>
+        <tr><td><code>/emotion/{key}</code></td><td>GET</td><td>Get emotional state for a conversation session.</td></tr>
+        <tr><td><code>/health</code></td><td>GET</td><td>Server health check with configuration summary.</td></tr>
+      </tbody>
+    </table>
+
+    <h4>POST /v1/respond</h4>
 
     <p>Request body:</p>
     <pre><code>{
@@ -211,6 +226,35 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
         <tr><td>Context</td><td>4096 tokens</td></tr>
         <tr><td>GPU layers</td><td>0 (CPU only)</td></tr>
         <tr><td>Threads</td><td>6</td></tr>
+      </tbody>
+    </table>
+
+    <h2 id="ruby">Ruby (Markov Chain Service)</h2>
+
+    <p>Ruby is a Markov chain service that runs alongside the LLM stack. It sits between Emerald and generates ambient messages without any LLM call.</p>
+
+    <h3>Role</h3>
+    <p>Ruby handles two trigger types: <code>random</code> (flat 1.5% chance per message) and <code>spontaneous</code> (periodic ambient messages). For these triggers, Emerald calls <code>Ruby.generate()</code> instead of Sapphire. The bot receives a <code>RespondCommand</code> either way -- the bot never knows whether the response came from an LLM or a Markov chain.</p>
+
+    <h3>How it works</h3>
+    <ul>
+      <li>Emerald forwards every message to Ruby's <code>/train</code> endpoint (fire-and-forget)</li>
+      <li>Ruby tokenizes each message and builds an order-2 Markov chain in SQLite (in-memory, sql.js WASM)</li>
+      <li>On <code>/generate</code>, Ruby walks the chain from a seed word pair, picking the most probable next word iteratively</li>
+      <li>Periodic binary snapshots (every 5 min) persist the chain to disk</li>
+      <li>Chain size is bounded (default 1M pairs) with LRU pruning</li>
+    </ul>
+
+    <h3>Why Ruby exists</h3>
+    <p>Without Ruby, every trigger (including 1.5% random chance) hits Krystal. With Ruby, ~70% of triggers are handled by the Markov chain at ~1ms latency -- zero GPU/VRAM usage. Ruby makes spontaneous messages economically viable at scale.</p>
+
+    <h3>Endpoint</h3>
+    <table>
+      <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/train</code></td><td>POST</td><td>Train on a message</td></tr>
+        <tr><td><code>/generate</code></td><td>POST</td><td>Generate text with optional seed and max length</td></tr>
+        <tr><td><code>/stats</code></td><td>GET</td><td>Chain statistics</td></tr>
       </tbody>
     </table>
 

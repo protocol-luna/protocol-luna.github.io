@@ -132,6 +132,7 @@ footer a { color: var(--primary-dim); }
     <div style="display:flex;gap:16px;">
       <a href="overview.html" class="back">Overview</a>
       <a href="modules.html" class="back">Modules</a>
+      <a href="overview.html" class="back">Overview</a>
       <a href="../" class="back">&larr; Back to site</a>
     </div>
   </div>
@@ -154,6 +155,7 @@ footer a { color: var(--primary-dim); }
           <li><a href="#step-sapphire">Step 2: Sapphire (Gateway)</a></li>
           <li><a href="#step-emerald">Step 3: Emerald (Brain)</a></li>
           <li><a href="#step-bot">Step 4: Bot (Jade / Pixieglow)</a></li>
+          <li><a href="#step-ruby">Step 5: Ruby (Optional)</a></li>
           <li><a href="#testing">Testing Your Setup</a></li>
           <li><a href="#debug-mode">Debug Mode</a></li>
           <li><a href="#best-practices"><span class="badge badge-advanced">Advanced</span> Best Practices</a></li>
@@ -171,7 +173,6 @@ footer a { color: var(--primary-dim); }
     <pre><code># 1. Start the LLM server (Krystal)
 git clone https://github.com/protocol-luna/krystal
 cd krystal
-npm install
 ./start.sh   # Luna 1.5B on :3124
 
 # 2. Start the LLM gateway (Sapphire)
@@ -248,11 +249,12 @@ LLM Layer         │  Krystal A  │  │  Krystal B   │
 
     <pre><code>git clone https://github.com/protocol-luna/krystal
 cd krystal
-npm install
 ./start.sh   # starts on :3124 with Luna 1.5B Q4_K_M</code></pre>
 
     <p><strong>Download the model:</strong></p>
-    <pre><code>npm run download-model   # Luna 1.5B (~1 GB)</code></pre>
+    <pre><code>huggingface-cli download \
+  fox3000foxy/Luna-Protocol-1.5B-Discord-Dialogues-200k-instruct \
+  --local-dir models/</code></pre>
 
     <p><strong>Environment variables:</strong></p>
     <table>
@@ -401,6 +403,23 @@ emerald_host: "localhost"
 emerald_port: 3126</code></pre>
 
     <p>The bot auto-joins rooms it's invited to. Requires a Matrix homeserver (tested with <a href="https://github.com/tuwunel/tuwunel" target="_blank" rel="noopener">tuwunel</a>). Invite <code>@pixieglow:protocol-luna.github.io</code> on the Luna server to test.</p>
+
+    <h2 id="step-ruby">Step 5: Ruby -- Markov Chain (Optional)</h2>
+
+    <p>Ruby builds an order-2 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency.</p>
+
+    <pre><code>git clone https://github.com/protocol-luna/ruby
+cd ruby
+npm install
+npm start   # HTTP server on :3127</code></pre>
+
+    <p>Enable Ruby in Emerald's config.yml:</p>
+    <pre><code>ruby_enabled: true
+ruby_host: "localhost"
+ruby_port: 3127
+ruby_reasons: ["random", "spontaneous"]</code></pre>
+
+    <p>Once enabled, Emerald automatically trains Ruby on every message and uses it for low-priority triggers (random and ambient messages), bypassing the LLM.</p>
 
     <h2 id="testing">Testing Your Setup</h2>
 

@@ -392,7 +392,17 @@ npm start    # WebSocket server on :3126</code></pre>
     </div>
 
     <div class="setup-block">
-      <h3><span class="setup-badge">4</span> Bot -- Jade (Discord) or Pixieglow (Matrix)</h3>
+      <h3><span class="setup-badge">4</span> Ruby -- Markov Chain Service</h3>
+      <p>Optional but recommended. Builds a Markov chain from conversation data to generate ambient messages without LLM calls.</p>
+      <pre><code>git clone https://github.com/protocol-luna/ruby.git
+cd ruby
+npm install
+npm start    # HTTP server on :3127</code></pre>
+      <p>Emerald's <code>config.yml</code> must have <code>ruby_enabled: true</code> and the correct <code>ruby_host</code>/<code>ruby_port</code>.</p>
+    </div>
+
+    <div class="setup-block">
+      <h3><span class="setup-badge">5</span> Bot -- Jade (Discord) or Pixieglow (Matrix)</h3>
       <p>Thin WebSocket clients of Emerald. No LLM logic -- just forward messages and post responses.</p>
       <pre><code># Jade (Discord)
 git clone https://github.com/protocol-luna/jade.git
@@ -447,6 +457,24 @@ huggingface-cli download \
         <p>Brain and decision engine. WebSocket server (:3126) that connects platform adapters to Sapphire. Evaluates behavior rules, processes responses, and sends commands. Debug mode across all layers.</p>
         <div class="tags"><span>TypeScript</span><span>WebSocket</span><span>PM2</span></div>
         <a href="https://github.com/protocol-luna/emerald" class="card-link" aria-label="Emerald repo"></a>
+      </div>
+      <div class="project-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
+        </div>
+        <h3>Sapphire</h3>
+        <p>LLM gateway built on FastAPI. Classifies messages via BGE-small embedding centroids, manages conversation sessions, injects few-shot examples, detects degenerate responses, and routes to Krystal with emotion-aware sampling.</p>
+        <div class="tags"><span>Python</span><span>FastAPI</span><span>fastembed</span></div>
+        <a href="https://github.com/protocol-luna/sapphire" class="card-link" aria-label="Sapphire repo"></a>
+      </div>
+      <div class="project-card">
+        <div class="icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#b388ff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/><path d="M8 10h.01"/><path d="M12 10h.01"/><path d="M16 10h.01"/></svg>
+        </div>
+        <h3>Ruby</h3>
+        <p>Markov chain service. Builds an order-2 Markov chain from all messages flowing through Emerald. Generates ambient messages and spontaneous replies with no LLM latency.</p>
+        <div class="tags"><span>TypeScript</span><span>sql.js</span><span>SQLite</span></div>
+        <a href="https://github.com/protocol-luna/ruby" class="card-link" aria-label="Ruby repo"></a>
       </div>
       <div class="project-card">
         <div class="icon-wrap">
@@ -706,12 +734,20 @@ huggingface-cli download \
     <h2 class="section-title">Related Articles</h2>
     <p class="section-sub">Technical deep-dives behind Protocol Luna, written by the creator at <a href="https://fox3000foxy.com" style="color:var(--primary-light);">fox3000foxy.com</a>.</p>
     <div class="blog-grid">
-      <a class="blog-post" href="docs/centroids.html">
-        <span class="luna-tag">Sapphire</span>
+      <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-layers-and-centroids" target="_blank" rel="noopener">
+        <span class="luna-tag">Protocol Luna</span>
         <div class="content">
-          <div class="title">Centroid Classification &amp; Emotional State</div>
-          <div class="desc">How embedding centroids classify FUTILE vs INTERESSANT, track valence/arousal, and control LLM parameters -- no neural classifiers required.</div>
-          <div class="meta">Technical deep-dive</div>
+          <div class="title">Luna Protocol: shared brains, emotion classification, and interesting/futile routing</div>
+          <div class="desc">From monolith to four-layer architecture: adapters, brain, emotion classifier, and inference. Embedding centroids, INTERESSANT/FUTILE routing, and LLM parameter tuning by valence and arousal.</div>
+          <div class="meta">July 27, 2026</div>
+        </div>
+      </a>
+      <a class="blog-post" href="https://fox3000foxy.com/blog/from-eliza-to-llm-chatbots-typescript" target="_blank" rel="noopener">
+        <span class="luna-tag">Protocol Luna</span>
+        <div class="content">
+          <div class="title">From ELIZA to LLMs: 60 years of conversational AI, rebuilt in TypeScript</div>
+          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot -- five radically different architectures, ported to TypeScript with original data.</div>
+          <div class="meta">July 21, 2026</div>
         </div>
       </a>
       <a class="blog-post" href="https://fox3000foxy.com/blog/luna-protocol-official-models" target="_blank" rel="noopener">
@@ -730,14 +766,6 @@ huggingface-cli download \
           <div class="meta">July 11, 2026</div>
         </div>
       </a>
-      <a class="blog-post" href="https://fox3000foxy.com/blog/from-eliza-to-llm-chatbots-typescript" target="_blank" rel="noopener">
-        <span class="luna-tag">Protocol Luna</span>
-        <div class="content">
-          <div class="title">From ELIZA to LLMs: 60 years of conversational AI, rebuilt in TypeScript</div>
-          <div class="desc">ELIZA, PARRY, ALICE, Jabberwacky, Cleverbot -- five radically different architectures, ported to TypeScript with original data.</div>
-          <div class="meta">July 21, 2026</div>
-        </div>
-      </a>
     </div>
     <div style="text-align:center;margin-top:24px;">
       <a href="https://fox3000foxy.com/blog" class="btn btn-outline" style="font-size:0.85rem;">More articles &rarr;</a>
@@ -751,9 +779,9 @@ huggingface-cli download \
     <h2 class="section-title">Documentation</h2>
     <p class="section-sub">State machines, fine-tuning guides, configuration references.</p>
     <div class="docs-grid">
-      <a href="docs/overview.html" class="doc-link">
-        <span class="doc-icon">&#x1F4CB;</span>
-        <div class="doc-info"><h4>Detailed Overview</h4><p>Triggers, behaviors, configuration reference</p></div>
+      <a href="docs/modules.html" class="doc-link">
+        <span class="doc-icon">&#x1F4E6;</span>
+        <div class="doc-info"><h4>All Modules</h4><p>Krystal, Sapphire, Emerald, Jade, Pixieglow, Ruby</p></div>
       </a>
       <a href="docs/fewshot-priming.html" class="doc-link">
         <span class="doc-icon">&#x1F3AF;</span>
