@@ -214,23 +214,18 @@ Adapter Layer     ┌──────▼───────┐  ┌───
                                   │ WebSocket :3126
 Brain Layer       ┌────────────────▼───────────────┐
 (Emerald)         │      Emerald (Brain)             │
-                  │  behavior + Sapphire client      │
-                  └────────────────┬────────────────┘
-                                  │ HTTP :3123
-Gateway Layer     ┌────────────────▼────────────────┐
-(Sapphire)        │     Sapphire (Gateway)            │
-                  │  classify FUTILE / INTERESSANT   │
-                  └──────┬─────────────────┬────────┘
-                         │                 │
-                    FUTILE            INTERESSANT
-                         │                 │
-                    HTTP :3124         HTTP :3125
-                         │                 │
-                  ┌──────▼──────┐  ┌──────▼───────┐
-LLM Layer         │  Krystal A  │  │  Krystal B   │
-(Krystal)         │  llama.cpp  │  │  llama.cpp   │
-                  │  small Q4   │  │  large model │
-                  └─────────────┘  └──────────────┘</code></pre>
+                  │  behavior + Sapphire + Ruby     │
+                  └──────┬────────────┬─────────────┘
+                         │ HTTP :3123 │ HTTP :3127
+                  ┌──────▼──────┐    ┌▼───────────┐
+                  │  Sapphire   │    │   Ruby      │
+                  │  (Gateway)  │    │  (Markov)   │
+                  └──────┬──────┘    └─────────────┘
+                         │ HTTP :3124 / :3125
+                  ┌──────▼──────────────────┐
+                  │  Krystal (llama.cpp)      │
+                  │  single or dual instance  │
+                  └─────────────────────────┘</code></pre>
 
     <h2 id="prerequisites">Prerequisites</h2>
 
