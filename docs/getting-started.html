@@ -213,19 +213,19 @@ Adapter Layer     ┌──────▼───────┐  ┌───
                          └────────┬─────────┘
                                   │ WebSocket :3126
 Brain Layer       ┌────────────────▼───────────────┐
-(Emerald)         │      Emerald (Brain)             │
-                  │  behavior + Sapphire + Ruby     │
-                  └──────┬────────────┬─────────────┘
+(Emerald)         │      Emerald (Brain)           │
+                  │  behavior + Sapphire + Ruby    │
+                  └──────┬────────────┬────────────┘
                          │ HTTP :3123 │ HTTP :3127
-                  ┌──────▼──────┐    ┌▼───────────┐
+                  ┌──────▼──────┐    ┌▼────────────┐
                   │  Sapphire   │    │   Ruby      │
                   │  (Gateway)  │    │  (Markov)   │
                   └──────┬──────┘    └─────────────┘
                          │ HTTP :3124 / :3125
-                  ┌──────▼──────────────────┐
+                  ┌──────▼────────────────────┐
                   │  Krystal (llama.cpp)      │
                   │  single or dual instance  │
-                  └─────────────────────────┘</code></pre>
+                  └───────────────────────────┘</code></pre>
 
     <h2 id="prerequisites">Prerequisites</h2>
 
