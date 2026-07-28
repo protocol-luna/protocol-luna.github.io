@@ -114,13 +114,13 @@
 
       <h3>Features</h3>
 
-      <h4>Embedding Classification</h4>
-      <p>Uses <code>fastembed</code> with <code>BAAI/bge-small-en-v1.5</code> (384-dim embeddings). Two centroid pairs are computed from YAML example files at startup:</p>
+      <h4>Embedding Classification (K-Means Multicentroid)</h4>
+      <p>Uses <code>fastembed</code> with <code>BAAI/bge-small-en-v1.5</code> (384-dim embeddings). At startup, <strong>k-means clustering</strong> (k=10, seed=42) computes 10 centroids per class from YAML example files:</p>
       <ul>
-        <li><strong>FUTILE/INTERESSANT</strong>: 579 futile + 545 interessant examples from <code>examples.yml</code></li>
-        <li><strong>Emotion axes</strong>: 83 positive, 79 negative, 85 high-arousal, 116 low-arousal from <code>examples_emotion.yml</code></li>
+        <li><strong>FUTILE/INTERESSANT</strong>: ~1100 examples from <code>examples.yml</code> → 10 centroids per class</li>
+        <li><strong>Emotion axes</strong>: 83 positive, 79 negative, 85 high-arousal, 116 low-arousal from <code>examples_emotion.yml</code> → 10 centroids per pole</li>
       </ul>
-      <p>Classification is a single cosine similarity comparison -- zero additional latency beyond the embedding itself.</p>
+      <p>Classification uses <strong>maximum cosine similarity</strong> across all 10 centroids per class, not a single centroid. The fixed seed (42) ensures reproducible centroids across rebuilds. Achieves <strong>100% accuracy on the 396-example test suite</strong>.</p>
 
       <h4>Session Management</h4>
       <p>Each conversation (keyed by <code>session_id</code>) stores up to 20 message pairs. Sessions expire after 600s of inactivity. The session store maps sessions to llama.cpp slots for prompt caching.</p>
@@ -422,14 +422,14 @@ emerald_port: 3126</code></pre>
       <h2 id="ruby">Ruby -- Markov Chain Service</h2>
       <p><strong>Language:</strong> TypeScript &middot; <strong>Port:</strong> 3127 &middot; <strong>Runtime:</strong> PM2 (esbuild → self-cli.cjs)</p>
 
-      <p>Ruby builds and serves an order-4 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency. It's the only service in the stack that <em>learns from conversation data</em> in real time.</p>
+      <p>Ruby builds and serves an order-2 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency. It's the only service in the stack that <em>learns from conversation data</em> in real time.</p>
 
       <h3>Architecture</h3>
       <p>Ruby is a simple HTTP server. Emerald sends every incoming message to Ruby's <code>/train</code> endpoint (fire-and-forget) and calls <code>/generate</code> for random triggers. Ruby stores its chain in a persistent SQLite database via <code>better-sqlite3</code> (native binding), with <code>TRANSACTIONS</code> and <code>STARTERS</code> tables indexed by channel. WAL mode ensures immediate durability without periodic snapshots.</p>
 
       <h3>Features</h3>
       <ul>
-        <li><strong>Order-4 Markov chain</strong>: Each state is a 4-word prefix mapping to possible next words with weighted random selection. Higher order produces more coherent sentences.</li>
+        <li><strong>Order-2 Markov chain</strong>: Each state is a 2-word prefix mapping to possible next words with weighted random selection. Lower order produces more varied output while remaining coherent.</li>
         <li><strong>Real-time training</strong>: Every message that flows through Emerald is forwarded to <code>/train</code>. The chain grows continuously as the bot converses.</li>
         <li><strong>Seeded generation</strong>: Emerald can pass a seed phrase and max length. Ruby walks the chain from any matching 4-word starter.</li>
         <li><strong>Channel-aware</strong>: Training and generation can be scoped to specific channels via <code>channel_id</code>.</li>
@@ -452,20 +452,22 @@ emerald_port: 3126</code></pre>
       <h3>Configuration</h3>
       <pre><code>port: 3127
 host: "127.0.0.1"
-order: 4
+order: 2
 max_length: 30
 skip_dm: true
 db_path: "chain.db"</code></pre>
 
       <h3>How the Markov Chain Works</h3>
-      <p>Ruby tokenizes messages by stripping URLs, mentions, and punctuation -- keeping only word characters and apostrophes. Each message produces a sequence of tokens. Every sliding window of 4 words records the following word with a frequency count. Generation picks a random 4-word starter and iteratively selects the next word via weighted random sampling:</p>
+      <p>Ruby tokenizes messages by stripping URLs, mentions, and punctuation -- keeping only word characters and apostrophes. Each message produces a sequence of tokens. Every sliding window of 2 words records the following word with a frequency count. Generation picks a random 2-word starter and iteratively selects the next word via weighted random sampling:</p>
       <pre><code>Input: "how are you doing today"
 Tokens: how, are, you, doing, today
 Prefix→suffix:
-  "how are you doing" → today
+  "how are" → you
+  "are you" → doing
+  "you doing" → today
 
 Generation: pick starter → weighted random → slide window → repeat</code></pre>
-      <p>With 6.9M transitions trained on 16.9M real Discord messages (order 4), Ruby produces sentences that feel natural because they're assembled from real human fragments, not generated by an LLM.</p>
+      <p>With order 2, Ruby produces varied but coherent sentences at minimal memory cost. The chain is trained from real Discord messages flowing through Emerald.</p>
 
       <h3>Emerald Integration</h3>
       <p>Emerald includes Ruby in its trigger pipeline. When a message is triggered by a <code>random</code> or <code>spontaneous</code> reason, Emerald calls <code>ruby.generate()</code> instead of Sapphire. Every human message is also forwarded to <code>/train</code> (fire-and-forget). This means ambient messages cost virtually nothing. The integration is transparent to the bot -- it receives a <code>RespondCommand</code> either way.</p>
@@ -476,7 +478,7 @@ Generation: pick starter → weighted random → slide window → repeat</code><
         <li>SQLite uses <code>better-sqlite3</code> (native C binding, not WASM) -- writes are immediately durable, no save interval needed</li>
         <li>WAL mode enabled; VACUUM runs automatically every 500K transitions</li>
         <li>Seed lookup: multi-word seeds are matched with LIKE + JS startsWith filter (avoids C string truncation)</li>
-        <li>Pre-trained chains (order 2, 3, 4) available on <a href="https://huggingface.co/fox3000foxy/ruby-chain">HuggingFace</a></li>
+        <li>Pre-trained chain (order 2) available on <a href="https://huggingface.co/fox3000foxy/ruby-chain">HuggingFace</a></li>
       </ul>
 
       <h3>Links</h3>

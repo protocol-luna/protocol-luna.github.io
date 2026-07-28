@@ -277,9 +277,9 @@ python server.py
     <p><strong>How it works:</strong></p>
     <ul>
       <li>Loads <code>BAAI/bge-small-en-v1.5</code> (fastembed, auto-downloaded on first run, ~100 MB)</li>
-      <li>Computes centroids from <code>examples.yml</code> (~1100 curated examples)</li>
-      <li>Each message is embedded and compared to centroids via cosine similarity</li>
-      <li>Scores emotion (valence/arousal) on [-1, 1] scale</li>
+      <li>Computes k-means multicentroids (k=10, seed=42) from <code>examples.yml</code> (~1100 curated examples)</li>
+      <li>Each message is embedded and compared to centroids via max cosine similarity across 10 per class</li>
+      <li>Scores emotion (valence/arousal) on [-1, 1] scale via multicentroid comparison</li>
       <li>Manages per-channel conversation sessions with configurable history length</li>
       <li>Calls Krystal with emotion-aware sampling parameters</li>
     </ul>
@@ -330,34 +330,20 @@ npm start
     </ul>
 
     <h3>Configuration (config.yml)</h3>
-    <pre><code>host: "0.0.0.0"
-port: 3126
+    <pre><code>port: 3126
 sapphire_host: "localhost"
 sapphire_port: 3123
-sapphire_timeout: 10
-bot_username: "Luna"
-behavior:
-  burst:
-    enabled: true
-    min_interval: 2.0
-    max_interval: 6.0
-    max_messages: 2
-    cooldown: 60
-    reply_chance: 0.3
-  sleep:
-    enabled: true
-    start_hour: 0
-    end_hour: 8
-    timezone: "UTC"
-  typo:
-    enabled: true
-    chance: 0.08
-    swap_chance: 0.12
-  mannerisms:
-    enabled: true
-    chance: 0.075
-  ignore_prefixes:
-    - "!"</code></pre>
+names: ["Luna", "Pixie"]
+keywords: ["hello", "hi", "hey", ...]
+random_chance: 0.015
+cooldown_seconds: 8
+burst_chance: 0.15
+hesitation_chance: 0.15
+typo_chance: 0.06
+letter_swap_chance: 0.04
+voice_message_chance: 0.12
+forget_chance: 0.03
+# See config.example.yml for full details</code></pre>
 
     <h2 id="step-bot">Step 4: Bot (Jade / Pixieglow)</h2>
 
@@ -486,12 +472,12 @@ python test_classifier.py</code></pre>
     </table>
 
     <h3>Tuning Examples</h3>
-    <p>If messages are misclassified, edit <code>sapphire/examples.yml</code>:</p>
+    <p>If messages are misclassified, edit <code>sapphire/examples.yml</code>. The k-means multicentroid (k=10, seed=42) automatically captures sub-types across 10 centroids per class:</p>
     <ul>
       <li>Add more examples of the misbehaving type</li>
       <li>Use weighted items: <code>{text: "example", weight: 5}</code></li>
       <li>Restart Sapphire after editing to recompute centroids</li>
-      <li>Run <code>python test_classifier.py</code> to verify accuracy</li>
+      <li>Run <code>python test_classifier.py</code> to verify accuracy (target: 100%)</li>
     </ul>
 
     <h2 id="troubleshooting">Troubleshooting</h2>

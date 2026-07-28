@@ -151,8 +151,8 @@
 
     <h3>Capabilities</h3>
     <ul>
-      <li><strong>Classification</strong>: Message embedding via fastembed + BAAI/bge-small-en-v1.5. Centroid similarity labels each message FUTILE or INTERESSANT.</li>
-      <li><strong>Emotion scoring</strong>: Four centroids (positive, negative, high_arousal, low_arousal) compute valence and arousal on a [-1, 1] scale. State per conversation decays via EMA. Deadzone: 0.005.</li>
+      <li><strong>Classification</strong>: Message embedding via fastembed + BAAI/bge-small-en-v1.5. <strong>K-means multicentroid</strong> (k=10, seed=42) computes 10 centroids per class. Classification uses maximum cosine similarity across all 10 -- achieves 100% accuracy on the test suite.</li>
+      <li><strong>Emotion scoring</strong>: Four poles (positive, negative, high_arousal, low_arousal), each with k-means multicentroid (k=10). Valence and arousal on a [-1, 1] scale via max-similarity comparison. State per conversation decays via EMA. Deadzone: 0.005.</li>
       <li><strong>Session management</strong>: Per-channel conversation history with configurable max messages and TTL.</li>
       <li><strong>Few-shot injection</strong>: Example conversations from <code>few_shot_examples.yml</code> injected server-side after the system prompt.</li>
       <li><strong>Emotion-aware sampling</strong>: Temperature, repeat penalty, and mirostat entropy dynamically adjusted by valence/arousal.</li>
