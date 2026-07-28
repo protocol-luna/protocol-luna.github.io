@@ -458,7 +458,7 @@ skip_dm: true
 db_path: "chain.db"</code></pre>
 
       <h3>How the Markov Chain Works</h3>
-      <p>Ruby tokenizes messages by stripping URLs, mentions, and punctuation — keeping only word characters and apostrophes. Each message produces a sequence of tokens. Every sliding window of 4 words records the following word with a frequency count. Generation picks a random 4-word starter and iteratively selects the next word via weighted random sampling:</p>
+      <p>Ruby tokenizes messages by stripping URLs, mentions, and punctuation -- keeping only word characters and apostrophes. Each message produces a sequence of tokens. Every sliding window of 4 words records the following word with a frequency count. Generation picks a random 4-word starter and iteratively selects the next word via weighted random sampling:</p>
       <pre><code>Input: "how are you doing today"
 Tokens: how, are, you, doing, today
 Prefix→suffix:
@@ -473,7 +473,7 @@ Generation: pick starter → weighted random → slide window → repeat</code><
       <h3>Developer Notes</h3>
       <ul>
         <li>Built with esbuild → <code>self-cli.cjs</code>. Run <code>npm run build</code> before <code>pm2 restart ruby</code></li>
-        <li>SQLite uses <code>better-sqlite3</code> (native C binding, not WASM) — writes are immediately durable, no save interval needed</li>
+        <li>SQLite uses <code>better-sqlite3</code> (native C binding, not WASM) -- writes are immediately durable, no save interval needed</li>
         <li>WAL mode enabled; VACUUM runs automatically every 500K transitions</li>
         <li>Seed lookup: multi-word seeds are matched with LIKE + JS startsWith filter (avoids C string truncation)</li>
         <li>Pre-trained chains (order 2, 3, 4) available on <a href="https://huggingface.co/fox3000foxy/ruby-chain">HuggingFace</a></li>

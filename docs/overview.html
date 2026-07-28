@@ -243,7 +243,7 @@ KRYSTAL_SEMANTIC_URL=http://127.0.0.1:3125</code></pre>
       <li>Emerald forwards every human message to Ruby's <code>/train</code> endpoint (fire-and-forget)</li>
       <li>Ruby tokenizes each message and builds an order-4 Markov chain in SQLite via <code>better-sqlite3</code> (native binding)</li>
       <li>Each 4-word prefix maps to possible next words with frequency counts; generation uses weighted random selection</li>
-      <li>Database is immediately durable (WAL mode) — no periodic snapshots needed</li>
+      <li>Database is immediately durable (WAL mode) -- no periodic snapshots needed</li>
       <li>6.9M transitions trained on 16.9M real Discord messages from the HuggingFace dataset</li>
     </ul>
 
