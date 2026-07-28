@@ -422,17 +422,17 @@ emerald_port: 3126</code></pre>
       <h2 id="ruby">Ruby -- Markov Chain Service</h2>
       <p><strong>Language:</strong> TypeScript &middot; <strong>Port:</strong> 3127 &middot; <strong>Runtime:</strong> PM2 (esbuild → self-cli.cjs)</p>
 
-      <p>Ruby builds and serves an order-2 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency. It's the only service in the stack that <em>learns from conversation data</em> in real time.</p>
+      <p>Ruby builds and serves an order-4 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency. It's the only service in the stack that <em>learns from conversation data</em> in real time.</p>
 
       <h3>Architecture</h3>
-      <p>Ruby is a simple HTTP server. Emerald sends every incoming message to Ruby's <code>/train</code> endpoint (fire-and-forget) and calls <code>/generate</code> for random triggers. Ruby stores its chain in an in-memory SQLite database via <code>sql.js</code> (WASM), with periodic binary snapshots to disk for persistence across restarts.</p>
+      <p>Ruby is a simple HTTP server. Emerald sends every incoming message to Ruby's <code>/train</code> endpoint (fire-and-forget) and calls <code>/generate</code> for random triggers. Ruby stores its chain in a persistent SQLite database via <code>better-sqlite3</code> (native binding), with <code>TRANSACTIONS</code> and <code>STARTERS</code> tables indexed by channel. WAL mode ensures immediate durability without periodic snapshots.</p>
 
       <h3>Features</h3>
       <ul>
-        <li><strong>Order-2 Markov chain</strong>: Each state is a pair of words. Given the previous two words, Ruby predicts the next word based on observed frequency. This produces surprisingly coherent short phrases.</li>
+        <li><strong>Order-4 Markov chain</strong>: Each state is a 4-word prefix mapping to possible next words with weighted random selection. Higher order produces more coherent sentences.</li>
         <li><strong>Real-time training</strong>: Every message that flows through Emerald is forwarded to <code>/train</code>. The chain grows continuously as the bot converses.</li>
-        <li><strong>Seeded generation</strong>: Emerald can pass a seed word and max length. Ruby walks the chain from any starting pair.</li>
-        <li><strong>Periodic snapshots</strong>: The SQLite database is dumped to a binary JSON file every 5 minutes. On restart, Ruby reloads from the last snapshot.</li>
+        <li><strong>Seeded generation</strong>: Emerald can pass a seed phrase and max length. Ruby walks the chain from any matching 4-word starter.</li>
+        <li><strong>Channel-aware</strong>: Training and generation can be scoped to specific channels via <code>channel_id</code>.</li>
         <li><strong>Zero LLM cost</strong>: Ruby responses use no GPU, no VRAM, no Krystal calls. Ambient messages cost ~1ms of CPU time.</li>
       </ul>
 
@@ -440,38 +440,43 @@ emerald_port: 3126</code></pre>
       <table>
         <thead><tr><th>Endpoint</th><th>Method</th><th>Description</th></tr></thead>
         <tbody>
-          <tr><td><code>/train</code></td><td>POST</td><td>Train on a message. Body: <code>{"text": "hello there"}</code></td></tr>
-          <tr><td><code>/generate</code></td><td>POST</td><td>Generate text. Body: <code>{"seed": "how", "maxLength": 20, "channelId": "..."}</code></td></tr>
-          <tr><td><code>/stats</code></td><td>GET</td><td>Returns chain size, unique pairs, and total learned tokens</td></tr>
+          <tr><td><code>/train</code></td><td>POST</td><td>Train on a message. Body: <code>{"text": "hello there", "channel_id": "..."}</code></td></tr>
+          <tr><td><code>/train-batch</code></td><td>POST</td><td>Train multiple messages atomically in a SQL transaction</td></tr>
+          <tr><td><code>/generate</code></td><td>POST</td><td>Generate text. Body: <code>{"seed": "how are you", "max_length": 30, "channel_id": "..."}</code></td></tr>
+          <tr><td><code>/channels</code></td><td>GET</td><td>List all known channel IDs</td></tr>
+          <tr><td><code>/stats</code></td><td>GET</td><td>Returns transition count, starter count, and database size</td></tr>
           <tr><td><code>/health</code></td><td>GET</td><td>Health check</td></tr>
         </tbody>
       </table>
 
       <h3>Configuration</h3>
       <pre><code>port: 3127
-save_interval: 300        # seconds between disk snapshots
-snapshot_path: "./data/chain.json"
-max_chain_size: 1000000   # max learned pairs before pruning</code></pre>
+host: "127.0.0.1"
+order: 4
+max_length: 30
+skip_dm: true
+db_path: "chain.db"</code></pre>
 
       <h3>How the Markov Chain Works</h3>
-      <p>Ruby tokenizes messages by splitting on whitespace and removing punctuation. Each message produces a sequence of tokens. For every adjacent pair <code>(w<sub>n</sub>, w<sub>n+1</sub>)</code>, Ruby records the following word. Given a seed pair, it picks the most probable next word and repeats:</p>
+      <p>Ruby tokenizes messages by stripping URLs, mentions, and punctuation — keeping only word characters and apostrophes. Each message produces a sequence of tokens. Every sliding window of 4 words records the following word with a frequency count. Generation picks a random 4-word starter and iteratively selects the next word via weighted random sampling:</p>
       <pre><code>Input: "how are you doing today"
-Pairs: (how, are) → you
-       (are, you) → doing
-       (you, doing) → today
+Tokens: how, are, you, doing, today
+Prefix→suffix:
+  "how are you doing" → today
 
-Generation: seed(how, are) → you → doing → today</code></pre>
-      <p>With enough training data, the chain produces sentences that feel natural because they're assembled from real human fragments, not generated by an LLM.</p>
+Generation: pick starter → weighted random → slide window → repeat</code></pre>
+      <p>With 6.9M transitions trained on 16.9M real Discord messages (order 4), Ruby produces sentences that feel natural because they're assembled from real human fragments, not generated by an LLM.</p>
 
       <h3>Emerald Integration</h3>
-      <p>Emerald includes Ruby in its trigger pipeline. When a message is triggered by a <code>random</code> or <code>spontaneous</code> reason, Emerald calls <code>Ruby.generate()</code> instead of Sapphire. This means ambient messages cost virtually nothing. The integration is transparent to the bot -- it receives a <code>RespondCommand</code> either way.</p>
+      <p>Emerald includes Ruby in its trigger pipeline. When a message is triggered by a <code>random</code> or <code>spontaneous</code> reason, Emerald calls <code>ruby.generate()</code> instead of Sapphire. Every human message is also forwarded to <code>/train</code> (fire-and-forget). This means ambient messages cost virtually nothing. The integration is transparent to the bot -- it receives a <code>RespondCommand</code> either way.</p>
 
       <h3>Developer Notes</h3>
       <ul>
         <li>Built with esbuild → <code>self-cli.cjs</code>. Run <code>npm run build</code> before <code>pm2 restart ruby</code></li>
-        <li>SQLite runs in-memory (sql.js WASM): no separate SQLite process required</li>
-        <li>Snapshots are atomic: Ruby writes to a temp file then renames</li>
-        <li>Channel-aware generation: responses can be conditioned on training data from specific channels</li>
+        <li>SQLite uses <code>better-sqlite3</code> (native C binding, not WASM) — writes are immediately durable, no save interval needed</li>
+        <li>WAL mode enabled; VACUUM runs automatically every 500K transitions</li>
+        <li>Seed lookup: multi-word seeds are matched with LIKE + JS startsWith filter (avoids C string truncation)</li>
+        <li>Pre-trained chains (order 2, 3, 4) available on <a href="https://huggingface.co/fox3000foxy/ruby-chain">HuggingFace</a></li>
       </ul>
 
       <h3>Links</h3>

@@ -408,11 +408,12 @@ emerald_port: 3126</code></pre>
 
     <h2 id="step-ruby">Step 5: Ruby -- Markov Chain (Optional)</h2>
 
-    <p>Ruby builds an order-2 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency.</p>
+    <p>Ruby builds an order-4 Markov chain from all messages flowing through Emerald. It generates ambient messages and spontaneous replies without LLM latency.</p>
 
     <pre><code>git clone https://github.com/protocol-luna/ruby
 cd ruby
 npm install
+npm run build
 npm start   # HTTP server on :3127</code></pre>
 
     <p>Enable Ruby in Emerald's config.yml:</p>
@@ -421,7 +422,10 @@ ruby_host: "localhost"
 ruby_port: 3127
 ruby_reasons: ["random", "spontaneous"]</code></pre>
 
-    <p>Once enabled, Emerald automatically trains Ruby on every message and uses it for low-priority triggers (random and ambient messages), bypassing the LLM.</p>
+    <p>Optionally download a pre-trained chain (6.9M transitions trained on 16.9M Discord messages):</p>
+    <pre><code>npm run download-chain</code></pre>
+
+    <p>Once enabled, Emerald automatically trains Ruby on every human message and uses it for low-priority triggers (random and ambient messages), bypassing the LLM.</p>
 
     <h2 id="testing">Testing Your Setup</h2>
 
